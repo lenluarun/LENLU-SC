@@ -40,3 +40,16 @@ The visual language follows a cyber assembly grid aesthetic:
 ## Notes
 
 This README matches the same visual tone as the application: direct, minimal, technical, and built around a neon command-center identity.
+
+## AI Integration
+
+An integrated AI assistant can automatically convert and correct your DuckyScript-like source. Use the AI panel at the top to:
+
+- Select a provider (default: GROQ).
+- Provide the provider's API URL and your API key (the app sends a POST with a JSON `prompt` payload by default).
+- Click `AI Convert & Fix` to request a corrected source and generated AutoIt assembly from the model.
+
+Notes:
+- The UI uses a generic POST behavior so you can connect GROQ, OpenAI, Anthropic, or any custom endpoint that accepts a JSON prompt and Bearer auth.
+- For OpenAI, the panel pre-fills the Chat Completions endpoint; for Anthropic it pre-fills the completion endpoint; for GROQ it pre-fills the GROQ API base.
+- Because this is a client-side integration, keep your keys secure and prefer using a server-side proxy for production deployments.

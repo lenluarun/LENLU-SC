@@ -230,3 +230,78 @@ function copyPipelineOutput() {
   if (!txt) return;
   navigator.clipboard.writeText(txt).then(() => alert("Assembly content buffered safely to Clipboard. Ready for SciTE workspace instantiation."));
 }
+
+// --- AI Integration ------------------------------------------------------
+function onAiModelChange() {
+  const sel = document.getElementById('aiModel').value;
+  const apiUrl = document.getElementById('aiApiUrl');
+  if (sel === 'groq') {
+    apiUrl.value = 'https://api.groq.com/v1';
+    apiUrl.placeholder = 'https://api.groq.com/v1 (POST)';
+  } else if (sel === 'openai') {
+    apiUrl.value = 'https://api.openai.com/v1/chat/completions';
+    apiUrl.placeholder = 'https://api.openai.com/v1/chat/completions (POST)';
+  } else if (sel === 'anthropic') {
+    apiUrl.value = 'https://api.anthropic.com/v1/complete';
+    apiUrl.placeholder = 'https://api.anthropic.com/v1/complete (POST)';
+  } else {
+    apiUrl.value = '';
+    apiUrl.placeholder = 'Custom API URL (POST)';
+  }
+}
+
+async function aiConvert() {
+  const model = document.getElementById('aiModel').value;
+  const apiUrl = document.getElementById('aiApiUrl').value.trim();
+  const apiKey = document.getElementById('aiApiKey').value.trim();
+  const source = document.getElementById('sourceEditor').value;
+  const logPanel = document.getElementById('diagnosticLog');
+  const output = document.getElementById('outputViewer');
+
+  if (!apiUrl || !apiKey) {
+    alert('Please provide an API URL and API Key for the selected model.');
+    return;
+  }
+
+  logPanel.innerHTML = `<div class="text-matrix-dim">// AI conversion in progress...</div>`;
+  output.textContent = '';
+
+  const prompt = `You are an assistant that converts and corrects DuckyScript-like source into valid AutoIt assembly. Reply with the corrected source followed by the generated AutoIt assembly. Preserve code formatting and clearly separate sections.` + "\n\nSOURCE:\n" + source;
+
+  try {
+    let body = {};
+    let headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey };
+
+    if (model === 'openai') {
+      body = { model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], temperature: 0 };
+    } else if (model === 'anthropic') {
+      body = { model: 'claude-2', prompt: prompt, max_tokens: 1200 };
+      // Anthropic sometimes expects a different auth header; keep generic 'Authorization: Bearer'
+    } else {
+      // Generic POST body for GROQ / custom endpoints
+      body = { prompt: prompt };
+    }
+
+    const res = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(body) });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Model API returned ${res.status}: ${txt}`);
+    }
+
+    const contentType = res.headers.get('content-type') || '';
+    let text = '';
+    if (contentType.includes('application/json')) {
+      const json = await res.json();
+      // Common extraction patterns: OpenAI, Anthropic, or raw provider
+      text = json.choices?.[0]?.message?.content || json.choices?.[0]?.text || json.completion || JSON.stringify(json, null, 2);
+    } else {
+      text = await res.text();
+    }
+
+    // Place AI output into the assembly viewer for user review
+    output.textContent = text;
+    logPanel.innerHTML = `<div class="text-matrix-dim">// AI conversion complete — review output above.</div>`;
+  } catch (err) {
+    logPanel.innerHTML = `<div class="text-danger">// AI conversion failed: ${err.message}</div>`;
+  }
+}

@@ -30,6 +30,25 @@
     </div>
   </nav>
 
+    <div class="col-12">
+      <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-wrap gap-2 align-items-center">
+        <div class="d-flex gap-2 align-items-center w-100">
+          <label class="text-xs text-matrix-dim me-2">AI MODEL</label>
+          <select id="aiModel" class="form-select form-select-sm bg-dark text-matrix border-matrix text-xs" style="width:200px" onchange="onAiModelChange()">
+            <option value="groq" selected>GROQ (default)</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="custom">Custom</option>
+          </select>
+
+          <input id="aiApiUrl" class="form-control form-control-sm bg-black text-matrix border-matrix ms-2" style="width:420px" placeholder="API URL (POST)" />
+          <input id="aiApiKey" type="password" class="form-control form-control-sm bg-black text-matrix border-matrix ms-2" style="width:260px" placeholder="API Key" />
+
+          <button class="btn btn-outline-cyan btn-sm ms-2" onclick="aiConvert()">AI Convert &amp; Fix</button>
+        </div>
+      </div>
+    </div>
+
   <main class="container-fluid py-3">
     <div class="row g-3">
       
