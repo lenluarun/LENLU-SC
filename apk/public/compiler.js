@@ -527,17 +527,43 @@ function downloadSessionPDF() {
   html2pdf().set(opt).from(wrapper).save().then(() => wrapper.remove());
 }
 
+const SYSTEM_VERSION = "v6.0.0";
+
 async function syncSystemCoreFromGitHub() {
   const logPanel = document.getElementById('diagnosticLog');
-  if(logPanel) logPanel.innerHTML = `<div class="text-cyan text-[10px] animate-pulse">Syncing...</div>`;
+  if(!logPanel) return;
+
+  logPanel.innerHTML = `<div class="text-cyan text-[10px] animate-pulse">[🌐] Checking for system updates...</div>`;
+  executeAudioTone(600, 'sine', 0.1);
+
   try {
-    const response = await fetch('https://api.github.com/repos/lenluarun/LENLU-SC/commits/main');
-    if (!response.ok) throw new Error(`${response.status}`);
-    const data = await response.json();
-    if(logPanel) logPanel.innerHTML = `<div class="text-matrix text-[10px]">[✓] SYNCED: ${data.sha.substring(0,7)}</div>`;
-    executeAudioTone(1150, 'sine', 0.2);
+    // Check for latest release instead of just commits
+    const response = await fetch('https://api.github.com/repos/lenluarun/LENLU-SC/releases/latest');
+    if (!response.ok) throw new Error(`Gateway Error: ${response.status}`);
+
+    const release = await response.json();
+    const latestTag = release.tag_name;
+
+    if (latestTag !== SYSTEM_VERSION) {
+      // Find APK asset if exists
+      const apkAsset = release.assets.find(a => a.name.endsWith('.apk'));
+      const downloadUrl = apkAsset ? apkAsset.browser_download_url : release.html_url;
+
+      logPanel.innerHTML = `
+        <div class="text-warning font-bold text-[10px]">[!] NEW UPDATE AVAILABLE: ${latestTag}</div>
+        <div class="text-matrix-dim text-[9px] mb-2">// Current: ${SYSTEM_VERSION}</div>
+        <button class="btn btn-matrix btn-sm text-[10px] py-1 px-3 w-100" onclick="window.open('${downloadUrl}', '_blank')">
+          <i class="fa-solid fa-download me-1"></i> DOWNLOAD UPDATED APK
+        </button>
+      `;
+      executeAudioTone(900, 'triangle', 0.3);
+    } else {
+      logPanel.innerHTML = `<div class="text-matrix text-[10px]">[✓] SYSTEM UP TO DATE: ${SYSTEM_VERSION}</div>`;
+      executeAudioTone(1100, 'sine', 0.1);
+    }
   } catch (err) {
-    if(logPanel) logPanel.innerHTML = `<div class="text-danger text-[10px]">[!] SYNC FAILED</div>`;
+    logPanel.innerHTML = `<div class="text-danger text-[10px]">[!] SYNC FAILED: ${err.message}</div>`;
+    executeAudioTone(200, 'sawtooth', 0.3);
   }
 }
 
