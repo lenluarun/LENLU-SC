@@ -1,0 +1,98 @@
+/* Hacker Matrix Phosphor Aesthetic Variables Mapping */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Share+Tech+Mono&display=swap');
+
+body {
+  font-family: 'Fira Code', monospace;
+  background-color: #030704 !important;
+  color: #10b981 !important;
+}
+
+.header-brand {
+  font-family: 'Share Tech Mono', sans-serif;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: #10b981;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+}
+
+.bg-dark-eval {
+  background-color: rgba(6, 12, 8, 0.95) !important;
+}
+
+.border-matrix {
+  border-color: #044621 !important;
+}
+
+.text-matrix {
+  color: #10b981 !important;
+}
+
+.text-matrix-dim {
+  color: #065f46 !important;
+}
+
+.text-cyan {
+  color: #06b6d4 !important;
+}
+
+.border-cyan {
+  border-color: #0891b2 !important;
+}
+
+.btn-matrix {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.btn-matrix:hover {
+  background-color: #34d399;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+}
+
+.btn-outline-matrix {
+  color: #10b981;
+  border-color: #044621;
+}
+
+.btn-outline-matrix:hover {
+  background-color: #044621;
+  color: #10b981;
+}
+
+/* Custom Textarea / Code Elements */
+.code-area {
+  font-size: 0.85rem;
+  background-color: #020402 !important;
+  color: #34d399 !important;
+  line-height: 1.6;
+}
+
+.code-area:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2) !important;
+}
+
+.code-area-log {
+  font-size: 0.75rem;
+  min-height: 90px;
+  max-height: 140px;
+  overflow-y: auto;
+  background-color: #010201;
+  border-radius: 4px;
+}
+
+/* Screen Scanline Simulation Filtering Overlay Overlay */
+body::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 9999;
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+}
+
+.shadow-matrix {
+  box-shadow: 0 0 20px rgba(4, 70, 33, 0.3);
+}
