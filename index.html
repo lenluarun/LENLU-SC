@@ -4,189 +4,1193 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LENLU SC // Cyber Assembly Grid</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-black text-emerald loading-active">
-
-  <canvas id="cmatrixCanvas"></canvas>
   
-  <div id="terminalSplash" class="d-flex flex-column justify-content-center align-items-center">
-    <div class="splash-box text-center p-5 border border-matrix rounded shadow-matrix backdrop-blur">
-      <h1 class="header-brand tracking-widest text-matrix mb-3 animate-pulse">LENLU SC SYSTEM INITIALIZATION</h1>
-      <p class="text-matrix-dim font-mono mb-4 text-xs">// DEPLOYING CYBERNETIC INTEGRATION CORE FRAMEWORK V5.0 //</p>
-      <button class="btn btn-matrix fw-bold text-black px-4 py-2 text-xs" onclick="initializeSystemInterface()">
-        <i class="fa-solid fa-power-off me-2"></i>ESTABLISH SECURE LINK
-      </button>
-    </div>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* =========================================
+       CORE VARIABLES & RESET
+       ========================================= */
+    :root {
+      --matrix-base: #000000;
+      --matrix-glow: #00ff41;
+      --matrix-dim: #008f11;
+      --matrix-dark: #003b00;
+      --cyber-cyan: #08f7fe;
+      --cyber-red: #ff003c;
+      --glass-bg: rgba(5, 10, 5, 0.75);
+      --glass-border: rgba(0, 255, 65, 0.2);
+      --font-mono: 'Fira Code', monospace;
+      --font-display: 'Share Tech Mono', sans-serif;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--matrix-base);
+      color: var(--matrix-glow);
+      font-family: var(--font-mono);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--matrix-base); }
+    ::-webkit-scrollbar-thumb { background: var(--matrix-dim); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--matrix-glow); }
+
+    /* =========================================
+       BACKGROUND & SPLASH
+       ========================================= */
+    #matrixCanvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0; pointer-events: none; opacity: 0.85;
+    }
+
+    .crt-overlay {
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+      background-size: 100% 4px;
+    }
+
+    #splashScreen {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--matrix-base);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
+
+    .splash-logo {
+      width: 150px; height: 150px; object-fit: contain;
+      filter: drop-shadow(0 0 20px var(--matrix-glow));
+      animation: pulse 2s infinite;
+      margin-bottom: 2rem;
+    }
+
+    /* =========================================
+       LAYOUT & NAVIGATION
+       ========================================= */
+    #appContainer {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; height: 100%;
+      opacity: 0; transition: opacity 1s ease;
+    }
+
+    .top-nav {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.75rem 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .brand {
+      font-family: var(--font-display); font-size: 1.5rem;
+      font-weight: bold; letter-spacing: 2px;
+      display: flex; align-items: center; gap: 10px;
+      text-shadow: 0 0 10px var(--matrix-glow);
+    }
+    .brand img { width: 30px; filter: drop-shadow(0 0 5px var(--matrix-glow)); }
+
+    .nav-links { display: flex; gap: 1rem; }
+    
+    .nav-btn {
+      background: transparent; border: 1px solid var(--glass-border);
+      color: var(--matrix-dim); font-family: var(--font-mono);
+      padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;
+      transition: var(--transition); font-size: 0.85rem;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    
+    .nav-btn:hover, .nav-btn.active {
+      color: #000; background: var(--matrix-glow);
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+    }
+
+    .main-content {
+      flex: 1; overflow-y: auto; padding: 1.5rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    .view-section { display: none; animation: fadeIn 0.4s ease; height: 100%; }
+    .view-section.active { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* =========================================
+       UI COMPONENTS (CARDS, BUTTONS, FORMS)
+       ========================================= */
+    .glass-card {
+      background: var(--glass-bg); backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border); border-radius: 8px;
+      padding: 1.5rem; position: relative;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .glass-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--matrix-glow), transparent);
+    }
+
+    .card-header {
+      font-family: var(--font-display); font-size: 1.2rem;
+      margin-bottom: 1rem; display: flex; justify-content: space-between;
+      align-items: center; border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .btn-matrix {
+      background: var(--matrix-dim); color: #000; border: none;
+      padding: 0.5rem 1rem; font-family: var(--font-mono);
+      font-weight: bold; cursor: pointer; border-radius: 4px;
+      transition: var(--transition); display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-matrix:hover { background: var(--matrix-glow); box-shadow: 0 0 15px var(--matrix-glow); }
+    
+    .btn-outline {
+      background: transparent; color: var(--matrix-glow);
+      border: 1px solid var(--matrix-dim);
+    }
+    .btn-outline:hover { background: var(--matrix-dark); border-color: var(--matrix-glow); }
+
+    .input-matrix {
+      width: 100%; background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--matrix-dark); color: var(--matrix-glow);
+      padding: 0.75rem; font-family: var(--font-mono); border-radius: 4px;
+      transition: var(--transition); outline: none;
+    }
+    .input-matrix:focus { border-color: var(--matrix-glow); box-shadow: 0 0 10px rgba(0,255,65,0.2); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    /* =========================================
+       SPECIFIC SPACES
+       ========================================= */
+    /* Code Editor */
+    .code-area {
+      flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid var(--matrix-dark);
+      padding: 1rem; font-size: 0.9rem; color: #a3fff0; resize: none; min-height: 300px;
+    }
+
+    /* AI Space */
+    .ai-workspace { display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.5rem; height: 100%; }
+    
+    .ai-controls { display: flex; flex-direction: column; gap: 1rem; }
+    
+    .mic-btn {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--matrix-dark); border: 2px solid var(--matrix-glow);
+      color: var(--matrix-glow); font-size: 2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      margin: 1rem auto; transition: var(--transition); position: relative;
+    }
+    .mic-btn.listening {
+      background: rgba(255, 0, 60, 0.2); border-color: var(--cyber-red);
+      color: var(--cyber-red); animation: pulse-red 1.5s infinite;
+    }
+
+    .tag-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      background: var(--matrix-dark); border: 1px solid var(--matrix-dim);
+      padding: 0.25rem 0.75rem; font-size: 0.75rem; cursor: pointer; border-radius: 20px;
+    }
+    .tag:hover, .tag.active { background: var(--matrix-glow); color: #000; }
+
+    /* Tools */
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .tool-card {
+      background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+      padding: 1.5rem; text-align: center; cursor: pointer; transition: var(--transition);
+      display: flex; flex-direction: column; align-items: center; gap: 10px; border-radius: 8px;
+    }
+    .tool-card:hover { background: var(--matrix-dark); border-color: var(--matrix-glow); transform: translateY(-5px); }
+    .tool-card i { font-size: 2rem; color: var(--matrix-glow); }
+
+    /* Terminal */
+    .terminal-log {
+      background: rgba(0,0,0,0.9); border: 1px solid var(--matrix-dark);
+      padding: 1rem; height: 200px; overflow-y: auto; font-size: 0.8rem;
+    }
+    .log-sys { color: var(--matrix-dim); }
+    .log-err { color: var(--cyber-red); }
+    .log-success { color: var(--matrix-glow); font-weight: bold; }
+
+    /* Animations */
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,60,0.4); } 70% { box-shadow: 0 0 0 20px rgba(255,0,60,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,60,0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <canvas id="matrixCanvas"></canvas>
+  <div class="crt-overlay"></div>
+
+  <div id="splashScreen">
+    <img id="splashSpinner" src="IMGS/L%202.png" alt="LENLU SC Loading Spinner" class="splash-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBmZjQxIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4='" style="display:block">
+    <img id="splashLogo" src="IMGS/L%202.png" alt="LENLU SC Logo" class="splash-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDBmZjQxIi8+PC9zdmc+'" style="display:none">
+    <h1 style="font-family: var(--font-display); letter-spacing: 5px;">LENLU ASG/SC</h1>
+    <p style="color: var(--matrix-dim); margin-top: 10px;">// INITIATING NEURAL FRAMEWORK V6.0 //</p>
+    <button class="btn-matrix" style="margin-top: 2rem;" onclick="bootSystem()">ESTABLISH LINK</button>
   </div>
 
-  <div id="appContainer" class="d-flex flex-column min-vh-100 style-scrollbar opacity-0">
+  <div id="appContainer">
     
-    <nav class="navbar navbar-dark bg-dark-eval border-bottom border-matrix px-3 py-2 sticky-top backdrop-blur">
-      <div class="container-fluid gap-2 flex-wrap">
-        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="#">
-          <div class="brand-logo p-2 rounded border border-matrix shadow-matrix">
-            <i class="fa-solid fa-terminal text-matrix"></i>
-          </div>
-          <span class="header-brand fs-4">LENLU SC</span>
-        </a>
-        
-        <div class="d-flex align-items-center flex-wrap gap-2 ms-auto-md custom-nav-controls">
-          <button id="audioToggleBtn" class="btn btn-outline-matrix btn-sm text-xs px-2" onclick="toggleAudioMuteState()">
-            <i class="fa-solid fa-volume-high me-1"></i>AUDIO: ON
-          </button>
-
-          <div class="input-group input-group-sm max-w-250">
-            <label class="input-group-text bg-black border-matrix text-matrix-dim text-xs" for="validationMode">LINT PROFILE:</label>
-            <select class="form-select bg-dark text-matrix border-matrix text-xs" id="validationMode" onchange="runLinter()">
-              <option value="strict" selected>STRICT MODE (All Rules)</option>
-              <option value="lax">LAX MODE (Ignore Warnings)</option>
-              <option value="experimental">EXPERIMENTAL (Ducky 3.0+)</option>
-            </select>
-          </div>
-          <span class="badge bg-matrix text-black font-bold tracking-wider px-2 py-2 text-xs border border-matrix shadow-matrix">V5.0_PRO_MATRIX</span>
-        </div>
+    <nav class="top-nav">
+      <div class="brand">
+        <img src="IMGS/L%202.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDBmZjQxIi8+PC9zdmc+'">
+        LENLU
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn active" onclick="switchView('ide')"><i class="fa-solid fa-code"></i> IDE</button>
+        <button class="nav-btn" onclick="switchView('ai')"><i class="fa-solid fa-brain"></i> AI Generator</button>
+        <button class="nav-btn" onclick="switchView('tools')"><i class="fa-solid fa-network-wired"></i> Scanners</button>
+        <button class="nav-btn" onclick="switchView('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
       </div>
     </nav>
 
-    <main class="container-fluid flex-grow-1 py-3 px-3 px-md-4">
-      <div class="row g-3">
-        
-        <div class="col-12">
-          <div class="p-3 bg-dark-eval border border-cyan rounded shadow-matrix glow-card-cyan backdrop-blur">
-            <div class="row g-2 align-items-center">
-              <div class="col-12 col-md-6 col-lg-3">
-                <div class="input-group input-group-sm">
-                  <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-brain me-1"></i> COGNITIVE:</span>
-                  <select class="form-select bg-dark text-cyan border-cyan text-xs" id="aiModelSelect" onchange="toggleApiKeyPlaceholder()">
-                    <option value="groq" selected>Groq (llama-3.3-70b)</option>
-                    <option value="openai">OpenAI (gpt-4o)</option>
-                    <option value="anthropic">Anthropic (claude-3-5)</option>
-                    <option value="gemini">Google (gemini-1.5)</option>
-                  </select>
+    <main class="main-content">
+      
+      <section id="view-ide" class="view-section active">
+        <div class="grid-2" style="height: 100%;">
+          
+          <div class="glass-card" style="display: flex; flex-direction: column;">
+            <div class="card-header">
+              <span><i class="fa-solid fa-file-code"></i> payload.ds</span>
+              <button class="btn-matrix btn-outline" onclick="compilePipeline()"><i class="fa-solid fa-bolt"></i> Compile</button>
+            </div>
+            <textarea id="sourceEditor" class="code-area" placeholder="REM Write DuckyScript here...&#10;GUI r&#10;DELAY 500&#10;STRING cmd&#10;ENTER"></textarea>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="glass-card" style="flex: 1; display: flex; flex-direction: column;">
+              <div class="card-header">
+                <span><i class="fa-solid fa-microchip"></i> assembly.au3</span>
+                <div style="display:flex; gap:0.5rem;">
+                  <button class="btn-matrix btn-outline" onclick="copyAssembly()"><i class="fa-solid fa-copy"></i> Copy</button>
+                  <button class="btn-matrix btn-outline" onclick="downloadAu3()"><i class="fa-solid fa-download"></i> Save .au3</button>
+                  <button class="btn-matrix btn-outline" onclick="downloadAu4()"><i class="fa-solid fa-download"></i> Save .au4</button>
+                  <button class="btn-matrix btn-outline" onclick="downloadThemedPDF()"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
                 </div>
               </div>
-              <div class="col-12 col-md-6 col-lg-4">
-                <div class="input-group input-group-sm">
-                  <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-key me-1"></i> API KEY:</span>
-                  <input type="password" id="aiApiKey" class="form-control bg-dark text-cyan border-cyan text-xs" placeholder="Paste your Groq API Token...">
+              <textarea id="outputViewer" class="code-area" readonly style="color: var(--cyber-cyan);"></textarea>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header" style="font-size: 1rem;"><i class="fa-solid fa-terminal"></i> Diagnostic Telemetry</div>
+              <div id="ideLog" class="terminal-log">
+                <div class="log-sys">// Compiler standing by...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-ai" class="view-section">
+        <div class="ai-workspace">
+          
+          <div class="glass-card ai-controls">
+            <div class="card-header"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Architect</div>
+            
+            <div style="text-align: center;">
+              <button id="micBtn" class="mic-btn" onclick="toggleVoiceAI()" title="Voice Dictation">
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+              <div id="micStatus" style="font-size: 0.8rem; color: var(--matrix-dim);">Awaiting Audio Input...</div>
+            </div>
+
+            <label style="font-size: 0.85rem; color: var(--matrix-dim);">Target OS Profile</label>
+            <div class="tag-grid" id="aiOsTags">
+              <span class="tag active" onclick="setAIOs('windows', this)">Windows</span>
+              <span class="tag" onclick="setAIOs('macos', this)">macOS</span>
+              <span class="tag" onclick="setAIOs('linux', this)">Linux</span>
+              <span class="tag" onclick="setAIOs('android', this)">Android</span>
+            </div>
+
+            <label style="font-size: 0.85rem; color: var(--matrix-dim); margin-top: 1rem;">AI Model (uses configured API key)</label>
+            <select id="aiModelSelect" class="input-matrix" style="width:100%">
+              <option value="llama-3.3-70b-versatile">Groq: llama-3.3-70b-versatile (default)</option>
+              <option value="gpt-4o">OpenAI: gpt-4o</option>
+              <option value="gpt-4o-mini">OpenAI: gpt-4o-mini</option>
+              <option value="gpt-4-0613">OpenAI: gpt-4-0613</option>
+              <option value="gpt-3.5-turbo-16k">OpenAI: gpt-3.5-turbo-16k</option>
+              <option value="text-davinci-003">OpenAI: text-davinci-003</option>
+              <option value="claude-2">Anthropic: claude-2</option>
+              <option value="claude-3-opus">Anthropic: claude-3-opus</option>
+              <option value="google-bison">Google: bison</option>
+              <option value="gemma-1.5">Google: gemma-1.5</option>
+              <option value="mistral-large">Mistral: mistral-large</option>
+              <option value="mistral-instruct">Mistral: instruct</option>
+              <option value="starcoder-1">StarCoder: starcoder-1</option>
+              <option value="llama-2-70b-chat">Meta: llama-2-70b-chat</option>
+              <option value="falcon-40b">Falcon: falcon-40b</option>
+              <option value="opt-6.7b">Meta: opt-6.7b</option>
+              <option value="cerebras-gpt-13b">Cerebras: cerebras-gpt-13b</option>
+              <option value="anthropic-claude-instant">Anthropic: claude-instant</option>
+              <option value="gpt-4o-realtime-preview">OpenAI: gpt-4o-realtime-preview</option>
+              <option value="custom">Custom (enter provider prefix in API Key input)</option>
+            </select>
+
+            <label style="font-size: 0.85rem; color: var(--matrix-dim); margin-top: 1rem;">Payload Objective</label>
+            <select id="aiObjective" class="input-matrix">
+              <option value="recon">System Reconnaissance</option>
+              <option value="exfil">Network/Data Exfiltration</option>
+              <option value="exec">Remote Execution / Reverse Shell</option>
+              <option value="prank">Harmless Prank</option>
+              <option value="custom" selected>Custom Prompt</option>
+            </select>
+
+            <label style="font-size: 0.85rem; color: var(--matrix-dim); margin-top: 1rem;">Stealth & Evasion Tuning</label>
+            <input type="range" id="aiStealth" min="1" max="3" value="1" style="width: 100%; accent-color: var(--matrix-glow);">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--matrix-dim);">
+              <span>Speed (Loud)</span> <span>Balanced</span> <span>Ghost (Slow)</span>
+            </div>
+
+            <textarea id="aiPrompt" class="input-matrix" rows="3" style="margin-top: 1rem;" placeholder="Describe your attack vector... (e.g., Open powershell admin and disable defender)"></textarea>
+            
+            <button class="btn-matrix" style="justify-content: center; width: 100%; margin-top: 1rem;" onclick="generateAIPayload()">
+              <i class="fa-solid fa-bolt"></i> SYNTHESIZE PAYLOAD
+            </button>
+          </div>
+
+          <div class="glass-card" style="display: flex; flex-direction: column;">
+            <div class="card-header">
+              <span><i class="fa-solid fa-robot"></i> AI Telemetry & Code</span>
+              <div>
+                <button class="btn-matrix btn-outline" onclick="copyAICode()"><i class="fa-solid fa-copy"></i> Copy</button>
+                <button class="btn-matrix btn-outline" onclick="sendToIDE()"><i class="fa-solid fa-arrow-right-to-bracket"></i> To IDE</button>
+              </div>
+            </div>
+            <div id="aiChatLog" class="terminal-log" style="height: 150px; border-bottom: none; margin-bottom: 0;">
+              <div class="log-sys">GhostChip AI initialized. Waiting for prompt parameters...</div>
+            </div>
+            <textarea id="aiOutput" class="code-area" readonly style="flex: 1; border-top: 1px dashed var(--matrix-dark);"></textarea>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="view-tools" class="view-section">
+        <div class="grid-2">
+          <div class="glass-card">
+            <div class="card-header">Network Surveillance</div>
+            <div class="tool-grid">
+              <div class="tool-card" onclick="runScanner('wifi')">
+                <i class="fa-solid fa-wifi"></i> <span>802.11 Scan</span>
+              </div>
+              <div class="tool-card" onclick="runScanner('ble')">
+                <i class="fa-brands fa-bluetooth"></i> <span>BLE Tracker</span>
+              </div>
+              <div class="tool-card" onclick="runScanner('deauth')" style="border-color: var(--cyber-red);">
+                <i class="fa-solid fa-skull-crossbones" style="color: var(--cyber-red);"></i> <span style="color: var(--cyber-red);">Deauth Monitor</span>
+              </div>
+            </div>
+            <div id="scannerOutput" class="terminal-log" style="margin-top: 1.5rem; height: 300px;">
+              <div class="log-sys">Select a module to initiate surveillance sweep...</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="glass-card" style="flex: 1;">
+              <div class="card-header">Encrypted File Vault</div>
+              <div class="input-matrix" style="display: flex; flex-direction: column; gap: 0.5rem; height: 200px; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--matrix-dark); padding-bottom: 5px;">
+                  <span><i class="fa-solid fa-folder"></i> payloads/</span> <span class="log-sys">Dir</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--matrix-dark); padding-bottom: 5px;">
+                  <span><i class="fa-solid fa-file-code"></i> keylogger.ps1</span> <span class="log-sys">12 KB</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--matrix-dark); padding-bottom: 5px;">
+                  <span><i class="fa-solid fa-file-code"></i> recon.ds</span> <span class="log-sys">2 KB</span>
                 </div>
               </div>
-              <div class="col-12 col-lg-5 d-flex gap-2 justify-content-lg-end mt-2 mt-lg-0 flex-wrap flex-sm-nowrap">
-                <button class="btn btn-outline-cyan btn-sm text-xs text-cyan flex-grow-1" onclick="triggerAiCorrection()">
-                  <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI OPTIMIZE STREAM
-                </button>
-                <button class="btn btn-outline-warning btn-sm text-xs text-warning border-warning flex-grow-1" onclick="triggerAiExplanation()">
-                  <i class="fa-solid fa-bug-slash me-1"></i> DECODE FLAGS
-                </button>
+              <button class="btn-matrix btn-outline" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-upload"></i> Upload File</button>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header">Hardware Modules</div>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span>NeoPixel Stealth Mode</span>
+                <button class="btn-matrix btn-outline" id="neoToggle" onclick="toggleNeoPixel()">OFF</button>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div class="col-12">
-          <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-wrap gap-2 justify-content-between align-items-center backdrop-blur shadow-matrix glow-card-matrix">
-            <div class="d-flex flex-wrap gap-2 align-items-center w-100 w-md-auto">
-              <button class="btn btn-matrix btn-sm text-black fw-bold px-3 py-2 text-xs flex-grow-1 flex-md-grow-0" onclick="compilePipeline()">
-                <i class="fa-solid fa-bolt-lightning me-1"></i> COMPILE PIPELINE
-              </button>
-              <div class="form-check form-check-inline align-items-center ms-md-2 my-1">
-                <input class="form-check-input check-matrix" type="checkbox" id="autoAiFix">
-                <label class="form-check-label text-matrix-dim text-xs select-none" for="autoAiFix">Auto AI Fix on Compile</label>
-              </div>
-              <button class="btn btn-outline-matrix btn-sm text-xs py-2 flex-grow-1 flex-md-grow-0" onclick="loadSampleTemplate()">
-                LOAD SYSTEM TEMPLATE
-              </button>
-              <button class="btn btn-outline-danger btn-sm text-xs py-2 flex-grow-1 flex-md-grow-0" onclick="resetGrid()">
-                WIPE BUFFER
-              </button>
-            </div>
-            <div class="d-flex flex-wrap gap-2 w-100 w-md-auto mt-2 mt-md-0 justify-content-end">
-              <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan flex-grow-1 flex-md-grow-0" onclick="copyPipelineOutput()">
-                <i class="fa-solid fa-fingerprint me-1"></i> COPY ASSEMBLY
-              </button>
-              <button class="btn btn-outline-success btn-sm text-xs text-white border-success flex-grow-1 flex-md-grow-0" onclick="downloadSessionPDF()">
-                <i class="fa-solid fa-file-pdf me-1"></i> EXPORT LOG (PDF)
-              </button>
-              <button class="btn btn-outline-light btn-sm text-xs text-white border-light flex-grow-1 flex-md-grow-0" onclick="downloadAu3()">
-                <i class="fa-solid fa-download me-1"></i> GENERATE .AU3
-              </button>
-            </div>
+      <section id="view-settings" class="view-section">
+        <div class="glass-card" style="max-width: 600px; margin: 0 auto; width: 100%;">
+          <div class="card-header">System Configuration</div>
+          
+          <label style="font-size: 0.85rem; color: var(--matrix-dim); display: block; margin-top: 1rem;">Groq API Key (AI Core)</label>
+          <div style="display: flex; gap: 1rem;">
+            <input type="password" id="apiKey" class="input-matrix" placeholder="gsk_...">
+            <button class="btn-matrix" onclick="saveApiKey()">Save</button>
+          </div>
+
+          <label style="font-size: 0.85rem; color: var(--matrix-dim); display: block; margin-top: 1rem;">Provider API Key (optional)</label>
+          <div style="display:flex; gap:1rem;">
+            <input type="password" id="providerApiKey" class="input-matrix" placeholder="Optional: paste API key for selected model's provider">
+            <button class="btn-matrix btn-outline" onclick="saveApiKey()">Save</button>
+          </div>
+
+          <label style="font-size: 0.75rem; color: var(--matrix-dim); display: block; margin-top: 0.6rem;">Provider Endpoint (optional)</label>
+          <input type="text" id="providerEndpoint" class="input-matrix" placeholder="Optional: e.g. https://api.openai.com/v1/chat/completions">
+
+          <label style="font-size: 0.85rem; color: var(--matrix-dim); display: block; margin-top: 1.5rem;">Target IP / Node</label>
+          <input type="text" id="targetIp" class="input-matrix" value="ghostchip.local">
+
+          <div style="margin-top: 2rem; border-top: 1px dashed var(--matrix-dark); padding-top: 1rem;">
+            <button class="btn-matrix" style="background: rgba(255,0,60,0.1); color: var(--cyber-red); border: 1px solid var(--cyber-red); width: 100%; justify-content: center;" onclick="if(confirm('Wipe all local memory?')) localStorage.clear(); alert('Wiped.'); location.reload();">
+              <i class="fa-solid fa-skull"></i> FACTORY RESET MEMORY
+            </button>
           </div>
         </div>
+      </section>
 
-        <div class="col-12 col-xl-5">
-          <div class="card bg-dark-eval border-matrix h-100 shadow-matrix glow-card-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2">
-              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-file-code me-2"></i>SOURCE_INGESTION.ds</span>
-              <span class="text-xs text-matrix-dim font-mono" id="lineCount">LINES: 0</span>
-            </div>
-            <div class="card-body p-0">
-              <textarea id="sourceEditor" class="form-control bg-transparent text-matrix border-0 p-3 code-area style-scrollbar" rows="14" oninput="handleSourceInput()" placeholder="REM Insert script parameters for stream compilation..."></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-5">
-          <div class="card bg-dark-eval border-matrix h-100 shadow-matrix glow-card-cyan backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2">
-              <span class="text-xs text-cyan tracking-widest fw-bold"><i class="fa-solid fa-microchip me-2"></i>AUTOIT_ASSEMBLY.au3</span>
-              <span class="text-matrix-dim font-mono text-[10px] bg-dark px-2 py-0.5 border border-matrix rounded">SciTE COMPATIBLE</span>
-            </div>
-            <div class="card-body p-0 position-relative">
-              <pre id="outputViewer" class="p-3 m-0 text-cyan code-area overflow-auto style-scrollbar select-text" style="max-height: 340px; min-height: 340px;"></pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-2">
-          <div class="card bg-dark-eval border-matrix h-100 shadow-matrix glow-card-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix py-2">
-              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-box-archive me-2"></i>SCRIPT VAULT</span>
-            </div>
-            <div class="card-body p-2 d-flex flex-column gap-2" style="min-height: 340px; max-height: 340px; overflow-y: auto;">
-              <button class="btn btn-outline-matrix btn-xs w-100 text-xs py-1" onclick="saveCurrentToVault()">
-                <i class="fa-solid fa-plus me-1"></i> CACHE CURRENT
-              </button>
-              <hr class="border-matrix my-1">
-              <div id="vaultContainer" class="d-flex flex-column gap-2 style-scrollbar overflow-auto pe-1">
-                <div class="text-center text-matrix-dim text-xs py-4 font-mono">// Vault Empty //</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card bg-dark-eval border-matrix shadow-matrix glow-card-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix py-2 d-flex justify-content-between align-items-center">
-              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-terminal me-2"></i>DIAGNOSTIC_LOG_TELEMETRY</span>
-              <span id="errorCounterBadge" class="badge bg-dark border border-matrix text-matrix text-xs">ERRORS: 0</span>
-            </div>
-            <div id="diagnosticLog" class="card-body p-3 code-area-log style-scrollbar select-text">
-              <div class="text-matrix-dim font-mono text-xs">// Terminal matrix aligned. Systems awaiting source streams...</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </main>
-
-    <footer class="bg-black text-center py-3 border-top border-matrix mt-auto backdrop-blur">
-      <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-xs">
-        <p class="m-0 text-matrix-dim tracking-wider font-mono">&copy; 2026 LENLU SC // PRIVILEGED SYSTEMS HARDWARE</p>
-        <div class="d-flex align-items-center gap-3 contact-tray font-mono">
-          <span class="text-matrix-dim">SYSOP CONTACTS:</span>
-          <a href="mailto:lenluarun@gmail.com" class="text-matrix text-decoration-none hover-glow"><i class="fa-solid fa-envelope me-1"></i>lenluarun@gmail.com</a>
-          <a href="https://instagram.com/lenlu_arun" target="_blank" rel="noopener noreferrer" class="text-cyan text-decoration-none hover-glow"><i class="fa-brands fa-instagram me-1"></i>@lenlu_arun</a>
-        </div>
-      </div>
-    </footer>
-    
   </div>
 
-  <script src="compiler.js"></script>
+  <script>
+    /* =========================================================================
+       MATRIX RAIN ENGINE
+       ========================================================================= */
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    let columns = [];
+    const chars = "ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ10100101_#$@%&";
+    const fontSize = 14;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const colCount = Math.floor(canvas.width / fontSize) + 1;
+      columns = [];
+      for (let i = 0; i < colCount; i++) {
+        columns.push({ x: i * fontSize, y: Math.random() * canvas.height * -1, speed: 1 + Math.random() * 3 });
+      }
+    }
+    
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + 'px monospace';
+      
+      columns.forEach(col => {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillStyle = Math.random() > 0.95 ? '#fff' : '#00ff41';
+        ctx.fillText(char, col.x, col.y);
+        col.y += col.speed;
+        if (col.y > canvas.height && Math.random() > 0.97) col.y = -20;
+      });
+      requestAnimationFrame(drawMatrix);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    requestAnimationFrame(drawMatrix);
+
+    /* =========================================================================
+       SYSTEM & NAVIGATION CORE
+       ========================================================================= */
+    function bootSystem() {
+        // staged boot: show spinner then swap to logo then reveal app
+        const splash = document.getElementById('splashScreen');
+        const spinner = document.getElementById('splashSpinner');
+        const logo = document.getElementById('splashLogo');
+        if (spinner) {
+          // ensure spinner visible
+          spinner.style.display = 'block';
+          spinner.style.animation = 'pulse 1.8s infinite';
+        }
+        // play startup tones
+        if (typeof executeAudioTone === 'function') { executeAudioTone(880,'sine',0.15); setTimeout(()=>executeAudioTone(1320,'sine',0.2),100); }
+
+        // swap to logo after 900ms
+        setTimeout(()=>{
+          if (spinner) { spinner.style.animation = ''; spinner.style.display = 'none'; }
+          if (logo) { logo.style.display = 'block'; }
+        }, 900);
+
+        // reveal app after 1600ms
+        setTimeout(()=>{
+          if (splash) { splash.style.opacity = '0'; splash.style.visibility = 'hidden'; }
+          document.getElementById('appContainer').style.opacity = '1';
+          logToIDE('Neural link established. LENLU SC online.');
+        }, 1600);
+
+        // Load settings
+        const key = localStorage.getItem('gc_groq_key');
+        if(key) document.getElementById('apiKey').value = key;
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById('view-' + viewId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    function logToIDE(msg, type = 'log-sys') {
+      const log = document.getElementById('ideLog');
+      const d = new Date().toLocaleTimeString();
+      log.innerHTML += `<div class="${type}">[${d}] ${msg}</div>`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    /* =========================================================================
+       COMPILER & LINTER (IDE)
+       ========================================================================= */
+    function compileCode() {
+      // For backward compatibility the old compileCode delegates to compilePipeline which contains
+      // a more complete mapping of DuckyScript -> AutoIt assembly generation.
+      if (typeof compilePipeline === 'function') return compilePipeline();
+      logToIDE('Compilation pipeline not available.', 'log-err');
+    }
+
+    function downloadAu3() {
+      const txt = document.getElementById('outputViewer').value;
+      if (!txt) { alert('Compile code first.'); return; }
+      const blob = new Blob([txt], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'payload.au3';
+      a.click();
+      logToIDE('File saved to local disk.');
+    }
+
+    function downloadSessionPDF() {
+      const source = document.getElementById('sourceEditor').value || '';
+      const output = document.getElementById('outputViewer').value || '';
+      const diag = document.getElementById('ideLog').innerText || '';
+
+      const wrapper = document.createElement('div');
+      wrapper.style.width = '1100px';
+      wrapper.style.padding = '18px';
+      wrapper.style.background = '#000';
+      wrapper.style.color = '#00ffd1';
+      wrapper.style.fontFamily = 'monospace';
+
+      const header = document.createElement('div');
+      header.style.display = 'flex';
+      header.style.justifyContent = 'space-between';
+      header.style.alignItems = 'center';
+      header.style.marginBottom = '12px';
+      header.innerHTML = `<div style="font-weight:700; font-size:18px;">LENLU SC // Session Export</div><div style="font-size:12px; color:#9be3c7">${new Date().toLocaleString()}</div>`;
+
+      const makeSection = (title, contentText) => {
+        const sec = document.createElement('div');
+        const t = document.createElement('div');
+        t.style.fontWeight = '700';
+        t.style.margin = '8px 0 6px 0';
+        t.textContent = title;
+        const pre = document.createElement('pre');
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.background = '#071018';
+        pre.style.padding = '12px';
+        pre.style.border = '1px solid rgba(0,255,209,0.08)';
+        pre.style.borderRadius = '6px';
+        pre.style.color = '#a3fff0';
+        pre.textContent = contentText || '';
+        sec.appendChild(t);
+        sec.appendChild(pre);
+        return sec;
+      };
+
+      wrapper.appendChild(header);
+      wrapper.appendChild(makeSection('SOURCE_INGESTION.ds', source));
+      wrapper.appendChild(makeSection('AUTOIT_ASSEMBLY.au3', output));
+      wrapper.appendChild(makeSection('DIAGNOSTIC_LOG', diag));
+
+      wrapper.style.webkitPrintColorAdjust = 'exact';
+      wrapper.style.printColorAdjust = 'exact';
+
+      document.body.appendChild(wrapper);
+      const opt = {
+        margin: 8,
+        filename: `lenlu_session_${Date.now()}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#000' },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+      };
+      setTimeout(() => {
+        if (window.html2pdf) {
+          html2pdf().set(opt).from(wrapper).save().then(() => wrapper.remove()).catch(() => wrapper.remove());
+        } else {
+          alert('PDF export library not loaded.');
+          wrapper.remove();
+        }
+      }, 200);
+    }
+
+    /* =========================================================================
+       AI GENERATOR SPACE
+       ========================================================================= */
+    let currentAIOs = 'windows';
+    let isListening = false;
+    let recognition = null;
+
+    function setAIOs(os, el) {
+      currentAIOs = os;
+      document.querySelectorAll('#aiOsTags .tag').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function logToAIChat(msg, type = 'log-sys') {
+      const log = document.getElementById('aiChatLog');
+      log.innerHTML += `<div class="${type}">> ${msg}</div>`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Voice Recognition
+    function toggleVoiceAI() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) { alert("Speech API not supported in this browser."); return; }
+
+      const btn = document.getElementById('micBtn');
+      const status = document.getElementById('micStatus');
+      const promptInput = document.getElementById('aiPrompt');
+
+      if (isListening && recognition) {
+        recognition.stop();
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        isListening = true;
+        btn.classList.add('listening');
+        status.textContent = "Listening... Speak payload intent.";
+      };
+
+      recognition.onresult = (e) => {
+        let transcript = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          transcript += e.results[i][0].transcript;
+        }
+        promptInput.value = transcript;
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        btn.classList.remove('listening');
+        status.textContent = "Audio captured.";
+      };
+
+      recognition.start();
+    }
+
+    async function generateAIPayload() {
+      const key = localStorage.getItem('gc_groq_key');
+      const providerKey = localStorage.getItem('lenlu_provider_key');
+      const providerEndpoint = localStorage.getItem('lenlu_provider_endpoint');
+
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      const objective = document.getElementById('aiObjective').value;
+      const selectedModel = (document.getElementById('aiModelSelect')||{}).value || 'llama-3.3-70b-versatile';
+      try { localStorage.setItem('lenlu_selected_model', selectedModel); } catch(e){}
+      const stealth = document.getElementById('aiStealth').value; // 1=fast, 3=slow/stealth
+      
+      if (!prompt && objective === 'custom') {
+        logToAIChat("ERR: Please provide a prompt or select a standard objective.", "log-err");
+        return;
+      }
+
+      logToAIChat("Synthesizing payload via Neural Net...", "log-sys");
+      document.getElementById('aiOutput').value = "Generating...";
+
+      // Build context for AI
+      let systemPrompt = `You are an elite BadUSB/DuckyScript payload engineer. Target OS: ${currentAIOs}. `;
+      if (stealth == 3) systemPrompt += "Use high stealth: long DELAYs (1000-2000ms), obfuscate strings if possible. ";
+      if (stealth == 1) systemPrompt += "Optimize for raw speed: minimal DELAYs (100-200ms). ";
+      systemPrompt += `Objective archetype: ${objective}. Output ONLY raw DuckyScript code. No markdown formatting, no explanations.`;
+
+      try {
+        // Choose which key and endpoint to use: provider override takes precedence
+        const keyToUse = providerKey || key;
+        if (!keyToUse) {
+          logToAIChat("ERR: No API key configured. Set Groq or Provider API Key in Settings.", "log-err");
+          switchView('settings');
+          return;
+        }
+        const endpointToUse = providerEndpoint || 'https://api.groq.com/openai/v1/chat/completions';
+        const payload = {
+          model: selectedModel || "llama-3.3-70b-versatile",
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: prompt || `Generate a standard ${objective} payload.` }
+          ],
+          temperature: 0.3,
+          max_tokens: 1024
+        };
+        const res = await fetch(endpointToUse, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keyToUse}` },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("API Connection Failed.");
+        const data = await res.json();
+        
+        let code = data.choices[0].message.content.trim();
+        code = code.replace(/```[\w]*\n?/g, '').trim(); // Strip markdown
+        
+        document.getElementById('aiOutput').value = code;
+        logToAIChat("Payload successfully synthesized and buffered.", "log-success");
+        
+        // Voice readout
+        if(window.speechSynthesis) {
+          const u = new SpeechSynthesisUtterance("Payload generated successfully.");
+          u.pitch = 0.8; u.rate = 1.2;
+          window.speechSynthesis.speak(u);
+        }
+
+      } catch (err) {
+        logToAIChat(err.message, "log-err");
+        document.getElementById('aiOutput').value = "";
+      }
+    }
+
+    function copyAICode() {
+      navigator.clipboard.writeText(document.getElementById('aiOutput').value);
+      logToAIChat("Code copied to clipboard.", "log-success");
+    }
+
+    function sendToIDE() {
+      document.getElementById('sourceEditor').value = document.getElementById('aiOutput').value;
+      switchView('ide');
+      logToIDE("Buffer imported from AI Architect.", "log-success");
+    }
+
+    /* =========================================================================
+       SCANNERS & SETTINGS
+       ========================================================================= */
+    function runScanner(type) {
+      const out = document.getElementById('scannerOutput');
+      out.innerHTML = `<div class="log-sys">Initializing ${type.toUpperCase()} interface...</div>`;
+      
+      setTimeout(() => {
+        if(type === 'wifi') {
+          out.innerHTML += `<div class="log-success">[✓] Found: TARGET_NET_1 (CH 6, -55dBm, WPA2)</div>`;
+          out.innerHTML += `<div class="log-success">[✓] Found: PUBLIC_FREE (CH 11, -70dBm, OPEN)</div>`;
+        } else if (type === 'ble') {
+          out.innerHTML += `<div class="log-success">[✓] BLE: Flipper Zero detected (MAC: XX:XX)</div>`;
+        } else if (type === 'deauth') {
+          out.innerHTML += `<div class="log-err">[!] ACTIVE DEAUTH ATTACK DETECTED ON CH 6</div>`;
+        }
+      }, 1500);
+    }
+
+    let neoState = false;
+    function toggleNeoPixel() {
+      neoState = !neoState;
+      const btn = document.getElementById('neoToggle');
+      btn.textContent = neoState ? "ON" : "OFF";
+      btn.style.background = neoState ? "var(--matrix-glow)" : "transparent";
+      btn.style.color = neoState ? "#000" : "var(--matrix-glow)";
+    }
+
+    function saveApiKey() {
+      const k = document.getElementById('apiKey').value;
+      const provKey = document.getElementById('providerApiKey') ? document.getElementById('providerApiKey').value : '';
+      const provEndpoint = document.getElementById('providerEndpoint') ? document.getElementById('providerEndpoint').value : '';
+      localStorage.setItem('gc_groq_key', k);
+      if (provKey) localStorage.setItem('lenlu_provider_key', provKey); else localStorage.removeItem('lenlu_provider_key');
+      if (provEndpoint) localStorage.setItem('lenlu_provider_endpoint', provEndpoint); else localStorage.removeItem('lenlu_provider_endpoint');
+      alert("API keys saved locally. Provider override will be used when provided.");
+    }
+
+    // Restore previously selected model
+    (function(){
+      try{
+        const sel = document.getElementById('aiModelSelect');
+        const s = localStorage.getItem('lenlu_selected_model');
+        if(sel && s) sel.value = s;
+        const provKey = localStorage.getItem('lenlu_provider_key');
+        const provEndpoint = localStorage.getItem('lenlu_provider_endpoint');
+        if(document.getElementById('providerApiKey') && provKey) document.getElementById('providerApiKey').value = provKey;
+        if(document.getElementById('providerEndpoint') && provEndpoint) document.getElementById('providerEndpoint').value = provEndpoint;
+      }catch(e){}
+    })();
+  </script>
+  <script>
+    (function(){
+      // Prevent re-defining on repeated loads
+      if (window._lenlu_extra_funcs) return; window._lenlu_extra_funcs = true;
+
+      // Audio helpers
+      if (typeof executeAudioTone === 'undefined') {
+        window.systemAudioMuted = false;
+        window.audioContextInstance = null;
+        window.executeAudioTone = function(frequency, toneType, signalDuration){
+          if (window.systemAudioMuted) return;
+          try {
+            if (!window.audioContextInstance) window.audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
+            if (window.audioContextInstance.state === 'suspended') window.audioContextInstance.resume();
+            const o = window.audioContextInstance.createOscillator();
+            const g = window.audioContextInstance.createGain();
+            o.type = toneType || 'sine'; o.frequency.setValueAtTime(frequency||440, window.audioContextInstance.currentTime);
+            g.gain.setValueAtTime(0.015, window.audioContextInstance.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.00001, window.audioContextInstance.currentTime + (signalDuration||0.08));
+            o.connect(g); g.connect(window.audioContextInstance.destination);
+            o.start(); o.stop(window.audioContextInstance.currentTime + (signalDuration||0.08));
+          } catch(e){console.warn('Audio error', e)}
+        };
+      }
+
+      if (typeof toggleAudioMuteState === 'undefined') {
+        window.toggleAudioMuteState = function(){
+          window.systemAudioMuted = !window.systemAudioMuted;
+          const btn = document.getElementById('audioToggleBtn');
+          if (btn) {
+            if (window.systemAudioMuted) { btn.innerHTML = `<i class="fa-solid fa-volume-xmark me-1"></i>AUDIO: MUTED`; btn.className = 'btn btn-outline-danger btn-sm text-xs px-2'; }
+            else { btn.innerHTML = `<i class="fa-solid fa-volume-high me-1"></i>AUDIO: ON`; btn.className = 'btn btn-outline-matrix btn-sm text-xs px-2'; window.executeAudioTone(587.33,'triangle',0.1); }
+          }
+        };
+      }
+
+      // Lightweight linter and compiler
+      if (typeof runLinter === 'undefined') {
+        window.runLinter = function(){
+          const src = (document.getElementById('sourceEditor')||{value:''}).value || '';
+          const mode = (document.getElementById('validationMode')||{}).value || 'strict';
+          const log = document.getElementById('ideLog') || document.getElementById('diagnosticLog');
+          if (!log) return [];
+
+          const VALID_COMMANDS = [
+            'REM','DELAY','DEFAULTDELAY','DEFAULT_DELAY','DEFAULTCHARDELAY','STRING','STRINGLN','REPEAT','GUI','WINDOWS','WIN','CTRL','CONTROL','ALT','SHIFT','COMMAND','OPTION','ENTER','ESC','ESCAPE','TAB','SPACE','BACKSPACE','DELETE','DEL','UP','UPARROW','DOWN','DOWNARROW','LEFT','LEFTARROW','RIGHT','RIGHTARROW','HOME','END','PAGEUP','PAGEDOWN','INSERT','PRINTSCREEN','CAPSLOCK','NUMLOCK','SCROLLLOCK','PAUSE','BREAK','MENU','APP','VAR','DEFINE','WHILE','END_WHILE','IF','ELSE','END_IF','ATTACKMODE','LED_R','LED_G','LED_B','LED_OFF','WAIT_FOR_BUTTON_PRESS','JITTER','REM_BLOCK','END_REM','MOUSE_MOVE','CLICK','HOLD','RELEASE'
+          ];
+
+          const lines = src.split('\n');
+          let errorsFound = [];
+          let insideBlockComment = false;
+          let insideWhileBlock = false;
+
+          if (!src.trim()) {
+            log.innerHTML += `<div class="log-sys">// System channel empty. Awaiting ingestion sequences...</div>`;
+            log.scrollTop = log.scrollHeight;
+            return errorsFound;
+          }
+
+          for (let i = 0; i < lines.length; i++) {
+            const rawLine = lines[i].trim();
+            const lineNum = i + 1;
+            if (!rawLine) continue;
+
+            if (rawLine.toUpperCase() === 'REM_BLOCK') { insideBlockComment = true; continue; }
+            if (rawLine.toUpperCase() === 'END_REM') { insideBlockComment = false; continue; }
+            if (insideBlockComment || rawLine.startsWith('REM') || rawLine.startsWith('//')) continue;
+
+            const parts = rawLine.split(/\s+/);
+            const baseCmd = parts[0].toUpperCase();
+            const argumentsStr = parts.slice(1).join(' ');
+
+            if (!VALID_COMMANDS.includes(baseCmd) && !rawLine.includes('$') && !rawLine.includes('=')) {
+              if (mode === 'strict' || mode === 'experimental') {
+                errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Syntax violation: Instruction target "${baseCmd}" is unmapped.` });
+              }
+            }
+
+            if ((baseCmd === 'DELAY' || baseCmd === 'DEFAULT_DELAY' || baseCmd === 'DEFAULTDELAY') && argumentsStr) {
+              let numericVal = parseInt(argumentsStr);
+              if (isNaN(numericVal)) {
+                errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Type Mismatch: "${baseCmd}" parameter must execute an Integer.` });
+              }
+            }
+
+            if (baseCmd === 'WHILE') insideWhileBlock = true;
+            if (baseCmd === 'END_WHILE') insideWhileBlock = false;
+          }
+
+          if (insideWhileBlock) {
+            errorsFound.push({ line: lines.length, type: 'CRITICAL', msg: `Structural Failure: Terminating "END_WHILE" bound missing.` });
+          }
+
+          // display
+          if (errorsFound.length === 0) {
+            log.innerHTML += `<div class="log-success">[✓] CODEBASE VALIDATION NOMINAL: Zero compilation flags raised.</div>`;
+          } else {
+            errorsFound.forEach(err => {
+              const cls = err.type === 'CRITICAL' ? 'log-err' : 'log-sys';
+              log.innerHTML += `<div class="${cls}">[!] Line ${err.line} [${err.type}]: ${err.msg}</div>`;
+            });
+          }
+          log.scrollTop = log.scrollHeight;
+          return errorsFound;
+        };
+      }
+
+      if (typeof compilePipeline === 'undefined') {
+        window.compilePipeline = function(){
+          const src = (document.getElementById('sourceEditor')||{value:''}).value || '';
+          const outEl = document.getElementById('outputViewer');
+          const log = document.getElementById('ideLog') || document.getElementById('diagnosticLog');
+          if(!src.trim()){ if(log) log.innerHTML += `<div class="log-err">No source to compile.</div>`; return; }
+          const lines = src.split('\n');
+          let assembly = '; LENLU SC - GENERATED ASSEMBLY\n#NoTrayIcon\n#include <Misc.au3>\n\n';
+
+          const KEY_MAP = {GUI:'{LWIN}',CTRL:'^',ALT:'!',SHIFT:'+'};
+
+          for (let i=0;i<lines.length;i++){
+            let raw = lines[i];
+            let t = raw.trim();
+            if(!t) continue;
+            if (t.startsWith('REM') || t.toUpperCase() === 'REM_BLOCK' ) { assembly += `; ${t}\n`; continue; }
+            if (t.toUpperCase() === 'END_REM') { assembly += `; ${t}\n`; continue; }
+
+            const parts = t.split(/\s+/);
+            const op = parts[0].toUpperCase();
+            const arg = parts.slice(1).join(' ');
+
+            switch(op){
+              case 'DELAY':
+              case 'DEFAULT_DELAY':
+              case 'DEFAULTDELAY':
+                assembly += `Sleep(${parseInt(arg)||100})\n`;
+                break;
+              case 'STRING':
+              case 'STRINGLN':
+                assembly += `Send("${arg.replace(/"/g,'""')}")\nSleep(100)\n`;
+                break;
+              case 'ENTER':
+                assembly += `Send("{ENTER}")\nSleep(100)\n`;
+                break;
+              case 'TAB':
+                assembly += `Send("{TAB}")\nSleep(80)\n`;
+                break;
+              case 'SPACE':
+                assembly += `Send(" ")\nSleep(60)\n`;
+                break;
+              case 'GUI':
+              case 'WIN':
+              case 'WINDOWS':
+                assembly += `Send("{LWIN}")\nSleep(100)\n`;
+                if(arg) assembly += `Send("${arg.replace(/"/g,'""')}")\nSleep(100)\n`;
+                break;
+              case 'CTRL':
+              case 'CONTROL':
+              case 'ALT':
+              case 'SHIFT':
+                // modifiers alone
+                assembly += `Send("${KEY_MAP[op]||''}")\nSleep(60)\n`;
+                break;
+              case 'WHILE':
+                assembly += `While ${arg || '1'}\n`;
+                break;
+              case 'END_WHILE':
+                assembly += `WEnd\n`;
+                break;
+              case 'IF':
+                assembly += `If ${arg} Then\n`;
+                break;
+              case 'ELSE':
+                assembly += `Else\n`;
+                break;
+              case 'END_IF':
+                assembly += `EndIf\n`;
+                break;
+              case 'MOUSE_MOVE':
+                // expect: MOUSE_MOVE x y
+                const coords = arg.split(/\s+/);
+                assembly += `MouseMove(${parseInt(coords[0])||0}, ${parseInt(coords[1])||0}, 0)\nSleep(40)\n`;
+                break;
+              case 'CLICK':
+                assembly += `MouseClick("left")\nSleep(60)\n`;
+                break;
+              case 'REPEAT':
+                // REPEAT n { ... } not implemented - leave as comment
+                assembly += `; REPEAT ${arg} (not expanded)\n`;
+                break;
+              case 'JITTER':
+                assembly += `; JITTER ${arg} - no-op in AutoIt\n`;
+                break;
+              case 'LED_R':
+              case 'LED_G':
+              case 'LED_B':
+              case 'LED_OFF':
+                assembly += `; LED Command: ${t}\n`;
+                break;
+              case 'WAIT_FOR_BUTTON_PRESS':
+                assembly += `; WAIT_FOR_BUTTON_PRESS - interactive wait not implemented\n`;
+                break;
+              default:
+                // handle compound modifiers or send literal keys
+                const tokens = t.replace(/-/g,' ').toUpperCase().split(/\s+/);
+                let modifiers=''; let regular='';
+                for(const tk of tokens){
+                  if(['CTRL','CONTROL','ALT','SHIFT'].includes(tk)) modifiers+=KEY_MAP[tk]||'';
+                  else if(KEY_MAP[tk]) regular+=KEY_MAP[tk];
+                  else if(tk.length===1) regular+=tk;
+                }
+                if(modifiers||regular) assembly += `Send("${modifiers}${regular}")\nSleep(100)\n`;
+                else assembly += `; Unmapped: ${t}\n`;
+            }
+          }
+
+          if(outEl) { if(outEl.tagName==='PRE') outEl.textContent = assembly; else outEl.value = assembly; }
+          if(log) log.innerHTML += `<div class="log-success">Assembly generated.</div>`; if(window.executeAudioTone) window.executeAudioTone(1050,'triangle',0.12);
+        };
+      }
+
+      // Vault (localStorage) helpers
+      if (typeof saveCurrentToVault === 'undefined') {
+        window.saveCurrentToVault = function(){
+          const code = (document.getElementById('sourceEditor')||{value:''}).value || '';
+          if(!code.trim()) return; let vault = JSON.parse(localStorage.getItem('lenlu_vault')||'[]'); const id='sc_'+Date.now(); const title = code.split('\n')[0].replace('REM','').trim()||`Script_${vault.length+1}`; vault.push({id,title,content:code}); localStorage.setItem('lenlu_vault', JSON.stringify(vault)); renderVaultCache(); if(window.executeAudioTone) window.executeAudioTone(750,'sine',0.08);
+        };
+
+        window.loadVaultScript = function(id){ let vault = JSON.parse(localStorage.getItem('lenlu_vault')||'[]'); const rec=vault.find(x=>x.id===id); if(rec){ const srcEl=document.getElementById('sourceEditor'); if(srcEl) srcEl.value=rec.content; if(window.runLinter) runLinter(); if(window.compilePipeline) compilePipeline(); if(window.executeAudioTone) window.executeAudioTone(900,'triangle',0.08);} };
+
+        window.deleteVaultScript = function(id,event){ if(event) event.stopPropagation(); let vault = JSON.parse(localStorage.getItem('lenlu_vault')||'[]'); vault=vault.filter(x=>x.id!==id); localStorage.setItem('lenlu_vault',JSON.stringify(vault)); renderVaultCache(); if(window.executeAudioTone) window.executeAudioTone(300,'square',0.08); };
+
+        window.renderVaultCache = function(){ const container=document.getElementById('vaultContainer'); if(!container) return; let vault=JSON.parse(localStorage.getItem('lenlu_vault')||'[]'); if(vault.length===0){ container.innerHTML=`<div class="text-center log-sys" style="padding:1rem">// Vault Empty //</div>`; return; } container.innerHTML=''; vault.forEach(item=>{ const d=document.createElement('div'); d.className='glass-card'; d.style.display='flex'; d.style.justifyContent='space-between'; d.style.alignItems='center'; d.style.cursor='pointer'; d.onclick=()=>loadVaultScript(item.id); d.innerHTML = `<div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${item.title}</div><button onclick="(function(e){window.deleteVaultScript('${item.id}', e) })(event)" class="btn-outline">✖</button>`; container.appendChild(d); }); };
+      }
+
+      if (typeof copyPipelineOutput === 'undefined') {
+        window.copyPipelineOutput = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>{ if(window.executeAudioTone) window.executeAudioTone(1100,'sine',0.08); alert('Assembly copied to clipboard.'); }); };
+      }
+
+      if (typeof downloadAu3 === 'undefined') {
+        window.downloadAu3 = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ alert('No compiled assembly available.'); return; } const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assembly.au3'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); if(window.executeAudioTone) window.executeAudioTone(1300,'triangle',0.12); };
+      }
+
+      if (typeof downloadAu4 === 'undefined') {
+        window.downloadAu4 = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ alert('No compiled assembly available.'); return; } const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assembly.au4'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); if(window.executeAudioTone) window.executeAudioTone(1300,'triangle',0.12); };
+      }
+
+      if (typeof copyAssembly === 'undefined') {
+        window.copyAssembly = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ alert('No compiled assembly to copy.'); return; } navigator.clipboard.writeText(txt).then(()=>{ if(window.executeAudioTone) window.executeAudioTone(1100,'sine',0.08); logToIDE('Assembly copied to clipboard.', 'log-success'); }).catch(()=>{ alert('Copy failed.'); }); };
+      }
+
+      if (typeof downloadThemedPDF === 'undefined') {
+        window.downloadThemedPDF = function(){
+          const srcText = (document.getElementById('sourceEditor')||{value:''}).value || '';
+          const outText = (document.getElementById('outputViewer')||{value:''}).value || '';
+          const diagText = (document.getElementById('ideLog')||{innerText:''}).innerText || '';
+          const selectedModel = (document.getElementById('aiModelSelect')||{}).value || '';
+
+          const wrapper = document.createElement('div');
+          wrapper.style.width = '1100px';
+          wrapper.style.margin = '0 auto';
+          wrapper.style.padding = '20px';
+          wrapper.style.background = '#000';
+          wrapper.style.color = '#00ffd1';
+          wrapper.style.fontFamily = 'Fira Code, monospace';
+
+          // header
+          const header = document.createElement('div');
+          header.style.display = 'flex';
+          header.style.alignItems = 'center';
+          header.style.justifyContent = 'space-between';
+          header.style.marginBottom = '18px';
+
+          const brand = document.createElement('div');
+          brand.style.display = 'flex';
+          brand.style.alignItems = 'center';
+          brand.innerHTML = `<img src="IMGS/L%202.png" style="width:48px;height:48px;margin-right:12px;object-fit:contain;filter:drop-shadow(0 0 6px #00ffd1)"/>`;
+          const title = document.createElement('div');
+          title.innerHTML = `<div style="font-weight:700; font-size:20px;">LENLU SC // Session Export</div><div style="font-size:12px; color:#9be3c7">${new Date().toLocaleString()}</div>`;
+          brand.appendChild(title);
+
+          const meta = document.createElement('div');
+          meta.style.textAlign = 'right';
+          meta.innerHTML = `<div style="font-size:12px; color:#9be3c7">Model: ${selectedModel || 'N/A'}</div><div style="font-size:12px; color:#9be3c7">Source: ${srcText.split('\n').length} lines</div>`;
+
+          header.appendChild(brand);
+          header.appendChild(meta);
+
+          // layout: two columns for Input and Output
+          const grid = document.createElement('div');
+          grid.style.display = 'grid';
+          grid.style.gridTemplateColumns = '1fr 1fr';
+          grid.style.gap = '14px';
+
+          const makeCard = (labelText, contentText) => {
+            const card = document.createElement('div');
+            card.style.background = 'linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.45))';
+            card.style.border = '1px solid rgba(0,255,209,0.06)';
+            card.style.borderRadius = '10px';
+            card.style.padding = '12px';
+            card.style.minHeight = '320px';
+
+            const h = document.createElement('div');
+            h.style.display = 'flex';
+            h.style.justifyContent = 'space-between';
+            h.style.alignItems = 'center';
+            h.style.marginBottom = '8px';
+            h.innerHTML = `<div style="font-weight:700; color:#a3fff0">${labelText}</div><div style="font-size:11px; color:#9be3c7">${contentText.split('\n').length} lines</div>`;
+
+            const pre = document.createElement('pre');
+            pre.style.whiteSpace = 'pre-wrap';
+            pre.style.wordBreak = 'break-word';
+            pre.style.background = '#071018';
+            pre.style.padding = '12px';
+            pre.style.border = '1px solid rgba(0,255,209,0.06)';
+            pre.style.borderRadius = '6px';
+            pre.style.color = '#a3fff0';
+            pre.style.fontFamily = 'Fira Code, monospace';
+            pre.style.fontSize = '12px';
+            pre.textContent = contentText || '';
+
+            card.appendChild(h);
+            card.appendChild(pre);
+            return card;
+          };
+
+          const srcCard = makeCard('SOURCE_INGESTION.ds', srcText);
+          const outCard = makeCard('AUTOIT_ASSEMBLY.au3', outText);
+
+          grid.appendChild(srcCard);
+          grid.appendChild(outCard);
+
+          // diagnostics (full width)
+          const diagCard = document.createElement('div');
+          diagCard.style.gridColumn = '1 / -1';
+          diagCard.style.marginTop = '12px';
+          diagCard.style.background = 'linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.45))';
+          diagCard.style.border = '1px solid rgba(255,80,80,0.04)';
+          diagCard.style.borderRadius = '10px';
+          diagCard.style.padding = '12px';
+          const dh = document.createElement('div'); dh.style.fontWeight='700'; dh.style.marginBottom='8px'; dh.style.color='#ff8a8a'; dh.textContent='DIAGNOSTIC_LOG';
+          const dpre = document.createElement('pre'); dpre.style.whiteSpace='pre-wrap'; dpre.style.background='#071018'; dpre.style.padding='12px'; dpre.style.border='1px solid rgba(255,80,80,0.03)'; dpre.style.borderRadius='6px'; dpre.style.color='#f0bfbf'; dpre.style.fontFamily='Fira Code, monospace'; dpre.style.fontSize='12px'; dpre.textContent = diagText || '// No diagnostics captured.';
+          diagCard.appendChild(dh); diagCard.appendChild(dpre);
+
+          wrapper.appendChild(header);
+          wrapper.appendChild(grid);
+          wrapper.appendChild(diagCard);
+
+          document.body.appendChild(wrapper);
+
+          const opt = {
+            margin: 8,
+            filename: `lenlu_session_${Date.now()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#000' },
+            jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+          };
+
+          setTimeout(()=>{
+            if (window.html2pdf) {
+              html2pdf().set(opt).from(wrapper).save().then(()=>wrapper.remove()).catch(()=>wrapper.remove());
+            } else {
+              alert('PDF export library not loaded.');
+              wrapper.remove();
+            }
+          }, 200);
+        };
+      }
+
+    })();
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </body>
 </html>

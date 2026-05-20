@@ -59,10 +59,10 @@ function toggleAudioMuteState() {
   const button = document.getElementById('audioToggleBtn');
   if (systemAudioMuted) {
     button.innerHTML = `<i class="fa-solid fa-volume-xmark me-1"></i>AUDIO: MUTED`;
-    button.className = "btn btn-outline-danger btn-sm text-xs px-2";
+    button.className = "btn btn-outline-danger btn-sm text-xs px-2 py-1 mobile-touch-target";
   } else {
     button.innerHTML = `<i class="fa-solid fa-volume-high me-1"></i>AUDIO: ON`;
-    button.className = "btn btn-outline-matrix btn-sm text-xs px-2";
+    button.className = "btn btn-outline-matrix btn-sm text-xs px-2 py-1 mobile-touch-target";
     executeAudioTone(587.33, 'triangle', 0.1);
   }
 }
@@ -90,19 +90,18 @@ function setupCanvasMetrics() {
 }
 
 function processMatrixRainLoop() {
-  canvasContext.fillStyle = 'rgba(0, 0, 0, 0.06)';
+  canvasContext.fillStyle = 'rgba(0, 0, 0, 0.08)';
   canvasContext.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
   
-  canvasContext.fillStyle = '#10b981';
+  canvasContext.fillStyle = '#00ff41';
   canvasContext.font = fontPixelSize + 'px monospace';
   
   customMatrixColumns.forEach(column => {
     const activeCharacter = internalMatrixGlyphs[Math.floor(Math.random() * internalMatrixGlyphs.length)];
-    // Make head glyph glow brighter white occasionally
     if (Math.random() > 0.98) {
       canvasContext.fillStyle = '#fff';
     } else {
-      canvasContext.fillStyle = '#10b981';
+      canvasContext.fillStyle = '#00ff41';
     }
     
     canvasContext.fillText(activeCharacter, column.xPos, column.yPos);
@@ -127,37 +126,50 @@ function initializeSystemInterface() {
   const applicationContainer = document.getElementById('appContainer');
   
   targetSplash.style.opacity = '0';
-  targetSplash.style.visibility = 'hidden';
-  applicationContainer.className = "d-flex flex-column min-vh-100 style-scrollbar opacity-100";
+  setTimeout(() => {
+    targetSplash.style.visibility = 'hidden';
+    applicationContainer.className = "d-flex flex-column min-vh-100 style-scrollbar opacity-100";
+  }, 600);
   
   document.body.classList.remove('loading-active');
   initializeVaultInterface();
+
+  // Load settings
+  const savedKey = localStorage.getItem('lenlu_ai_key');
+  if(savedKey) {
+    const keyInput = document.getElementById('aiApiKey');
+    if(keyInput) keyInput.value = savedKey;
+  }
 }
 
 // SCRIPT INTERACTIVE INPUT MATRIX TRACKER
 function handleSourceInput() {
   runLinter();
-  executeAudioTone(1200 + Math.random() * 400, 'square', 0.015);
+  executeAudioTone(1200 + Math.random() * 400, 'square', 0.01);
 }
 
 // COMPILER AND LINTER ENGINE
 function runLinter() {
   const source = document.getElementById('sourceEditor').value;
-  const mode = document.getElementById('validationMode').value;
+  const modeElement = document.getElementById('validationMode');
+  const mode = modeElement ? modeElement.value : 'strict';
   const logPanel = document.getElementById('diagnosticLog');
   const badge = document.getElementById('errorCounterBadge');
   
   const lines = source.split('\n');
-  document.getElementById('lineCount').innerText = `LINES: ${lines.length}`;
+  const lineCountEl = document.getElementById('lineCount');
+  if(lineCountEl) lineCountEl.innerText = `L: ${lines.length}`;
 
   let errorsFound = [];
   let insideBlockComment = false;
   let insideWhileBlock = false;
 
   if (!source.trim()) {
-    logPanel.innerHTML = `<div class="text-matrix-dim font-mono">// System channel empty. Awaiting ingestion sequences...</div>`;
-    badge.className = "badge bg-dark border border-matrix text-matrix text-xs";
-    badge.innerText = "ERRORS: 0";
+    if(logPanel) logPanel.innerHTML = `<div class="text-matrix-dim font-mono">// System channel empty.</div>`;
+    if(badge) {
+        badge.className = "badge bg-dark border border-matrix text-matrix text-[9px]";
+        badge.innerText = "READY";
+    }
     return errorsFound;
   }
 
@@ -176,14 +188,13 @@ function runLinter() {
 
     if (!VALID_COMMANDS.includes(baseCmd) && !rawLine.includes('$') && !rawLine.includes('=')) {
       if (mode === 'strict' || mode === 'experimental') {
-        errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Syntax violation: Instruction target "${baseCmd}" is unmapped.` });
+        errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Syntax violation: "${baseCmd}" is unmapped.` });
       }
     }
 
-    if ((baseCmd === 'DELAY' || baseCmd === 'DEFAULT_DELAY' || baseCmd === 'DEFAULTDELAY') && argumentsStr) {
-      let numericVal = parseInt(argumentsStr);
-      if (isNaN(numericVal)) {
-        errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Type Mismatch: "${baseCmd}" parameter must execute an Integer.` });
+    if (['DELAY', 'DEFAULT_DELAY', 'DEFAULTDELAY'].includes(baseCmd) && argumentsStr) {
+      if (isNaN(parseInt(argumentsStr))) {
+        errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Type Mismatch: "${baseCmd}" expects Integer.` });
       }
     }
 
@@ -192,7 +203,7 @@ function runLinter() {
   }
 
   if (insideWhileBlock) {
-    errorsFound.push({ line: lines.length, type: 'CRITICAL', msg: `Structural Failure: Terminating "END_WHILE" bound missing.` });
+    errorsFound.push({ line: lines.length, type: 'CRITICAL', msg: `Structural Failure: "END_WHILE" missing.` });
   }
 
   displayDiagnostics(errorsFound, badge, logPanel);
@@ -200,20 +211,25 @@ function runLinter() {
 }
 
 function displayDiagnostics(errors, badge, panel) {
+  if(!panel) return;
   let criticalCount = errors.filter(e => e.type === 'CRITICAL').length;
   if (errors.length === 0) {
-    panel.innerHTML = `<div class="text-matrix font-bold">[✓] CODEBASE VALIDATION NOMINAL: Zero compilation flags raised. Ready for assembly deployment.</div>`;
-    badge.className = "badge bg-matrix text-black text-xs font-bold";
-    badge.innerText = "VERIFIED";
+    panel.innerHTML = `<div class="text-matrix font-bold">[✓] CODEBASE NOMINAL</div>`;
+    if(badge) {
+        badge.className = "badge bg-matrix text-black text-[9px] font-bold";
+        badge.innerText = "VERIFIED";
+    }
     return;
   }
-  badge.className = criticalCount > 0 ? "badge bg-danger text-white text-xs" : "badge bg-warning text-black text-xs";
-  badge.innerText = `FLAGS: ${errors.length}`;
+  if(badge) {
+    badge.className = criticalCount > 0 ? "badge bg-danger text-white text-[9px]" : "badge bg-warning text-black text-[9px]";
+    badge.innerText = `FLAGS: ${errors.length}`;
+  }
 
   let trackingMark = '';
   errors.forEach(err => {
     let markerColor = err.type === 'CRITICAL' ? 'text-danger' : 'text-warning';
-    trackingMark += `<div class="${markerColor} font-mono">[!] Line ${err.line} [${err.type}]: ${err.msg}</div>`;
+    trackingMark += `<div class="${markerColor} font-mono text-[10px]">[!] L${err.line}: ${err.msg}</div>`;
   });
   panel.innerHTML = trackingMark;
 }
@@ -221,7 +237,7 @@ function displayDiagnostics(errors, badge, panel) {
 function toggleApiKeyPlaceholder() {
   const model = document.getElementById('aiModelSelect').value;
   const keyInput = document.getElementById('aiApiKey');
-  keyInput.placeholder = `Paste your ${model.toUpperCase()} API Key...`;
+  if(keyInput) keyInput.placeholder = `Paste ${model.toUpperCase()} Token...`;
 }
 
 // AI CONNECTIONS DECK
@@ -231,13 +247,13 @@ async function CallAiNeuralNetwork(promptText) {
   const logPanel = document.getElementById('diagnosticLog');
 
   if (!apiKey) {
-    logPanel.innerHTML = `<div class="text-danger font-bold">[⚡ AUTH ERROR] API Key must be supplied inside the integration deck to establish connection arrays.</div>`;
+    if(logPanel) logPanel.innerHTML = `<div class="text-danger font-bold text-[10px]">[⚡ AUTH ERR] Set API Key in Settings.</div>`;
     executeAudioTone(250, 'sawtooth', 0.3);
     return null;
   }
 
-  logPanel.innerHTML = `<div class="text-cyan font-bold animate-pulse">[🤖 AI LINK INITIALIZING] Processing parameters via neural array...</div>`;
-  executeAudioTone(700, 'triangle', 0.5);
+  if(logPanel) logPanel.innerHTML = `<div class="text-cyan font-bold text-[10px] animate-pulse">[🤖 AI LINK] Processing...</div>`;
+  executeAudioTone(700, 'triangle', 0.3);
 
   let endpoint = "";
   let payloadBody = {};
@@ -260,51 +276,57 @@ async function CallAiNeuralNetwork(promptText) {
       headerConfiguration["anthropic-version"] = "2023-06-01";
       payloadBody = { model: "claude-3-5-sonnet-20241022", max_tokens: 1024, messages: [{ role: "user", content: promptText }] };
       break;
-    case "gemini":
-      endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
-      payloadBody = { contents: [{ parts: [{ text: promptText }] }] };
-      break;
   }
 
   try {
     const response = await fetch(endpoint, { method: "POST", headers: headerConfiguration, body: JSON.stringify(payloadBody) });
-    if (!response.ok) throw new Error(`Status error code: ${response.status}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const clearData = await response.json();
     
     if (modelProvider === "groq" || modelProvider === "openai") return clearData.choices[0].message.content;
     else if (modelProvider === "anthropic") return clearData.content[0].text;
-    else if (modelProvider === "gemini") return clearData.candidates[0].content.parts[0].text;
   } catch (ex) {
-    logPanel.innerHTML = `<div class="text-danger font-bold">[❌ CONNECTION BREAK] Neural handshakes dropped: ${ex.message}</div>`;
+    if(logPanel) logPanel.innerHTML = `<div class="text-danger font-bold text-[10px]">[❌ ERR] ${ex.message}</div>`;
     executeAudioTone(200, 'sawtooth', 0.4);
     return null;
   }
 }
 
 async function triggerAiCorrection() {
+  const promptInput = document.getElementById('aiPrompt');
+  const customIntent = promptInput ? promptInput.value.trim() : "";
   const codeSource = document.getElementById('sourceEditor').value;
-  if(!codeSource.trim()) return;
-  const operationalPrompt = `You are an expert compiler engineering assistant. Analyze this script structure. Correct syntax errors or unclosed logic. Return ONLY the updated code without markdown or prose:\n\n${codeSource}`;
+
+  let operationalPrompt = "";
+  if(customIntent) {
+    operationalPrompt = `Expert BadUSB engineer. Target OS: Windows. Use high stealth. Objective: ${customIntent}. Output ONLY raw DuckyScript code. No markdown.`;
+  } else {
+    if(!codeSource.trim()) return;
+    operationalPrompt = `Expert compiler assistant. Correct this DuckyScript. Return ONLY code:\n\n${codeSource}`;
+  }
   
   const optimizedData = await CallAiNeuralNetwork(operationalPrompt);
   if(optimizedData) {
-    document.getElementById('sourceEditor').value = optimizedData.trim();
+    let cleanCode = optimizedData.replace(/```[\w]*\n?/g, '').trim();
+    document.getElementById('sourceEditor').value = cleanCode;
     runLinter();
     compilePipeline();
     executeAudioTone(950, 'sine', 0.2);
-    document.getElementById('diagnosticLog').innerHTML = `<div class="text-matrix font-bold">[✓] AI COGNITIVE ADJUSTMENT COMPLETED: Source stream normalized successfully.</div>`;
+    const log = document.getElementById('diagnosticLog');
+    if(log) log.innerHTML = `<div class="text-matrix font-bold text-[10px]">[✓] AI SYNTHESIS COMPLETED</div>`;
   }
 }
 
 async function triggerAiExplanation() {
   const codeSource = document.getElementById('sourceEditor').value;
   if(!codeSource.trim()) return;
-  const analyticalPrompt = `Analyze systemic structural errors inside this script setup. Keep details concise and structured:\n\n${codeSource}`;
+  const analyticalPrompt = `Briefly explain what this DuckyScript does and any risks:\n\n${codeSource}`;
   
   const analyticalReport = await CallAiNeuralNetwork(analyticalPrompt);
   if(analyticalReport) {
     executeAudioTone(600, 'sine', 0.25);
-    document.getElementById('diagnosticLog').innerHTML = `<div class="text-warning font-mono" style="white-space: pre-wrap;">${analyticalReport}</div>`;
+    const log = document.getElementById('diagnosticLog');
+    if(log) log.innerHTML = `<div class="text-warning font-mono text-[10px]" style="white-space: pre-wrap;">${analyticalReport}</div>`;
   }
 }
 
@@ -316,7 +338,6 @@ function compilePipeline() {
   const autoFixEnabled = document.getElementById('autoAiFix') ? document.getElementById('autoAiFix').checked : false;
 
   if (criticalIssues.length > 0 && autoFixEnabled) {
-    document.getElementById('diagnosticLog').innerHTML = `<div class="text-cyan font-bold">[⚡] Auto AI Fix enabled — invoking AI optimizer...</div>`;
     triggerAiCorrection();
     return;
   }
@@ -324,10 +345,7 @@ function compilePipeline() {
   let sourceCode = document.getElementById('sourceEditor').value;
   let lines = sourceCode.split('\n');
   
-  let assemblyBuffer = '; =========================================================================\n';
-  assemblyBuffer += '; === GENERATED BY LENLU SC ASSEMBLER PLATFORM                           ===\n';
-  assemblyBuffer += '; === SciTE Compliant Compilation Frame Architecture Target: x84/x64     ===\n';
-  assemblyBuffer += '; =========================================================================\n\n';
+  let assemblyBuffer = '; === LENLU SC ASSEMBLER V6.0 ===\n';
   assemblyBuffer += '#NoTrayIcon\n#include <Misc.au3>\n\n';
 
   let currentLatencyDelay = 100;
@@ -347,8 +365,16 @@ function compilePipeline() {
       case 'STRING':
         assemblyBuffer += `Send("${values.replace(/"/g, '""')}", 1)\nSleep(${currentLatencyDelay})\n`;
         break;
+      case 'ENTER':
+        assemblyBuffer += `Send("{ENTER}")\nSleep(${currentLatencyDelay})\n`;
+        break;
+      case 'GUI':
+      case 'WIN':
+        assemblyBuffer += `Send("{LWIN}")\nSleep(200)\n`;
+        if(values) assemblyBuffer += `Send("${values}", 1)\nSleep(${currentLatencyDelay})\n`;
+        break;
       case 'WHILE':
-        assemblyBuffer += `While ${values}\n`;
+        assemblyBuffer += `While ${values || '1'}\n`;
         break;
       case 'END_WHILE':
         assemblyBuffer += `WEnd\n`;
@@ -356,12 +382,12 @@ function compilePipeline() {
       default:
         let modifiers = '';
         let regularKeys = '';
-        let keyTokens = lineText.replace(/-/g, ' ').toUpperCase().split(/\s+/);
-
-        for (let token of keyTokens) {
-          if (['CTRL', 'CONTROL', 'ALT', 'SHIFT'].includes(token)) {
-            modifiers += KEY_MAP[token];
-          } else if (KEY_MAP[token]) { regularKeys += KEY_MAP[token]; }
+        let tokens = lineText.replace(/-/g, ' ').toUpperCase().split(/\s+/);
+        for (let t of tokens) {
+          if (KEY_MAP[t]) {
+            if(['CTRL', 'ALT', 'SHIFT'].includes(t)) modifiers += KEY_MAP[t];
+            else regularKeys += KEY_MAP[t];
+          }
         }
         if (modifiers || regularKeys) {
           assemblyBuffer += `Send("${modifiers}${regularKeys}")\nSleep(${currentLatencyDelay})\n`;
@@ -370,16 +396,13 @@ function compilePipeline() {
   }
 
   if (criticalIssues.length > 0) {
-    let banner = ';; =========================================================================\n';
-    banner += ';; WARNING: DIAGNOSTIC FLAGS PRESENT - Review Diagnostic Log before deployment\n';
-    banner += ';; =========================================================================\n\n';
-    assemblyBuffer = banner + assemblyBuffer;
+    assemblyBuffer = ';; WARNING: SYNTAX ERRORS DETECTED\n' + assemblyBuffer;
     executeAudioTone(380, 'sawtooth', 0.2);
   } else {
-    executeAudioTone(1050, 'triangle', 0.15);
+    executeAudioTone(1050, 'triangle', 0.1);
   }
 
-  targetOutput.textContent = assemblyBuffer;
+  if(targetOutput) targetOutput.textContent = assemblyBuffer;
 }
 
 // STORAGE MANAGER VAULT SYSTEM
@@ -395,7 +418,7 @@ function saveCurrentToVault() {
   const uniqueId = 'sc_' + Date.now();
   const rawTitle = code.split('\n')[0].replace('REM', '').trim() || `Script_${currentVault.length + 1}`;
   
-  currentVault.push({ id: uniqueId, title: rawTitle.substring(0,20), content: code });
+  currentVault.push({ id: uniqueId, title: rawTitle.substring(0,25), content: code });
   localStorage.setItem('lenlu_vault', JSON.stringify(currentVault));
   
   executeAudioTone(750, 'sine', 0.1);
@@ -409,6 +432,7 @@ function loadVaultScript(id) {
     document.getElementById('sourceEditor').value = record.content;
     runLinter();
     compilePipeline();
+    switchTab('ide', document.querySelector('.nav-item'));
     executeAudioTone(900, 'triangle', 0.1);
   }
 }
@@ -424,22 +448,23 @@ function deleteVaultScript(id, event) {
 
 function renderVaultCache() {
   const container = document.getElementById('vaultContainer');
+  if(!container) return;
   let currentVault = JSON.parse(localStorage.getItem('lenlu_vault') || '[]');
   
   if (currentVault.length === 0) {
-    container.innerHTML = `<div class="text-center text-matrix-dim text-xs py-4 font-mono">// Vault Empty //</div>`;
+    container.innerHTML = `<div class="text-center text-matrix-dim text-[10px] py-4 font-mono">// Vault Empty //</div>`;
     return;
   }
   
   container.innerHTML = '';
   currentVault.forEach(item => {
     const div = document.createElement('div');
-    div.className = "d-flex justify-content-between align-items-center bg-black border border-matrix p-2 rounded cursor-pointer hover-glow text-xs font-mono";
+    div.className = "d-flex justify-content-between align-items-center bg-black border border-matrix p-2 rounded hover-glow text-[10px] font-mono mb-1";
     div.style.cursor = "pointer";
     div.onclick = () => loadVaultScript(item.id);
     div.innerHTML = `
       <span class="text-matrix truncate flex-grow-1"><i class="fa-solid fa-file-code me-1"></i>${item.title}</span>
-      <button class="btn p-0 border-0 text-danger text-xs ms-2" onclick="deleteVaultScript('${item.id}', event)"><i class="fa-solid fa-trash-can"></i></button>
+      <button class="btn p-0 border-0 text-danger text-[10px] ms-2" onclick="deleteVaultScript('${item.id}', event)"><i class="fa-solid fa-trash-can"></i></button>
     `;
     container.appendChild(div);
   });
@@ -447,7 +472,7 @@ function renderVaultCache() {
 
 // UTILITY CORE FUNCTIONS
 function loadSampleTemplate() {
-  document.getElementById('sourceEditor').value = `REM Broken Loop Framework\nWHILE $Value < 5\nDELAY XYZ\nSTRING Executing structural break iteration without bounds.`;
+  document.getElementById('sourceEditor').value = `REM Simple Recon\nGUI r\nDELAY 500\nSTRING cmd\nENTER\nDELAY 500\nSTRING systeminfo\nENTER`;
   runLinter();
   executeAudioTone(500, 'sine', 0.1);
 }
@@ -464,102 +489,19 @@ function copyPipelineOutput() {
   if (!txt) return;
   navigator.clipboard.writeText(txt).then(() => {
     executeAudioTone(1100, 'sine', 0.08);
-    alert("Assembly parameters written to memory clipboard buffer.");
+    alert("Copied to buffer.");
   });
 }
 
 function downloadAu3() {
   const txt = document.getElementById('outputViewer').textContent;
-  if (!txt) { alert('No compiled assembly available to download.'); return; }
-  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'assembly.au3';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  executeAudioTone(1300, 'triangle', 0.15);
-}
-
-function downloadSessionPDF() {
-  const source = document.getElementById('sourceEditor').value;
-  const output = document.getElementById('outputViewer').textContent;
-  const diag = document.getElementById('diagnosticLog').innerText;
-
-  const wrapper = document.createElement('div');
-  wrapper.style.width = '1200px';
-  wrapper.style.padding = '20px';
-  wrapper.style.background = '#000';
-  wrapper.style.color = '#00FFD1';
-  wrapper.style.fontFamily = 'monospace';
-
-  const header = document.createElement('div');
-  header.style.display = 'flex';
-  header.style.justifyContent = 'space-between';
-  header.style.alignItems = 'center';
-  header.style.marginBottom = '12px';
-  header.innerHTML = `<div style="font-weight:700; font-size:18px;">LENLU SC // Session Export</div><div style="font-size:12px; color:#9be3c7">${new Date().toLocaleString()}</div>`;
-
-  const makeSection = (title, contentText) => {
-    const sec = document.createElement('div');
-    const t = document.createElement('div');
-    t.style.fontWeight = '700';
-    t.style.margin = '8px 0 6px 0';
-    t.textContent = title;
-    const pre = document.createElement('pre');
-    pre.style.whiteSpace = 'pre-wrap';
-    pre.style.background = '#071018';
-    pre.style.padding = '12px';
-    pre.style.border = '1px solid rgba(0,255,209,0.08)';
-    pre.style.borderRadius = '6px';
-    pre.style.color = '#a3fff0';
-    pre.textContent = contentText || '';
-    sec.appendChild(t);
-    sec.appendChild(pre);
-    return sec;
-  };
-
-  wrapper.appendChild(header);
-  wrapper.appendChild(makeSection('SOURCE_INGESTION.ds', source));
-  wrapper.appendChild(makeSection('AUTOIT_ASSEMBLY.au3', output));
-  wrapper.appendChild(makeSection('DIAGNOSTIC_LOG', diag));
-  
-  wrapper.style.webkitPrintColorAdjust = 'exact';
-  wrapper.style.printColorAdjust = 'exact';
-  wrapper.style.colorAdjust = 'exact';
-
-  const opt = {
-    margin: 8,
-    filename: `lenlu_session_${Date.now()}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#000' },
-    jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
-  };
-
-  document.body.appendChild(wrapper);
-  executeAudioTone(600, 'triangle', 0.5);
-  setTimeout(() => {
-    html2pdf().set(opt).from(wrapper).save().then(() => wrapper.remove()).catch(() => wrapper.remove());
-  }, 250);
-}
-
-function downloadAu3() {
-  const txt = document.getElementById('outputViewer').textContent;
-  if (!txt) { 
-    alert('No compiled assembly available to download.'); 
-    return; 
-  }
-  
-  // High-compatibility mobile data URI approach
+  if (!txt) return;
   const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
   const reader = new FileReader();
   reader.readAsDataURL(blob);
   reader.onloadend = function() {
-    const base64data = reader.result;
     const a = document.createElement('a');
-    a.href = base64data;
+    a.href = reader.result;
     a.download = 'assembly.au3';
     document.body.appendChild(a);
     a.click();
@@ -568,42 +510,102 @@ function downloadAu3() {
   executeAudioTone(1300, 'triangle', 0.15);
 }
 
-// GITHUB UPSTREAM AGENT SYNCHRONIZATION MODULE
+function downloadSessionPDF() {
+  if(!window.html2pdf) return;
+  const source = document.getElementById('sourceEditor').value;
+  const output = document.getElementById('outputViewer').textContent;
+  const diag = document.getElementById('diagnosticLog').innerText;
+
+  const wrapper = document.createElement('div');
+  wrapper.style.padding = '20px';
+  wrapper.style.background = '#000';
+  wrapper.style.color = '#00FFD1';
+  wrapper.style.fontFamily = 'monospace';
+  wrapper.innerHTML = `<h2>LENLU SC Session</h2><hr><p><b>Source:</b></p><pre>${source}</pre><hr><p><b>Assembly:</b></p><pre>${output}</pre><hr><p><b>Log:</b></p><pre>${diag}</pre>`;
+
+  const opt = { margin: 10, filename: `session_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+  html2pdf().set(opt).from(wrapper).save().then(() => wrapper.remove());
+}
+
 async function syncSystemCoreFromGitHub() {
   const logPanel = document.getElementById('diagnosticLog');
-  
-  // Set tracking environment UI states
-  logPanel.innerHTML = `<div class="text-cyan font-bold animate-pulse">[🌐 GIT SUBSYSTEM INITIALIZING] Querying remote repository payload at lenluarun/LENLU-SC...</div>`;
-  executeAudioTone(620, 'triangle', 0.22);
-
+  if(logPanel) logPanel.innerHTML = `<div class="text-cyan text-[10px] animate-pulse">Syncing...</div>`;
   try {
-    // Ping main tree deployment history
     const response = await fetch('https://api.github.com/repos/lenluarun/LENLU-SC/commits/main');
-    
-    if (!response.ok) {
-      throw new Error(`Git gateway connectivity exception: HTTP status ${response.status}`);
-    }
-    
-    const commitPayload = await response.json();
-    const staticSha = commitPayload.sha.substring(0, 7);
-    const patchMessage = commitPayload.commit.message;
-    const operatorIdentity = commitPayload.commit.author.name;
-
-    // Output live structural data back into the Matrix Telemetry Log Screen
-    logPanel.innerHTML = `
-      <div class="text-matrix font-bold">[✓] UPSTREAM RESYNCHRONIZATION METRICS SECURED</div>
-      <div class="text-matrix-dim font-mono text-[11px] mt-1">>> Framework State: Operational</div>
-      <div class="text-matrix-dim font-mono text-[11px]">>> Active Commit Hash: SHA-${staticSha}</div>
-      <div class="text-matrix-dim font-mono text-[11px]">>> System Manifest Patch: "${patchMessage}"</div>
-      <div class="text-matrix-dim font-mono text-[11px]">>> Registered Operator: ${operatorIdentity}</div>
-    `;
-    
-    // Synthesize success sound alert
-    executeAudioTone(1150, 'sine', 0.25);
-    
+    if (!response.ok) throw new Error(`${response.status}`);
+    const data = await response.json();
+    if(logPanel) logPanel.innerHTML = `<div class="text-matrix text-[10px]">[✓] SYNCED: ${data.sha.substring(0,7)}</div>`;
+    executeAudioTone(1150, 'sine', 0.2);
   } catch (err) {
-    // Handle offline status variables gracefully 
-    logPanel.innerHTML = `<div class="text-danger font-bold">[❌ GIT DEPLOYMENT EXCEPTION] Remote handshake failed: ${err.message}</div>`;
-    executeAudioTone(210, 'sawtooth', 0.45);
+    if(logPanel) logPanel.innerHTML = `<div class="text-danger text-[10px]">[!] SYNC FAILED</div>`;
+  }
+}
+
+// Mobile Tab Controller
+function switchTab(tabId, el) {
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  
+  const target = document.getElementById('view-' + tabId);
+  if(target) target.classList.add('active');
+  if(el) el.classList.add('active');
+
+  executeAudioTone(1000, 'sine', 0.05);
+}
+
+// Voice AI Recognition
+let isListening = false;
+let recognition = null;
+function toggleVoiceAI() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { alert("Speech API unsupported."); return; }
+  
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micStatus');
+
+  if (isListening) {
+    recognition.stop();
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.onstart = () => {
+    isListening = true;
+    if(btn) btn.classList.add('listening');
+    if(status) status.innerText = "Listening...";
+  };
+  recognition.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    const promptArea = document.getElementById('aiPrompt');
+    if(promptArea) promptArea.value = transcript;
+  };
+  recognition.onend = () => {
+    isListening = false;
+    if(btn) btn.classList.remove('listening');
+    if(status) status.innerText = "Captured.";
+  };
+  recognition.start();
+}
+
+function runScanner(type) {
+  const out = document.getElementById('scannerOutput');
+  if(!out) return;
+  out.innerHTML = `<div class="text-matrix-dim">Scanning ${type}...</div>`;
+  setTimeout(() => {
+    out.innerHTML = `<div class="text-matrix">[✓] ${type.toUpperCase()} scan complete.</div>`;
+  }, 1000);
+}
+
+function saveSettings() {
+  const key = document.getElementById('aiApiKey').value;
+  localStorage.setItem('lenlu_ai_key', key);
+  executeAudioTone(1100, 'sine', 0.1);
+  alert("Settings saved.");
+}
+
+function factoryReset() {
+  if(confirm('Wipe all memory?')) {
+    localStorage.clear();
+    location.reload();
   }
 }

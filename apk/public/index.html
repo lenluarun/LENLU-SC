@@ -14,8 +14,11 @@
   
   <div id="terminalSplash" class="d-flex flex-column justify-content-center align-items-center p-3">
     <div class="splash-box text-center p-4 w-100 max-w-400 border border-matrix rounded shadow-matrix backdrop-blur">
+      <div class="brand-icon-large mb-3">
+        <i class="fa-solid fa-microchip text-matrix fa-3x"></i>
+      </div>
       <h1 class="header-brand tracking-widest text-matrix mb-2 small-screen-title">LENLU SC</h1>
-      <p class="text-matrix-dim font-mono mb-4 text-xs">// INITIALIZING V5.0 MOBILE CORE //</p>
+      <p class="text-matrix-dim font-mono mb-4 text-xs">// INITIALIZING V6.0 MOBILE CORE //</p>
       <button class="btn btn-matrix fw-bold text-black w-100 py-3 mobile-touch-target" onclick="initializeSystemInterface()">
         <i class="fa-solid fa-power-off me-2"></i>ESTABLISH LINK
       </button>
@@ -38,141 +41,310 @@
       </div>
     </nav>
 
-    <main class="container-fluid py-2 px-2">
-      <div class="row g-2">
-        
-        <div class="col-12">
-          <div class="p-2 bg-dark-eval border border-matrix rounded backdrop-blur">
-            <div class="input-group input-group-sm mb-2">
-              <label class="input-group-text bg-black border-matrix text-matrix-dim text-xs" for="validationMode">PROFILE:</label>
-              <select class="form-select bg-dark text-matrix border-matrix text-xs" id="validationMode" onchange="runLinter()">
-                <option value="strict" selected>STRICT MODE</option>
-                <option value="lax">LAX MODE</option>
-                <option value="experimental">EXPERIMENTAL</option>
-              </select>
-            </div>
-            <div class="form-check form-check-inline d-flex align-items-center my-1 py-1">
-              <input class="form-check-input check-matrix me-2" type="checkbox" id="autoAiFix">
-              <label class="form-check-label text-matrix-dim text-xs select-none" for="autoAiFix">Auto AI Fix on Compile</label>
-            </div>
-          </div>
-        </div>
+    <main class="container-fluid py-2 px-2 flex-grow-1 overflow-auto style-scrollbar" style="padding-bottom: 80px !important;">
 
-        <div class="col-12">
-          <div class="p-3 bg-dark-eval border border-cyan rounded shadow-matrix glow-card-cyan backdrop-blur">
-            <div class="d-flex flex-column gap-2">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text bg-black border-cyan text-cyan text-xs w-90">MODEL:</span>
-                <select class="form-select bg-dark text-cyan border-cyan text-xs" id="aiModelSelect" onchange="toggleApiKeyPlaceholder()">
-                  <option value="groq" selected>Groq (llama-3.3)</option>
-                  <option value="openai">OpenAI (gpt-4o)</option>
-                  <option value="anthropic">Anthropic (claude-3-5)</option>
-                  <option value="gemini">Google (gemini-1.5)</option>
-                </select>
-              </div>
-              <div class="input-group input-group-sm">
-                <span class="input-group-text bg-black border-cyan text-cyan text-xs w-90">KEY:</span>
-                <input type="password" id="aiApiKey" class="form-control bg-dark text-cyan border-cyan text-xs" placeholder="Paste API Token...">
-              </div>
-              <div class="d-flex gap-2 mt-1">
-                <button class="btn btn-outline-cyan btn-sm text-xs text-cyan flex-grow-1 py-2 mobile-touch-target" onclick="triggerAiCorrection()">
-                  <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI FIX
-                </button>
-                <button class="btn btn-outline-warning btn-sm text-xs text-warning border-warning flex-grow-1 py-2 mobile-touch-target" onclick="triggerAiExplanation()">
-                  <i class="fa-solid fa-bug-slash me-1"></i> DECODE
-                </button>
+      <!-- IDE VIEW -->
+      <section id="view-ide" class="view-section active">
+        <div class="row g-2">
+          <div class="col-12">
+            <div class="p-2 bg-dark-eval border border-matrix rounded backdrop-blur">
+              <div class="row g-2 align-items-center">
+                <div class="col-6">
+                  <select class="form-select form-select-sm bg-dark text-matrix border-matrix text-xs" id="validationMode" onchange="runLinter()">
+                    <option value="strict" selected>STRICT</option>
+                    <option value="lax">LAX</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <div class="form-check d-flex align-items-center m-0">
+                    <input class="form-check-input check-matrix me-2" type="checkbox" id="autoAiFix">
+                    <label class="form-check-label text-matrix-dim text-[10px] select-none" for="autoAiFix">Auto AI Fix</label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-12">
-        <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-column gap-2 backdrop-blur">
-            <button class="btn btn-matrix btn-sm text-black fw-bold py-2.5 text-xs w-100 mobile-touch-target" onclick="compilePipeline()">
-            <i class="fa-solid fa-bolt-lightning me-1"></i> COMPILE PIPELINE
-            </button>
-            <div class="mobile-action-grid">
-            <button class="btn btn-outline-matrix btn-sm text-xs py-2 mobile-touch-target" onclick="loadSampleTemplate()">TEMPLATE</button>
-            <button class="btn btn-outline-danger btn-sm text-xs py-2 mobile-touch-target" onclick="resetGrid()">WIPE</button>
-            <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan py-2 mobile-touch-target" onclick="copyPipelineOutput()">COPY</button>
-            <button class="btn btn-outline-light btn-sm text-xs text-white border-light py-2 mobile-touch-target" onclick="downloadAu3()">.AU3</button>
-            </div>
-            <button class="btn btn-outline-matrix btn-sm text-xs py-2 w-100 mobile-touch-target backend-git-btn" onclick="syncSystemCoreFromGitHub()">
-            <i class="fa-brands fa-github me-1"></i> SYNC CORE FROM UPSTREAM
-            </button>
-            <button class="btn btn-outline-success btn-sm text-xs text-white border-success py-2 w-100 mobile-touch-target" onclick="downloadSessionPDF()">
-            <i class="fa-solid fa-file-pdf me-1"></i> EXPORT LOG (PDF)
-            </button>
-        </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2 px-3">
-              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-file-code me-2"></i>SOURCE_INGESTION.ds</span>
-              <span class="text-xs text-matrix-dim font-mono" id="lineCount">LINES: 0</span>
-            </div>
-            <div class="card-body p-0">
-              <textarea id="sourceEditor" class="form-control bg-transparent text-matrix border-0 p-3 code-area style-scrollbar" rows="8" oninput="handleSourceInput()" placeholder="REM Enter code here..."></textarea>
+          <div class="col-12">
+            <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
+              <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2 px-3">
+                <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-file-code me-2"></i>payload.ds</span>
+                <span class="text-xs text-matrix-dim font-mono" id="lineCount">L: 0</span>
+              </div>
+              <div class="card-body p-0">
+                <textarea id="sourceEditor" class="form-control bg-transparent text-matrix border-0 p-3 code-area style-scrollbar" rows="6" oninput="handleSourceInput()" placeholder="REM Enter code here..."></textarea>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-12">
-          <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2 px-3">
-              <span class="text-xs text-cyan tracking-widest fw-bold"><i class="fa-solid fa-microchip me-2"></i>AUTOIT_ASSEMBLY.au3</span>
-              <span class="badge bg-dark border border-matrix text-matrix-dim text-[9px]">SciTE</span>
-            </div>
-            <div class="card-body p-0">
-              <pre id="outputViewer" class="p-3 m-0 text-cyan code-area overflow-auto style-scrollbar select-text" style="height: 220px; min-height: 220px;"></pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix py-2 px-3">
-              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-box-archive me-2"></i>SCRIPT VAULT</span>
-            </div>
-            <div class="card-body p-2 d-flex flex-column gap-2">
-              <button class="btn btn-outline-matrix btn-xs w-100 text-xs py-2 mobile-touch-target" onclick="saveCurrentToVault()">
-                <i class="fa-solid fa-plus me-1"></i> CACHE SCRIPT PARAMS
+          <div class="col-12">
+            <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-column gap-2 backdrop-blur">
+              <button class="btn btn-matrix btn-sm text-black fw-bold py-2.5 text-xs w-100 mobile-touch-target" onclick="compilePipeline()">
+                <i class="fa-solid fa-bolt-lightning me-1"></i> COMPILE PIPELINE
               </button>
-              <div id="vaultContainer" class="d-flex flex-column gap-1 max-h-150 style-scrollbar overflow-auto">
-                <div class="text-center text-matrix-dim text-xs py-2 font-mono">// Vault Empty //</div>
+              <div class="mobile-action-grid">
+                <button class="btn btn-outline-matrix btn-sm text-xs py-2 mobile-touch-target" onclick="loadSampleTemplate()">TEMPLATE</button>
+                <button class="btn btn-outline-danger btn-sm text-xs py-2 mobile-touch-target" onclick="resetGrid()">WIPE</button>
+                <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan py-2 mobile-touch-target" onclick="copyPipelineOutput()">COPY</button>
+                <button class="btn btn-outline-light btn-sm text-xs text-white border-light py-2 mobile-touch-target" onclick="downloadAu3()">.AU3</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
+              <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2 px-3">
+                <span class="text-xs text-cyan tracking-widest fw-bold"><i class="fa-solid fa-microchip me-2"></i>assembly.au3</span>
+                <span id="errorCounterBadge" class="badge bg-dark border border-matrix text-matrix-dim text-[9px]">READY</span>
+              </div>
+              <div class="card-body p-0">
+                <pre id="outputViewer" class="p-3 m-0 text-cyan code-area overflow-auto style-scrollbar select-text" style="height: 180px; min-height: 180px;"></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
+              <div class="card-header bg-black border-bottom border-matrix py-2 px-3">
+                <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-terminal me-2"></i>DIAGNOSTIC_LOG</span>
+              </div>
+              <div id="diagnosticLog" class="card-body p-3 code-area-log style-scrollbar select-text">
+                <div class="text-matrix-dim font-mono text-xs">// System active.</div>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div class="col-12">
-          <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
-            <div class="card-header bg-black border-bottom border-matrix py-2 px-3">
-              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-terminal me-2"></i>DIAGNOSTIC_LOG</span>
-            </div>
-            <div id="diagnosticLog" class="card-body p-3 code-area-log style-scrollbar select-text">
-              <div class="text-matrix-dim font-mono text-xs">// System active. Awaiting injection sequences...</div>
+      <!-- AI VIEW -->
+      <section id="view-ai" class="view-section">
+        <div class="row g-2">
+          <div class="col-12">
+            <div class="p-3 bg-dark-eval border border-cyan rounded shadow-matrix glow-card-cyan backdrop-blur text-center">
+              <div class="mb-3">
+                <button id="micBtn" class="mic-btn-mobile" onclick="toggleVoiceAI()" title="Voice Dictation">
+                  <i class="fa-solid fa-microphone"></i>
+                </button>
+                <div id="micStatus" class="text-matrix-dim text-[10px] mt-2">Awaiting Audio Input...</div>
+              </div>
+
+              <div class="d-flex flex-column gap-2 text-start">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-black border-cyan text-cyan text-xs" style="width: 80px;">MODEL:</span>
+                  <select class="form-select bg-dark text-cyan border-cyan text-xs" id="aiModelSelect" onchange="toggleApiKeyPlaceholder()">
+                    <option value="groq" selected>Groq (Llama 3)</option>
+                    <option value="openai">OpenAI (GPT-4o)</option>
+                    <option value="anthropic">Claude 3</option>
+                  </select>
+                </div>
+
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-black border-cyan text-cyan text-xs" style="width: 80px;">PROMPT:</span>
+                  <textarea id="aiPrompt" class="form-control bg-dark text-cyan border-cyan text-xs" rows="3" placeholder="Describe payload intent..."></textarea>
+                </div>
+
+                <button class="btn btn-matrix btn-sm text-black fw-bold py-2.5 w-100 mt-2" onclick="triggerAiCorrection()">
+                  <i class="fa-solid fa-wand-magic-sparkles me-2"></i>SYNTHESIZE PAYLOAD
+                </button>
+
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-warning btn-sm text-xs flex-grow-1 py-2" onclick="triggerAiExplanation()">
+                    <i class="fa-solid fa-bug-slash me-1"></i> DECODE CODE
+                  </button>
+                  <button class="btn btn-outline-cyan btn-sm text-xs flex-grow-1 py-2" onclick="sendAiToIde()">
+                    <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> TO IDE
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-      </div>
+      <!-- TOOLS VIEW -->
+      <section id="view-tools" class="view-section">
+        <div class="row g-2">
+          <div class="col-12">
+            <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
+              <div class="card-header bg-black border-bottom border-matrix py-2 px-3">
+                <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-box-archive me-2"></i>SCRIPT VAULT</span>
+              </div>
+              <div class="card-body p-2 d-flex flex-column gap-2">
+                <button class="btn btn-outline-matrix btn-sm w-100 text-xs py-2" onclick="saveCurrentToVault()">
+                  <i class="fa-solid fa-plus me-1"></i> SAVE CURRENT TO VAULT
+                </button>
+                <div id="vaultContainer" class="d-flex flex-column gap-1 max-h-250 style-scrollbar overflow-auto">
+                  <!-- Vault items -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
+              <div class="card-header bg-black border-bottom border-matrix py-2 px-3">
+                <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-network-wired me-2"></i>SCANNERS</span>
+              </div>
+              <div class="card-body p-2">
+                <div class="row g-2">
+                  <div class="col-4">
+                    <button class="btn btn-outline-matrix btn-sm w-100 text-[10px] py-3" onclick="runScanner('wifi')">
+                      <i class="fa-solid fa-wifi d-block mb-1 fs-5"></i>WIFI
+                    </button>
+                  </div>
+                  <div class="col-4">
+                    <button class="btn btn-outline-matrix btn-sm w-100 text-[10px] py-3" onclick="runScanner('ble')">
+                      <i class="fa-brands fa-bluetooth d-block mb-1 fs-5"></i>BLE
+                    </button>
+                  </div>
+                  <div class="col-4">
+                    <button class="btn btn-outline-danger btn-sm w-100 text-[10px] py-3" onclick="runScanner('deauth')">
+                      <i class="fa-solid fa-skull d-block mb-1 fs-5"></i>DEAUTH
+                    </button>
+                  </div>
+                </div>
+                <div id="scannerOutput" class="mt-2 p-2 bg-black border border-matrix rounded text-[10px] font-mono" style="height: 100px; overflow-y: auto;">
+                  <div class="text-matrix-dim">// Select scanner...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS VIEW -->
+      <section id="view-settings" class="view-section">
+        <div class="row g-2">
+          <div class="col-12">
+            <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
+              <div class="card-header bg-black border-bottom border-matrix py-2 px-3">
+                <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-gear me-2"></i>SYSTEM CONFIG</span>
+              </div>
+              <div class="card-body p-3 d-flex flex-column gap-3">
+                <div>
+                  <label class="text-matrix-dim text-[10px] d-block mb-1">API TOKEN:</label>
+                  <div class="input-group input-group-sm">
+                    <input type="password" id="aiApiKey" class="form-control bg-dark text-matrix border-matrix text-xs" placeholder="Paste Token...">
+                    <button class="btn btn-matrix btn-sm px-3" onclick="saveSettings()">SAVE</button>
+                  </div>
+                </div>
+
+                <button class="btn btn-outline-matrix btn-sm text-xs py-2" onclick="syncSystemCoreFromGitHub()">
+                  <i class="fa-brands fa-github me-1"></i> SYNC CORE FROM UPSTREAM
+                </button>
+
+                <button class="btn btn-outline-success btn-sm text-xs py-2" onclick="downloadSessionPDF()">
+                  <i class="fa-solid fa-file-pdf me-1"></i> EXPORT SESSION PDF
+                </button>
+
+                <div class="border-top border-matrix pt-3 mt-2">
+                  <button class="btn btn-outline-danger btn-sm text-xs w-100 py-2" onclick="factoryReset()">
+                    <i class="fa-solid fa-radiation me-1"></i> FACTORY RESET MEMORY
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
-    <footer class="bg-black text-center py-3 border-top border-matrix mt-auto backdrop-blur">
-      <div class="container px-2 d-flex flex-column gap-2 text-xs">
-        <p class="m-0 text-matrix-dim tracking-wider font-mono">&copy; 2026 LENLU SC // PRIVILEGED SYS</p>
-        <div class="d-flex flex-column gap-1 align-items-center font-mono text-xs">
-          <a href="mailto:lenluarun@gmail.com" class="text-matrix text-decoration-none py-1"><i class="fa-solid fa-envelope me-1"></i>lenluarun@gmail.com</a>
-          <a href="https://instagram.com/lenlu_arun" target="_blank" rel="noopener noreferrer" class="text-cyan text-decoration-none py-1"><i class="fa-brands fa-instagram me-1"></i>@lenlu_arun</a>
-        </div>
-      </div>
-    </footer>
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-nav-bar backdrop-blur">
+      <button class="nav-item active" onclick="switchTab('ide', this)">
+        <i class="fa-solid fa-code"></i>
+        <span>IDE</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('ai', this)">
+        <i class="fa-solid fa-brain"></i>
+        <span>AI</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('tools', this)">
+        <i class="fa-solid fa-toolbox"></i>
+        <span>TOOLS</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('settings', this)">
+        <i class="fa-solid fa-sliders"></i>
+        <span>SET</span>
+      </button>
+    </nav>
     
   </div>
 
+  <!-- Load Scripts -->
   <script src="compiler.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+  <script>
+    // Tab Switching Logic
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+      document.getElementById('view-' + tabId).classList.add('active');
+      el.classList.add('active');
+
+      executeAudioTone(1000, 'sine', 0.05);
+    }
+
+    // Voice AI Placeholder (Logic should be in compiler.js but adding here for now)
+    let isListening = false;
+    let recognition = null;
+    function toggleVoiceAI() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) { alert("Speech API not supported."); return; }
+
+      const btn = document.getElementById('micBtn');
+      const status = document.getElementById('micStatus');
+
+      if (isListening) {
+        recognition.stop();
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.onstart = () => {
+        isListening = true;
+        btn.classList.add('listening');
+        status.innerText = "Listening...";
+      };
+      recognition.onresult = (e) => {
+        document.getElementById('aiPrompt').value = e.results[0][0].transcript;
+      };
+      recognition.onend = () => {
+        isListening = false;
+        btn.classList.remove('listening');
+        status.innerText = "Captured.";
+      };
+      recognition.start();
+    }
+
+    function sendAiToIde() {
+      const code = document.getElementById('sourceEditor').value; // In this app AI edits sourceEditor directly via triggerAiCorrection
+      switchTab('ide', document.querySelector('.nav-item')); // Switch to first nav item
+    }
+
+    function runScanner(type) {
+      const out = document.getElementById('scannerOutput');
+      out.innerHTML = `<div class="text-matrix-dim">Initializing ${type.toUpperCase()}...</div>`;
+      setTimeout(() => {
+        out.innerHTML += `<div class="text-matrix">[✓] ${type.toUpperCase()} scan complete. No targets found in immediate proximity.</div>`;
+      }, 1000);
+    }
+
+    function saveSettings() {
+      const key = document.getElementById('aiApiKey').value;
+      localStorage.setItem('lenlu_ai_key', key);
+      alert("Settings locked.");
+    }
+
+    function factoryReset() {
+      if(confirm('Wipe all neural memory?')) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+  </script>
 </body>
 </html>
