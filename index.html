@@ -25,41 +25,58 @@
             <option value="experimental">EXPERIMENTAL (DuckyScript 3.0+)</option>
           </select>
         </div>
-        <span class="badge bg-matrix text-black font-bold">V3.0_CORE</span>
+        <span class="badge bg-matrix text-black font-bold">V4.0_AI_INFUSED</span>
       </div>
     </div>
   </nav>
 
-    <div class="col-12">
-      <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-wrap gap-2 align-items-center">
-        <div class="d-flex gap-2 align-items-center w-100">
-          <label class="text-xs text-matrix-dim me-2">AI MODEL</label>
-          <select id="aiModel" class="form-select form-select-sm bg-dark text-matrix border-matrix text-xs" style="width:200px" onchange="onAiModelChange()">
-            <option value="groq" selected>GROQ (default)</option>
-            <option value="openai">OpenAI</option>
-            <option value="anthropic">Anthropic</option>
-            <option value="custom">Custom</option>
-          </select>
-
-          <input id="aiApiUrl" class="form-control form-control-sm bg-black text-matrix border-matrix ms-2" style="width:420px" placeholder="API URL (POST)" />
-          <input id="aiApiKey" type="password" class="form-control form-control-sm bg-black text-matrix border-matrix ms-2" style="width:260px" placeholder="API Key" />
-
-          <button class="btn btn-outline-cyan btn-sm ms-2" onclick="aiConvert()">AI Convert &amp; Fix</button>
-        </div>
-      </div>
-    </div>
-
   <main class="container-fluid py-3">
     <div class="row g-3">
       
+      <div class="col-12">
+        <div class="p-3 bg-dark-eval border border-cyan rounded shadow-matrix">
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-brain me-1"></i> COGNITIVE INFRA:</span>
+                <select class="form-select bg-dark text-cyan border-cyan text-xs" id="aiModelSelect" onchange="toggleApiKeyPlaceholder()">
+                  <option value="groq" selected>Groq (llama-3.3-70b-versatile)</option>
+                  <option value="openai">OpenAI (gpt-4o)</option>
+                  <option value="anthropic">Anthropic (claude-3-5-sonnet)</option>
+                  <option value="gemini">Google (gemini-1.5-pro)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-key me-1"></i> API KEY:</span>
+                <input type="password" id="aiApiKey" class="form-control bg-dark text-cyan border-cyan text-xs" placeholder="Paste your Groq API Token...">
+              </div>
+            </div>
+            <div class="col-12 col-md-5 d-flex gap-2 justify-content-md-end">
+              <button class="btn btn-outline-cyan btn-sm text-xs text-cyan flex-grow-1 flex-md-grow-0" onclick="triggerAiCorrection()">
+                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI AUTO-OPTIMIZE CODE
+              </button>
+              <button class="btn btn-outline-warning btn-sm text-xs text-warning border-warning flex-grow-1 flex-md-grow-0" onclick="triggerAiExplanation()">
+                <i class="fa-solid fa-bug-slash me-1"></i> EXPLAIN SYNTAX FLAGGING
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="col-12">
         <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-wrap gap-2 justify-content-between align-items-center">
           <div class="d-flex gap-2">
             <button class="btn btn-matrix btn-sm text-black fw-bold" onclick="compilePipeline()">
               <i class="fa-solid fa-bolt-lightning me-1"></i> COMPILE PIPELINE
             </button>
+            <div class="form-check form-check-inline align-items-center ms-2">
+              <input class="form-check-input" type="checkbox" id="autoAiFix">
+              <label class="form-check-label text-matrix-dim text-xs" for="autoAiFix">Auto AI Fix on Compile</label>
+            </div>
             <button class="btn btn-outline-matrix btn-sm text-xs" onclick="loadSampleTemplate()">
-              LOAD CORE TEMPLATE
+              LOAD BROKEN SAMPLE (FOR TEST)
             </button>
             <button class="btn btn-outline-danger btn-sm text-xs" onclick="resetGrid()">
               WIPE BUFFER
@@ -68,6 +85,12 @@
           <div class="d-flex gap-2">
             <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan" onclick="copyPipelineOutput()">
               <i class="fa-solid fa-fingerprint me-1"></i> COPY ASSEMBLY
+            </button>
+            <button class="btn btn-outline-success btn-sm text-xs text-white border-success" onclick="downloadSessionPDF()">
+              <i class="fa-solid fa-file-pdf me-1"></i> DOWNLOAD SESSION (PDF)
+            </button>
+            <button class="btn btn-outline-light btn-sm text-xs text-white border-light" onclick="downloadAu3()">
+              <i class="fa-solid fa-download me-1"></i> DOWNLOAD .AU3
             </button>
           </div>
         </div>
@@ -117,5 +140,6 @@
   </footer>
 
   <script src="compiler.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </body>
 </html>

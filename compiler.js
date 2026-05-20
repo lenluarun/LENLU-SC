@@ -1,4 +1,3 @@
-// Valid core commands dictionary matrix
 const VALID_COMMANDS = [
   'REM', 'DELAY', 'DEFAULTDELAY', 'DEFAULT_DELAY', 'DEFAULTCHARDELAY', 
   'STRING', 'STRINGLN', 'REPEAT', 'GUI', 'WINDOWS', 'WIN', 'CTRL', 
@@ -11,7 +10,6 @@ const VALID_COMMANDS = [
   'LED_OFF', 'WAIT_FOR_BUTTON_PRESS', 'JITTER', 'REM_BLOCK', 'END_REM'
 ];
 
-// Map modifiers/keys to AutoIt
 const KEY_MAP = {
   "GUI": "{LWIN}", "WINDOWS": "{LWIN}", "WIN": "{LWIN}", "COMMAND": "{LWIN}",
   "CTRL": "^", "CONTROL": "^", "ALT": "!", "SHIFT": "+", "OPTION": "{LALT}",
@@ -32,7 +30,6 @@ function runLinter() {
   document.getElementById('lineCount').innerText = `LINES: ${lines.length}`;
 
   let errorsFound = [];
-  let definedTokens = [];
   let insideBlockComment = false;
   let insideWhileBlock = false;
 
@@ -43,13 +40,11 @@ function runLinter() {
     return errorsFound;
   }
 
-  // Iterate over string vectors line-by-line
   for (let i = 0; i < lines.length; i++) {
     let rawLine = lines[i].trim();
     let lineNum = i + 1;
     if (!rawLine) continue;
 
-    // Comments block boundaries processing
     if (rawLine.toUpperCase() === 'REM_BLOCK') { insideBlockComment = true; continue; }
     if (rawLine.toUpperCase() === 'END_REM') { insideBlockComment = false; continue; }
     if (insideBlockComment || rawLine.startsWith('REM') || rawLine.startsWith('//')) continue;
@@ -58,58 +53,39 @@ function runLinter() {
     let baseCmd = parts[0].toUpperCase();
     let argumentsStr = parts.slice(1).join(' ');
 
-    // 1. Unrecognized structural instructions check
     if (!VALID_COMMANDS.includes(baseCmd) && !rawLine.includes('$') && !rawLine.includes('=')) {
       if (mode === 'strict' || mode === 'experimental') {
         errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Syntax violation: Instruction target "${baseCmd}" is unmapped.` });
       }
     }
 
-    // 2. Bound constraints monitoring on DELAY loops
     if ((baseCmd === 'DELAY' || baseCmd === 'DEFAULT_DELAY' || baseCmd === 'DEFAULTDELAY') && argumentsStr) {
       let numericVal = parseInt(argumentsStr);
       if (isNaN(numericVal)) {
         errorsFound.push({ line: lineNum, type: 'CRITICAL', msg: `Type Mismatch: "${baseCmd}" parameter must execute an Integer.` });
-      } else if (numericVal <= 0 && mode === 'strict') {
-        errorsFound.push({ line: lineNum, type: 'WARNING', msg: `Timing Optimization Warning: Delay metric [${numericVal}ms] allocation has no operational value.` });
       }
     }
 
-    // 3. Register Constant Token declarations Tracking
-    if (baseCmd === 'DEFINE') {
-      let tokenName = parts[1];
-      if (tokenName) definedTokens.push(tokenName);
-    }
-
-    // 4. Block loop balance checks
     if (baseCmd === 'WHILE') insideWhileBlock = true;
     if (baseCmd === 'END_WHILE') insideWhileBlock = false;
-
-    // 5. Experimental profile check
-    if (mode === 'strict' && (baseCmd === 'ATTACKMODE' || baseCmd === 'JITTER')) {
-      errorsFound.push({ line: lineNum, type: 'WARNING', msg: `Syntax constraint: Keyword "${baseCmd}" belongs to extended engine firmware. Switch lint profile to EXPERIMENTAL.` });
-    }
   }
 
   if (insideWhileBlock) {
-    errorsFound.push({ line: lines.length, type: 'CRITICAL', msg: `Structural Failure: Opened "WHILE" logical control routine loop lacks terminating "END_WHILE" bound.` });
+    errorsFound.push({ line: lines.length, type: 'CRITICAL', msg: `Structural Failure: Terminating "END_WHILE" bound missing.` });
   }
 
-  // Render Telemetry logs to UI drawer viewport dynamically
   displayDiagnostics(errorsFound, badge, logPanel);
   return errorsFound;
 }
 
 function displayDiagnostics(errors, badge, panel) {
   let criticalCount = errors.filter(e => e.type === 'CRITICAL').length;
-  
   if (errors.length === 0) {
     panel.innerHTML = `<div class="text-matrix font-bold">[✓] CODEBASE VALIDATION NOMINAL: Zero compilation flags raised. Ready for assembly deployment.</div>`;
     badge.className = "badge bg-matrix text-black text-xs font-bold";
     badge.innerText = "VERIFIED";
     return;
   }
-
   badge.className = criticalCount > 0 ? "badge bg-danger text-white text-xs" : "badge bg-warning text-black text-xs";
   badge.innerText = `FLAGS: ${errors.length}`;
 
@@ -121,13 +97,134 @@ function displayDiagnostics(errors, badge, panel) {
   panel.innerHTML = trackingMark;
 }
 
+function toggleApiKeyPlaceholder() {
+  const model = document.getElementById('aiModelSelect').value;
+  const keyInput = document.getElementById('aiApiKey');
+  keyInput.placeholder = `Paste your ${model.toUpperCase()} API Key...`;
+}
+
+// AI COGNITIVE DISPATCH PIPELINE
+async function CallAiNeuralNetwork(promptText) {
+  const modelProvider = document.getElementById('aiModelSelect').value;
+  const apiKey = document.getElementById('aiApiKey').value.trim();
+  const logPanel = document.getElementById('diagnosticLog');
+
+  if (!apiKey) {
+    logPanel.innerHTML = `<div class="text-danger font-bold">[⚡ AUTH ERROR] API Key must be supplied inside the integration deck to establish connection arrays.</div>`;
+    return null;
+  }
+
+  logPanel.innerHTML = `<div class="text-cyan font-bold animate-pulse">[🤖 AI LINK INITIALIZING] Processing current stream parameters via neural array...</div>`;
+
+  let endpoint = "";
+  let payloadBody = {};
+  let headerConfiguration = {
+    "Content-Type": "application/json"
+  };
+
+  switch (modelProvider) {
+    case "groq":
+      endpoint = "https://api.groq.com/openai/v1/chat/completions";
+      headerConfiguration["Authorization"] = `Bearer ${apiKey}`;
+      payloadBody = {
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: promptText }]
+      };
+      break;
+
+    case "openai":
+      endpoint = "https://api.openai.com/v1/chat/completions";
+      headerConfiguration["Authorization"] = `Bearer ${apiKey}`;
+      payloadBody = {
+        model: "gpt-4o",
+        messages: [{ role: "user", content: promptText }]
+      };
+      break;
+
+    case "anthropic":
+      // Anthropic typically strictly requires custom client proxies in browsers due to CORS policies.
+      endpoint = "https://api.anthropic.com/v1/messages";
+      headerConfiguration["x-api-key"] = apiKey;
+      headerConfiguration["anthropic-version"] = "2023-06-01";
+      payloadBody = {
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 1024,
+        messages: [{ role: "user", content: promptText }]
+      };
+      break;
+
+    case "gemini":
+      endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+      payloadBody = {
+        contents: [{ parts: [{ text: promptText }] }]
+      };
+      break;
+  }
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: headerConfiguration,
+      body: JSON.stringify(payloadBody)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Terminal responded with unexpected server status code: ${response.status}`);
+    }
+
+    const clearData = await response.json();
+    
+    // Normalize variant model data mapping returns
+    if (modelProvider === "groq" || modelProvider === "openai") {
+      return clearData.choices[0].message.content;
+    } else if (modelProvider === "anthropic") {
+      return clearData.content[0].text;
+    } else if (modelProvider === "gemini") {
+      return clearData.candidates[0].content.parts[0].text;
+    }
+  } catch (ex) {
+    logPanel.innerHTML = `<div class="text-danger font-bold">[❌ CONNECTION BREAK] Neural handshakes dropped: ${ex.message}</div>`;
+    return null;
+  }
+}
+
+async function triggerAiCorrection() {
+  const codeSource = document.getElementById('sourceEditor').value;
+  if(!codeSource.trim()) return;
+
+  const operationalPrompt = `You are an expert compiler engineering assistant running inside the LENLU SC workspace. Analyze the following script structure. Correct any syntax errors, unclosed logic blocks, or formatting errors. Return ONLY the fully updated code inside your response. Do not include introductory prose or markdown wraps:\n\n${codeSource}`;
+  
+  const optimizedData = await CallAiNeuralNetwork(operationalPrompt);
+  if(optimizedData) {
+    document.getElementById('sourceEditor').value = optimizedData.trim();
+    runLinter();
+    compilePipeline();
+    document.getElementById('diagnosticLog').innerHTML = `<div class="text-matrix font-bold">[✓] AI COGNITIVE ADJUSTMENT COMPLETED: Source stream normalized successfully.</div>`;
+  }
+}
+
+async function triggerAiExplanation() {
+  const codeSource = document.getElementById('sourceEditor').value;
+  if(!codeSource.trim()) return;
+
+  const analyticalPrompt = `Analyze the structural flaws or code formatting issues inside this script snippet. Keep your explanation concise and tactical, structured for system administrators:\n\n${codeSource}`;
+  
+  const analyticalReport = await CallAiNeuralNetwork(analyticalPrompt);
+  if(analyticalReport) {
+    document.getElementById('diagnosticLog').innerHTML = `<div class="text-warning font-mono" style="white-space: pre-wrap;">${analyticalReport}</div>`;
+  }
+}
+
 function compilePipeline() {
   const validationAnomalies = runLinter();
   const criticalIssues = validationAnomalies.filter(e => e.type === 'CRITICAL');
   const targetOutput = document.getElementById('outputViewer');
-  
-  if (criticalIssues.length > 0) {
-    targetOutput.textContent = `;; COMPILATION TERMINATED BY INGESTION INTERFACE LINTER\n;; FIX THE ${criticalIssues.length} CRITICAL ERRORS IN THE TELEMETRY LOGGER DRAWER BELOW.`;
+  const autoFixEnabled = document.getElementById('autoAiFix') ? document.getElementById('autoAiFix').checked : false;
+
+  if (criticalIssues.length > 0 && autoFixEnabled) {
+    // If user opted into auto-fix, invoke AI correction and let it re-run compilation afterwards
+    document.getElementById('diagnosticLog').innerHTML = `<div class="text-cyan font-bold">[⚡] Auto AI Fix enabled — invoking AI optimizer...</div>`;
+    triggerAiCorrection();
     return;
   }
 
@@ -141,20 +238,10 @@ function compilePipeline() {
   assemblyBuffer += '#NoTrayIcon\n#include <Misc.au3>\n\n';
 
   let currentLatencyDelay = 100;
-  let nestedComment = false;
 
   for (let idx = 0; idx < lines.length; idx++) {
     let lineText = lines[idx].trim();
-    if (!lineText) continue;
-
-    if (lineText.toUpperCase() === 'REM_BLOCK') { nestedComment = true; assemblyBuffer += '/*\n'; continue; }
-    if (lineText.toUpperCase() === 'END_REM') { nestedComment = false; assemblyBuffer += '*/\n'; continue; }
-    if (nestedComment) { assemblyBuffer += `  ${lineText}\n`; continue; }
-
-    if (lineText.startsWith('REM') || lineText.startsWith('//')) {
-      assemblyBuffer += `; ${lineText}\n`;
-      continue;
-    }
+    if (!lineText || lineText.startsWith('REM')) continue;
 
     let structures = lineText.split(/\s+/);
     let operator = structures[0].toUpperCase();
@@ -164,25 +251,14 @@ function compilePipeline() {
       case 'DELAY':
         assemblyBuffer += `Sleep(${parseInt(values) || 100})\n`;
         break;
-      case 'DEFAULT_DELAY':
-      case 'DEFAULTDELAY':
-        currentLatencyDelay = parseInt(values) || 100;
-        assemblyBuffer += `; Baseline interface interval latency changed to: ${currentLatencyDelay}ms\n`;
-        break;
       case 'STRING':
         assemblyBuffer += `Send("${values.replace(/"/g, '""')}", 1)\nSleep(${currentLatencyDelay})\n`;
-        break;
-      case 'STRINGLN':
-        assemblyBuffer += `Send("${values.replace(/"/g, '""')}" & "{ENTER}", 1)\nSleep(${currentLatencyDelay})\n`;
         break;
       case 'WHILE':
         assemblyBuffer += `While ${values}\n`;
         break;
       case 'END_WHILE':
         assemblyBuffer += `WEnd\n`;
-        break;
-      case 'VAR':
-        assemblyBuffer += `Local ${values}\n`;
         break;
       default:
         let modifiers = '';
@@ -192,30 +268,27 @@ function compilePipeline() {
         for (let token of keyTokens) {
           if (['CTRL', 'CONTROL', 'ALT', 'SHIFT'].includes(token)) {
             modifiers += KEY_MAP[token];
-          } else if (KEY_MAP[token]) {
-            regularKeys += KEY_MAP[token];
-          } else if (token.length === 1) {
-            regularKeys += lineText.split(/\s+/)[keyTokens.indexOf(token)];
-          }
+          } else if (KEY_MAP[token]) { regularKeys += KEY_MAP[token]; }
         }
-
         if (modifiers || regularKeys) {
           assemblyBuffer += `Send("${modifiers}${regularKeys}")\nSleep(${currentLatencyDelay})\n`;
-        } else {
-          if (lineText.includes('=')) {
-            assemblyBuffer += `${lineText}\n`;
-          } else {
-            assemblyBuffer += `; Unhandled symbolic execution structural mapping fallback: ${lineText}\n`;
-          }
         }
     }
+  }
+  // If there are critical issues and auto-fix is not enabled, include a diagnostics banner
+  if (criticalIssues.length > 0) {
+    let banner = ';; =========================================================================\n';
+    banner += ';; WARNING: DIAGNOSTIC FLAGS PRESENT - Review Diagnostic Log before deployment\n';
+    banner += ';; Use the "AI AUTO-OPTIMIZE CODE" button to attempt automatic fixes if desired.\n';
+    banner += ';; =========================================================================\n\n';
+    assemblyBuffer = banner + assemblyBuffer;
   }
 
   targetOutput.textContent = assemblyBuffer;
 }
 
 function loadSampleTemplate() {
-  document.getElementById('sourceEditor').value = `REM Core Verification Framework\nVAR $Counter = 0\nDEFAULT_DELAY 200\n\nGUI r\nDELAY 500\nSTRING notepad.exe\nENTER\nDELAY 1000\n\nWHILE $Counter < 2\n  STRINGLN Running validation diagnostics via LENLU SC layer...\n  $Counter = $Counter + 1\nEND_WHILE`;
+  document.getElementById('sourceEditor').value = `REM Broken Loop Framework\nWHILE $Value < 5\nDELAY XYZ\nSTRING Executing structural break iteration without bounds.`;
   runLinter();
 }
 
@@ -228,80 +301,79 @@ function resetGrid() {
 function copyPipelineOutput() {
   const txt = document.getElementById('outputViewer').textContent;
   if (!txt) return;
-  navigator.clipboard.writeText(txt).then(() => alert("Assembly content buffered safely to Clipboard. Ready for SciTE workspace instantiation."));
+  navigator.clipboard.writeText(txt).then(() => alert("Data safely copied."));
 }
 
-// --- AI Integration ------------------------------------------------------
-function onAiModelChange() {
-  const sel = document.getElementById('aiModel').value;
-  const apiUrl = document.getElementById('aiApiUrl');
-  if (sel === 'groq') {
-    apiUrl.value = 'https://api.groq.com/v1';
-    apiUrl.placeholder = 'https://api.groq.com/v1 (POST)';
-  } else if (sel === 'openai') {
-    apiUrl.value = 'https://api.openai.com/v1/chat/completions';
-    apiUrl.placeholder = 'https://api.openai.com/v1/chat/completions (POST)';
-  } else if (sel === 'anthropic') {
-    apiUrl.value = 'https://api.anthropic.com/v1/complete';
-    apiUrl.placeholder = 'https://api.anthropic.com/v1/complete (POST)';
-  } else {
-    apiUrl.value = '';
-    apiUrl.placeholder = 'Custom API URL (POST)';
-  }
+function downloadAu3() {
+  const txt = document.getElementById('outputViewer').textContent;
+  if (!txt) { alert('No compiled assembly available to download.'); return; }
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'assembly.au3';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
-async function aiConvert() {
-  const model = document.getElementById('aiModel').value;
-  const apiUrl = document.getElementById('aiApiUrl').value.trim();
-  const apiKey = document.getElementById('aiApiKey').value.trim();
+function downloadSessionPDF() {
+  // Build a printable clone with the same visual theme
   const source = document.getElementById('sourceEditor').value;
-  const logPanel = document.getElementById('diagnosticLog');
-  const output = document.getElementById('outputViewer');
+  const output = document.getElementById('outputViewer').textContent;
+  const diag = document.getElementById('diagnosticLog').innerText;
 
-  if (!apiUrl || !apiKey) {
-    alert('Please provide an API URL and API Key for the selected model.');
-    return;
-  }
+  const wrapper = document.createElement('div');
+  wrapper.style.width = '1200px';
+  wrapper.style.padding = '20px';
+  wrapper.style.background = '#000';
+  wrapper.style.color = '#00FFD1';
+  wrapper.style.fontFamily = 'monospace, ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace';
 
-  logPanel.innerHTML = `<div class="text-matrix-dim">// AI conversion in progress...</div>`;
-  output.textContent = '';
+  const header = document.createElement('div');
+  header.style.display = 'flex';
+  header.style.justifyContent = 'space-between';
+  header.style.alignItems = 'center';
+  header.style.marginBottom = '12px';
+  header.innerHTML = `<div style="font-weight:700; font-size:18px;">LENLU SC // Session Export</div><div style="font-size:12px; color:#9be3c7">${new Date().toLocaleString()}</div>`;
 
-  const prompt = `You are an assistant that converts and corrects DuckyScript-like source into valid AutoIt assembly. Reply with the corrected source followed by the generated AutoIt assembly. Preserve code formatting and clearly separate sections.` + "\n\nSOURCE:\n" + source;
+  const makeSection = (title, contentText) => {
+    const sec = document.createElement('div');
+    const t = document.createElement('div');
+    t.style.fontWeight = '700';
+    t.style.margin = '8px 0 6px 0';
+    t.textContent = title;
+    const pre = document.createElement('pre');
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.style.background = '#071018';
+    pre.style.padding = '12px';
+    pre.style.border = '1px solid rgba(0,255,209,0.08)';
+    pre.style.borderRadius = '6px';
+    pre.style.color = '#a3fff0';
+    pre.textContent = contentText || '';
+    sec.appendChild(t);
+    sec.appendChild(pre);
+    return sec;
+  };
 
-  try {
-    let body = {};
-    let headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey };
+  wrapper.appendChild(header);
+  wrapper.appendChild(makeSection('SOURCE_INGESTION.ds', source));
+  wrapper.appendChild(makeSection('AUTOIT_ASSEMBLY.au3', output));
+  wrapper.appendChild(makeSection('DIAGNOSTIC_LOG', diag));
 
-    if (model === 'openai') {
-      body = { model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], temperature: 0 };
-    } else if (model === 'anthropic') {
-      body = { model: 'claude-2', prompt: prompt, max_tokens: 1200 };
-      // Anthropic sometimes expects a different auth header; keep generic 'Authorization: Bearer'
-    } else {
-      // Generic POST body for GROQ / custom endpoints
-      body = { prompt: prompt };
-    }
+  // Use html2pdf to export wrapper to PDF
+  const opt = {
+    margin:       8,
+    filename:     `lenlu_session_${Date.now()}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#000' },
+    jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+  };
 
-    const res = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(body) });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Model API returned ${res.status}: ${txt}`);
-    }
-
-    const contentType = res.headers.get('content-type') || '';
-    let text = '';
-    if (contentType.includes('application/json')) {
-      const json = await res.json();
-      // Common extraction patterns: OpenAI, Anthropic, or raw provider
-      text = json.choices?.[0]?.message?.content || json.choices?.[0]?.text || json.completion || JSON.stringify(json, null, 2);
-    } else {
-      text = await res.text();
-    }
-
-    // Place AI output into the assembly viewer for user review
-    output.textContent = text;
-    logPanel.innerHTML = `<div class="text-matrix-dim">// AI conversion complete — review output above.</div>`;
-  } catch (err) {
-    logPanel.innerHTML = `<div class="text-danger">// AI conversion failed: ${err.message}</div>`;
-  }
+  document.body.appendChild(wrapper);
+  // Small timeout to ensure DOM paints/styles applied
+  setTimeout(() => {
+    html2pdf().set(opt).from(wrapper).save().then(() => wrapper.remove()).catch(() => wrapper.remove());
+  }, 250);
 }

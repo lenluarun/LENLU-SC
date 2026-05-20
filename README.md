@@ -1,55 +1,53 @@
-# LENLU SC
+# LENLU SC — Cyber Assembly Grid
 
-LENLU SC is a cyber-styled code conversion and validation interface for DuckyScript-like source lines, rendered with a Matrix-inspired neon console theme. The app takes command streams in one panel, lints them in real time, and compiles them into AutoIt output in the next panel.
+![LENLU SC Interface](IMGS/lenlu-sc-ui.png)
 
-## Overview
+LENLU SC is a neon-console themed toolkit that converts DuckyScript-like command streams into SciTE-compatible AutoIt (`.au3`) assemblies while providing live linting, telemetry, and AI-assisted fixes.
 
-This project presents a tactical terminal UI built around a dark phosphor palette, glowing green accents, and diagnostic telemetry panels. It is designed to feel like a high-trust assembly console rather than a generic form-based tool.
+--
 
-## Core Features
+## Quick Features (At a Glance)
 
-- Live source validation with strict, lax, and experimental lint profiles.
-- Command-to-AutoIt compilation pipeline for DuckyScript-style inputs.
-- Real-time diagnostic telemetry with critical and warning flags.
-- Sample template loading, output copying, and buffer reset actions.
-- SciTE-compatible assembly output for fast handoff into downstream tooling.
+- Live lint profiles: `STRICT`, `LAX`, `EXPERIMENTAL`.
+- Compile pipeline: converts source to AutoIt and displays assembly in-panel.
+- Export options: copy output, download compiled `.au3`, or export full session as a themed PDF.
+- AI integration: auto-correct or explain issues using configurable model providers.
 
-## Theme Direction
+## The New Export Options
 
-The visual language follows a cyber assembly grid aesthetic:
+- **Download .AU3**: Downloads the contents of the `AUTOIT_ASSEMBLY.au3` panel as `assembly.au3` (plain text). Use the `DOWNLOAD .AU3` button in the top-right controls.
+- **Download Session (PDF)**: Exports a single PDF containing three sections: `SOURCE_INGESTION.ds`, `AUTOIT_ASSEMBLY.au3`, and `DIAGNOSTIC_LOG`. The PDF preserves a dark, neon-green, monospace visual theme for consistent offline review.
 
-- Matte black surfaces with matrix-green borders and highlights.
-- Mono-spaced UI text for a terminal-grade feel.
-- Subtle scanline and phosphor-style overlays.
-- Compact panels, badge indicators, and status logging.
+Notes on security: PDF generation uses a client-side library (`html2pdf`) and runs entirely in the browser; no data is sent to a remote service during export.
 
-## File Structure
+## Usage
 
-- index.html - Main interface and layout shell.
-- style.css - Cyber theme, glow effects, and scanline styling.
-- compiler.js - Linter, compiler, and clipboard actions.
+1. Open [index.html](index.html) in a modern browser.
+2. Paste or type your DuckyScript-like commands into the `SOURCE_INGESTION.ds` panel.
+3. Choose a lint profile from the `LINT PROFILE` dropdown.
+4. Click `COMPILE PIPELINE` to generate the AutoIt assembly.
+	- If critical flags appear you can still generate assembly without AI. Enable `Auto AI Fix on Compile` to have the editor attempt automatic corrections before final compilation.
+5. Use `COPY ASSEMBLY` to copy to clipboard, `DOWNLOAD .AU3` to save the `.au3` file, or `DOWNLOAD SESSION (PDF)` to save the full session as PDF.
 
-## How It Works
+## Files to Know
 
-1. Enter or paste source commands into the left editor.
-2. Select a lint profile to control validation strictness.
-3. Run the compile pipeline to generate AutoIt output.
-4. Review the diagnostic log for unresolved syntax or structural issues.
-5. Copy the assembly output when the pipeline is clean.
+- [index.html](index.html) — UI shell and controls.
+- [style.css](style.css) — cyber grid theme and styles.
+- [compiler.js](compiler.js) — linter, compile logic, AI stubs, and new download helpers (`downloadAu3()` and `downloadSessionPDF()`).
 
-## Notes
+## Visual & Branding
 
-This README matches the same visual tone as the application: direct, minimal, technical, and built around a neon command-center identity.
+The included image (`IMGS/lenlu-sc-ui.png`) is used above to illustrate the live interface. If you have a different export from your design tools, place it in the `IMGS/` folder and update the path in this README.
 
-## AI Integration
+## Development & Notes
 
-An integrated AI assistant can automatically convert and correct your DuckyScript-like source. Use the AI panel at the top to:
+- The PDF generator depends on `html2pdf.bundle.min.js` which is loaded from CDN in `index.html`.
+- Keep API keys out of client-side bundles for production — prefer a proxy server for model calls.
 
-- Select a provider (default: GROQ).
-- Provide the provider's API URL and your API key (the app sends a POST with a JSON `prompt` payload by default).
-- Click `AI Convert & Fix` to request a corrected source and generated AutoIt assembly from the model.
+## What's Next
 
-Notes:
-- The UI uses a generic POST behavior so you can connect GROQ, OpenAI, Anthropic, or any custom endpoint that accepts a JSON prompt and Bearer auth.
-- For OpenAI, the panel pre-fills the Chat Completions endpoint; for Anthropic it pre-fills the completion endpoint; for GROQ it pre-fills the GROQ API base.
-- Because this is a client-side integration, keep your keys secure and prefer using a server-side proxy for production deployments.
+- I can (optionally) embed the exact CSS used for the PDF render, add CLI build scripts, or generate a production-ready static export workflow. Tell me which you'd like next.
+
+--
+
+Built with neon phosphor love. Maintain control. Assemble with precision.
