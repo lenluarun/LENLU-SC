@@ -1,0 +1,14 @@
+{
+  "appId": "com.lenlu.cybergrid",
+  "appName": "LENLU SC",
+  "webDir": "public",
+  "bundledWebRuntime": false,
+  "server": {
+    "allowNavigation": []
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "backgroundColor": "#000000"
+  }
+}

@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --matrix-color: #10b981;
+  --matrix-dim: #065f46;
+  --matrix-border: #044621;
+  --cyber-cyan: #06b6d4;
+  --cyber-dark-bg: rgba(4, 10, 6, 0.88);
+}
+
+body {
+  font-family: 'Fira Code', monospace;
+  background-color: #000000 !important;
+  color: var(--matrix-color) !important;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background matrix layout layer */
+#cmatrixCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Entry point screen lock box */
+#terminalSplash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  background-color: #000000;
+  transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+.max-w-400 { max-width: 400px; }
+.w-90 { width: 90px !important; }
+.max-h-150 { max-height: 150px; }
+
+.backdrop-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.header-brand {
+  font-family: 'Share Tech Mono', sans-serif;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--matrix-color);
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+}
+
+.bg-dark-eval {
+  background-color: var(--cyber-dark-bg) !important;
+}
+
+.border-matrix { border-color: var(--matrix-border) !important; }
+.text-matrix { color: var(--matrix-color) !important; }
+.text-matrix-dim { color: var(--matrix-dim) !important; }
+.border-cyan { border-color: #0891b2 !important; }
+.text-cyan { color: var(--cyber-cyan) !important; }
+
+/* Mobile Touch Target Standards */
+.mobile-touch-target {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dense Action Control Blocks for Thumb Interactions */
+.mobile-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+/* Interactive Card System Structures */
+.shadow-matrix { box-shadow: 0 0 12px rgba(4, 70, 33, 0.25); }
+
+.btn-matrix {
+  background-color: var(--matrix-color);
+  border-color: var(--matrix-color);
+  color: #000 !important;
+}
+
+.btn-outline-matrix {
+  color: var(--matrix-color);
+  border-color: var(--matrix-border);
+  background: transparent;
+}
+
+.btn-outline-cyan {
+  color: var(--cyber-cyan);
+  border-color: #0891b2;
+  background: transparent;
+}
+
+.form-control, .form-select {
+  background-color: #020402 !important;
+  color: #fff !important;
+  border-color: var(--matrix-border) !important;
+}
+
+.check-matrix:checked {
+  background-color: var(--matrix-color) !important;
+  border-color: var(--matrix-color) !important;
+}
+
+/* Layout Workspace Dimensions Configured for Mobile Views */
+.code-area {
+  font-size: 0.8rem;
+  background-color: rgba(2, 4, 2, 0.9) !important;
+  color: #34d399 !important;
+  line-height: 1.5;
+  border-radius: 0;
+}
+
+#sourceEditor {
+  height: 180px;
+  min-height: 180px;
+}
+
+.code-area-log {
+  font-size: 0.75rem;
+  min-height: 100px;
+  max-height: 140px;
+  overflow-y: auto;
+  background-color: rgba(1, 2, 1, 0.95);
+}
+
+#appContainer {
+  position: relative;
+  z-index: 5;
+  transition: opacity 0.4s ease-in-out;
+}
+
+/* Native-style Scroll Tracking Bars */
+.style-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.style-scrollbar::-webkit-scrollbar-track {
+  background: #010201;
+}
+.style-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--matrix-border);
+  border-radius: 2px;
+}
+
+/* CRT Overlay Mesh Filter Layer */
+body::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  z-index: 99999;
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Disable desktop effects on mobile touchpads to optimize rendering performance */
+@media (hover: hover) {
+  .glow-card-matrix:hover {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3) !important;
+    transform: translateY(-1px);
+  }
+  .glow-card-cyan:hover {
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3) !important;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 420px) {
+  .small-screen-title {
+    font-size: 1.5rem !important;
+  }
+  .mobile-action-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.backend-git-btn {
+  border-color: var(--matrix-border) !important;
+  color: var(--matrix-color) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.backend-git-btn:active, .backend-git-btn:focus {
+  background-color: var(--matrix-border) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4) !important;
+}

@@ -8,136 +8,183 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-black text-emerald select-none">
+<body class="bg-black text-emerald loading-active">
 
-  <nav class="navbar navbar-dark bg-dark-eval border-bottom border-matrix px-3">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-        <i class="fa-solid fa-square-terminal text-matrix animate-pulse"></i>
-        <span class="header-brand">LENLU SC</span>
-      </a>
-      <div class="d-flex align-items-center gap-3">
-        <div class="input-group input-group-sm">
-          <label class="input-group-text bg-black border-matrix text-matrix-dim text-xs" for="validationMode">LINT PROFILE:</label>
-          <select class="form-select bg-dark text-matrix border-matrix text-xs" id="validationMode" onchange="runLinter()">
-            <option value="strict" selected>STRICT MODE (All Rules)</option>
-            <option value="lax">LAX MODE (Ignore Warnings)</option>
-            <option value="experimental">EXPERIMENTAL (DuckyScript 3.0+)</option>
-          </select>
-        </div>
-        <span class="badge bg-matrix text-black font-bold">V4.0_AI_INFUSED</span>
-      </div>
+  <canvas id="cmatrixCanvas"></canvas>
+  
+  <div id="terminalSplash" class="d-flex flex-column justify-content-center align-items-center">
+    <div class="splash-box text-center p-5 border border-matrix rounded shadow-matrix backdrop-blur">
+      <h1 class="header-brand tracking-widest text-matrix mb-3 animate-pulse">LENLU SC SYSTEM INITIALIZATION</h1>
+      <p class="text-matrix-dim font-mono mb-4 text-xs">// DEPLOYING CYBERNETIC INTEGRATION CORE FRAMEWORK V5.0 //</p>
+      <button class="btn btn-matrix fw-bold text-black px-4 py-2 text-xs" onclick="initializeSystemInterface()">
+        <i class="fa-solid fa-power-off me-2"></i>ESTABLISH SECURE LINK
+      </button>
     </div>
-  </nav>
+  </div>
 
-  <main class="container-fluid py-3">
-    <div class="row g-3">
-      
-      <div class="col-12">
-        <div class="p-3 bg-dark-eval border border-cyan rounded shadow-matrix">
-          <div class="row g-2 align-items-center">
-            <div class="col-12 col-md-3">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-brain me-1"></i> COGNITIVE INFRA:</span>
-                <select class="form-select bg-dark text-cyan border-cyan text-xs" id="aiModelSelect" onchange="toggleApiKeyPlaceholder()">
-                  <option value="groq" selected>Groq (llama-3.3-70b-versatile)</option>
-                  <option value="openai">OpenAI (gpt-4o)</option>
-                  <option value="anthropic">Anthropic (claude-3-5-sonnet)</option>
-                  <option value="gemini">Google (gemini-1.5-pro)</option>
-                </select>
+  <div id="appContainer" class="d-flex flex-column min-vh-100 style-scrollbar opacity-0">
+    
+    <nav class="navbar navbar-dark bg-dark-eval border-bottom border-matrix px-3 py-2 sticky-top backdrop-blur">
+      <div class="container-fluid gap-2 flex-wrap">
+        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="#">
+          <div class="brand-logo p-2 rounded border border-matrix shadow-matrix">
+            <i class="fa-solid fa-terminal text-matrix"></i>
+          </div>
+          <span class="header-brand fs-4">LENLU SC</span>
+        </a>
+        
+        <div class="d-flex align-items-center flex-wrap gap-2 ms-auto-md custom-nav-controls">
+          <button id="audioToggleBtn" class="btn btn-outline-matrix btn-sm text-xs px-2" onclick="toggleAudioMuteState()">
+            <i class="fa-solid fa-volume-high me-1"></i>AUDIO: ON
+          </button>
+
+          <div class="input-group input-group-sm max-w-250">
+            <label class="input-group-text bg-black border-matrix text-matrix-dim text-xs" for="validationMode">LINT PROFILE:</label>
+            <select class="form-select bg-dark text-matrix border-matrix text-xs" id="validationMode" onchange="runLinter()">
+              <option value="strict" selected>STRICT MODE (All Rules)</option>
+              <option value="lax">LAX MODE (Ignore Warnings)</option>
+              <option value="experimental">EXPERIMENTAL (Ducky 3.0+)</option>
+            </select>
+          </div>
+          <span class="badge bg-matrix text-black font-bold tracking-wider px-2 py-2 text-xs border border-matrix shadow-matrix">V5.0_PRO_MATRIX</span>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid flex-grow-1 py-3 px-3 px-md-4">
+      <div class="row g-3">
+        
+        <div class="col-12">
+          <div class="p-3 bg-dark-eval border border-cyan rounded shadow-matrix glow-card-cyan backdrop-blur">
+            <div class="row g-2 align-items-center">
+              <div class="col-12 col-md-6 col-lg-3">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-brain me-1"></i> COGNITIVE:</span>
+                  <select class="form-select bg-dark text-cyan border-cyan text-xs" id="aiModelSelect" onchange="toggleApiKeyPlaceholder()">
+                    <option value="groq" selected>Groq (llama-3.3-70b)</option>
+                    <option value="openai">OpenAI (gpt-4o)</option>
+                    <option value="anthropic">Anthropic (claude-3-5)</option>
+                    <option value="gemini">Google (gemini-1.5)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-key me-1"></i> API KEY:</span>
+                  <input type="password" id="aiApiKey" class="form-control bg-dark text-cyan border-cyan text-xs" placeholder="Paste your Groq API Token...">
+                </div>
+              </div>
+              <div class="col-12 col-lg-5 d-flex gap-2 justify-content-lg-end mt-2 mt-lg-0 flex-wrap flex-sm-nowrap">
+                <button class="btn btn-outline-cyan btn-sm text-xs text-cyan flex-grow-1" onclick="triggerAiCorrection()">
+                  <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI OPTIMIZE STREAM
+                </button>
+                <button class="btn btn-outline-warning btn-sm text-xs text-warning border-warning flex-grow-1" onclick="triggerAiExplanation()">
+                  <i class="fa-solid fa-bug-slash me-1"></i> DECODE FLAGS
+                </button>
               </div>
             </div>
-            <div class="col-12 col-md-4">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text bg-black border-cyan text-cyan text-xs"><i class="fa-solid fa-key me-1"></i> API KEY:</span>
-                <input type="password" id="aiApiKey" class="form-control bg-dark text-cyan border-cyan text-xs" placeholder="Paste your Groq API Token...">
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-wrap gap-2 justify-content-between align-items-center backdrop-blur shadow-matrix glow-card-matrix">
+            <div class="d-flex flex-wrap gap-2 align-items-center w-100 w-md-auto">
+              <button class="btn btn-matrix btn-sm text-black fw-bold px-3 py-2 text-xs flex-grow-1 flex-md-grow-0" onclick="compilePipeline()">
+                <i class="fa-solid fa-bolt-lightning me-1"></i> COMPILE PIPELINE
+              </button>
+              <div class="form-check form-check-inline align-items-center ms-md-2 my-1">
+                <input class="form-check-input check-matrix" type="checkbox" id="autoAiFix">
+                <label class="form-check-label text-matrix-dim text-xs select-none" for="autoAiFix">Auto AI Fix on Compile</label>
+              </div>
+              <button class="btn btn-outline-matrix btn-sm text-xs py-2 flex-grow-1 flex-md-grow-0" onclick="loadSampleTemplate()">
+                LOAD SYSTEM TEMPLATE
+              </button>
+              <button class="btn btn-outline-danger btn-sm text-xs py-2 flex-grow-1 flex-md-grow-0" onclick="resetGrid()">
+                WIPE BUFFER
+              </button>
+            </div>
+            <div class="d-flex flex-wrap gap-2 w-100 w-md-auto mt-2 mt-md-0 justify-content-end">
+              <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan flex-grow-1 flex-md-grow-0" onclick="copyPipelineOutput()">
+                <i class="fa-solid fa-fingerprint me-1"></i> COPY ASSEMBLY
+              </button>
+              <button class="btn btn-outline-success btn-sm text-xs text-white border-success flex-grow-1 flex-md-grow-0" onclick="downloadSessionPDF()">
+                <i class="fa-solid fa-file-pdf me-1"></i> EXPORT LOG (PDF)
+              </button>
+              <button class="btn btn-outline-light btn-sm text-xs text-white border-light flex-grow-1 flex-md-grow-0" onclick="downloadAu3()">
+                <i class="fa-solid fa-download me-1"></i> GENERATE .AU3
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-5">
+          <div class="card bg-dark-eval border-matrix h-100 shadow-matrix glow-card-matrix backdrop-blur">
+            <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2">
+              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-file-code me-2"></i>SOURCE_INGESTION.ds</span>
+              <span class="text-xs text-matrix-dim font-mono" id="lineCount">LINES: 0</span>
+            </div>
+            <div class="card-body p-0">
+              <textarea id="sourceEditor" class="form-control bg-transparent text-matrix border-0 p-3 code-area style-scrollbar" rows="14" oninput="handleSourceInput()" placeholder="REM Insert script parameters for stream compilation..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-5">
+          <div class="card bg-dark-eval border-matrix h-100 shadow-matrix glow-card-cyan backdrop-blur">
+            <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2">
+              <span class="text-xs text-cyan tracking-widest fw-bold"><i class="fa-solid fa-microchip me-2"></i>AUTOIT_ASSEMBLY.au3</span>
+              <span class="text-matrix-dim font-mono text-[10px] bg-dark px-2 py-0.5 border border-matrix rounded">SciTE COMPATIBLE</span>
+            </div>
+            <div class="card-body p-0 position-relative">
+              <pre id="outputViewer" class="p-3 m-0 text-cyan code-area overflow-auto style-scrollbar select-text" style="max-height: 340px; min-height: 340px;"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-2">
+          <div class="card bg-dark-eval border-matrix h-100 shadow-matrix glow-card-matrix backdrop-blur">
+            <div class="card-header bg-black border-bottom border-matrix py-2">
+              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-box-archive me-2"></i>SCRIPT VAULT</span>
+            </div>
+            <div class="card-body p-2 d-flex flex-column gap-2" style="min-height: 340px; max-height: 340px; overflow-y: auto;">
+              <button class="btn btn-outline-matrix btn-xs w-100 text-xs py-1" onclick="saveCurrentToVault()">
+                <i class="fa-solid fa-plus me-1"></i> CACHE CURRENT
+              </button>
+              <hr class="border-matrix my-1">
+              <div id="vaultContainer" class="d-flex flex-column gap-2 style-scrollbar overflow-auto pe-1">
+                <div class="text-center text-matrix-dim text-xs py-4 font-mono">// Vault Empty //</div>
               </div>
             </div>
-            <div class="col-12 col-md-5 d-flex gap-2 justify-content-md-end">
-              <button class="btn btn-outline-cyan btn-sm text-xs text-cyan flex-grow-1 flex-md-grow-0" onclick="triggerAiCorrection()">
-                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI AUTO-OPTIMIZE CODE
-              </button>
-              <button class="btn btn-outline-warning btn-sm text-xs text-warning border-warning flex-grow-1 flex-md-grow-0" onclick="triggerAiExplanation()">
-                <i class="fa-solid fa-bug-slash me-1"></i> EXPLAIN SYNTAX FLAGGING
-              </button>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card bg-dark-eval border-matrix shadow-matrix glow-card-matrix backdrop-blur">
+            <div class="card-header bg-black border-bottom border-matrix py-2 d-flex justify-content-between align-items-center">
+              <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-terminal me-2"></i>DIAGNOSTIC_LOG_TELEMETRY</span>
+              <span id="errorCounterBadge" class="badge bg-dark border border-matrix text-matrix text-xs">ERRORS: 0</span>
+            </div>
+            <div id="diagnosticLog" class="card-body p-3 code-area-log style-scrollbar select-text">
+              <div class="text-matrix-dim font-mono text-xs">// Terminal matrix aligned. Systems awaiting source streams...</div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="col-12">
-        <div class="p-2 bg-dark-eval border border-matrix rounded d-flex flex-wrap gap-2 justify-content-between align-items-center">
-          <div class="d-flex gap-2">
-            <button class="btn btn-matrix btn-sm text-black fw-bold" onclick="compilePipeline()">
-              <i class="fa-solid fa-bolt-lightning me-1"></i> COMPILE PIPELINE
-            </button>
-            <div class="form-check form-check-inline align-items-center ms-2">
-              <input class="form-check-input" type="checkbox" id="autoAiFix">
-              <label class="form-check-label text-matrix-dim text-xs" for="autoAiFix">Auto AI Fix on Compile</label>
-            </div>
-            <button class="btn btn-outline-matrix btn-sm text-xs" onclick="loadSampleTemplate()">
-              LOAD BROKEN SAMPLE (FOR TEST)
-            </button>
-            <button class="btn btn-outline-danger btn-sm text-xs" onclick="resetGrid()">
-              WIPE BUFFER
-            </button>
-          </div>
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan" onclick="copyPipelineOutput()">
-              <i class="fa-solid fa-fingerprint me-1"></i> COPY ASSEMBLY
-            </button>
-            <button class="btn btn-outline-success btn-sm text-xs text-white border-success" onclick="downloadSessionPDF()">
-              <i class="fa-solid fa-file-pdf me-1"></i> DOWNLOAD SESSION (PDF)
-            </button>
-            <button class="btn btn-outline-light btn-sm text-xs text-white border-light" onclick="downloadAu3()">
-              <i class="fa-solid fa-download me-1"></i> DOWNLOAD .AU3
-            </button>
-          </div>
+      </div>
+    </main>
+
+    <footer class="bg-black text-center py-3 border-top border-matrix mt-auto backdrop-blur">
+      <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-xs">
+        <p class="m-0 text-matrix-dim tracking-wider font-mono">&copy; 2026 LENLU SC // PRIVILEGED SYSTEMS HARDWARE</p>
+        <div class="d-flex align-items-center gap-3 contact-tray font-mono">
+          <span class="text-matrix-dim">SYSOP CONTACTS:</span>
+          <a href="mailto:lenluarun@gmail.com" class="text-matrix text-decoration-none hover-glow"><i class="fa-solid fa-envelope me-1"></i>lenluarun@gmail.com</a>
+          <a href="https://instagram.com/lenlu_arun" target="_blank" rel="noopener noreferrer" class="text-cyan text-decoration-none hover-glow"><i class="fa-brands fa-instagram me-1"></i>@lenlu_arun</a>
         </div>
       </div>
-
-      <div class="col-12 col-lg-6">
-        <div class="card bg-dark-eval border-matrix h-100">
-          <div class="card-header bg-black border-matrix d-flex justify-content-between align-items-center py-2">
-            <span class="text-xs text-matrix tracking-widest"><i class="fa-solid fa-file-code me-2"></i>SOURCE_INGESTION.ds</span>
-            <span class="text-[10px] text-matrix-dim font-mono" id="lineCount">LINES: 0</span>
-          </div>
-          <div class="card-body p-0">
-            <textarea id="sourceEditor" class="form-control bg-transparent text-matrix border-0 p-3 code-area" rows="18" oninput="runLinter()" placeholder="REM Insert code blocks for architecture evaluation..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-lg-6">
-        <div class="card bg-dark-eval border-matrix h-100">
-          <div class="card-header bg-black border-matrix d-flex justify-content-between align-items-center py-2">
-            <span class="text-xs text-cyan tracking-widest"><i class="fa-solid fa-microchip me-2"></i>AUTOIT_ASSEMBLY.au3</span>
-            <span class="text-[9px] bg-dark px-2 py-0.5 border border-matrix rounded text-matrix-dim">SciTE COMPATIBLE</span>
-          </div>
-          <div class="card-body p-0">
-            <pre id="outputViewer" class="p-3 m-0 text-cyan code-area overflow-auto select-text"></pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12">
-        <div class="card bg-dark-eval border-matrix shadow-matrix">
-          <div class="card-header bg-black border-matrix py-2 d-flex justify-content-between align-items-center">
-            <span class="text-xs text-matrix tracking-widest"><i class="fa-solid fa-terminal me-2"></i>DIAGNOSTIC_LOG_TELEMETRY</span>
-            <span id="errorCounterBadge" class="badge bg-dark border border-matrix text-matrix text-xs">ERRORS: 0</span>
-          </div>
-          <div id="diagnosticLog" class="card-body p-3 code-area-log select-text">
-            <div class="text-matrix-dim">// System initialized. Awaiting source ingestion streams...</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <footer class="bg-black text-center py-2 border-top border-matrix mt-auto">
-    <p class="m-0 text-matrix-dim text-xs tracking-wider">&copy; 2026 LENLU SC // CONTROL ENVIRONMENT PRIVILEGED INTERFACE</p>
-  </footer>
+    </footer>
+    
+  </div>
 
   <script src="compiler.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
