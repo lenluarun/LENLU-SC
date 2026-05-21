@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LENLU SC // CINEMATIC OS</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        matrix: {
+                            glow: '#00ff41',
+                            dark: '#003b00',
+                            base: '#050a06',
+                            metal: '#1a1c1a'
+                        },
+                        cyber: {
+                            cyan: '#08f7fe',
+                            graphite: '#0a0b0a'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        display: ['"Syncopate"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <!-- Chosen Palette: Cinematic Matrix (Deep Graphite, Neon Green Glow, Titanium Accents) -->
+    <!-- Application Structure Plan: Linear narrative flow imitating a system boot sequence -> Hero Command Center -> Modular Services -> Holographic Project Showcase (Horizontal Scroll) -> Encrypted Terminal Contact. Designed to feel like a WebGL spatial operating system rather than a standard webpage. -->
+    <!-- Visualization & Content Choices: 
+         - Goal: Immersion -> Three.js volumetric particle system & wireframe terrain -> Interactive background.
+         - Goal: Services -> Glassmorphism 3D tilt cards -> Interactive metallic components.
+         - Goal: Projects -> GSAP Horizontal Scroll -> Cinematic lateral movement.
+         - Library: Three.js, GSAP, Lenis. NO SVG/Mermaid. Pure Canvas & HTML/CSS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        :root {
+            --neon-green: #00ff41;
+            --neon-dim: rgba(0, 255, 65, 0.3);
+            --bg-color: #030503;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* Cinematic Overlays */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            z-index: 40;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%);
+            z-index: 39;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism & Metallic UI */
+        .cyber-panel {
+            background: rgba(10, 12, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 65, 0.15);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 255, 65, 0.05);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .cyber-panel:hover {
+            border-color: rgba(0, 255, 65, 0.4);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 255, 65, 0.15);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);
+        }
+
+        .metal-text {
+            background: linear-gradient(180deg, #ffffff 0%, #718096 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Boot Sequence */
+        #boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--neon-green);
+        }
+
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Scroll Container */
+        #smooth-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #1a2e1a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+        /* Hide elements for GSAP reveals */
+        .reveal-up { opacity: 0; transform: translateY(50px); }
+    </style>
+</head>
+<body class="selection:bg-matrix-glow selection:text-black">
+
+    <!-- Cinematic Overlays -->
+    <div id="canvas-container"></div>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- Boot Sequence -->
+    <div id="boot-screen">
+        <div id="boot-text" class="text-xs md:text-sm lg:text-base whitespace-pre-wrap"></div>
+        <div class="mt-2 text-matrix-glow">> <span class="cursor-blink">_</span></div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="fixed top-0 w-full z-50 p-6 mix-blend-difference pointer-events-none">
+        <div class="max-w-7xl mx-auto flex justify-between items-center cyber-panel rounded-full px-8 py-3 pointer-events-auto">
+            <div class="font-display font-bold text-lg tracking-widest metal-text">LENLU<span class="text-matrix-glow glow">SC</span></div>
+            <div class="hidden md:flex space-x-8 font-mono text-xs tracking-widest uppercase">
+                <a href="#sys-core" class="hover:text-matrix-glow transition-colors">Sys.Core</a>
+                <a href="#modules" class="hover:text-matrix-glow transition-colors">Modules</a>
+                <a href="#archives" class="hover:text-matrix-glow transition-colors">Archives</a>
+                <a href="#terminal" class="hover:text-matrix-glow transition-colors">Terminal</a>
+            </div>
+            <div class="w-3 h-3 rounded-full bg-matrix-glow shadow-[0_0_10px_#00ff41] animate-pulse"></div>
+        </div>
+    </nav>
+
+    <!-- Smooth Scroll Wrapper -->
+    <div id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <!-- Hero Section -->
+            <section id="sys-core" class="relative w-full h-screen flex flex-col items-center justify-center pt-20 px-4">
+                <div class="text-center z-10 max-w-5xl mx-auto reveal-up">
+                    <p class="font-mono text-matrix-glow mb-4 tracking-[0.3em] text-xs md:text-sm uppercase">// Unified Compilation &amp; Cybernetic Control Deck</p>
+                    <h1 class="font-display text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter metal-text leading-none mb-6">
+                        CYBER<br>ASSEMBLY
+                    </h1>
+                    <p class="font-sans text-gray-400 max-w-3xl mx-auto text-lg md:text-xl font-light tracking-wide">
+                        An interactive command studio for compiling keyboard injection payloads, synthesizing script automation via LLM engines, and analyzing local wireless signal telemetries.
+                    </p>
+                    <div class="mt-12 flex flex-col md:flex-row items-center justify-center gap-6">
+                        <button onclick="window.location.href='index.html'" class="relative px-8 py-4 bg-transparent border border-matrix-glow text-matrix-glow font-mono text-sm uppercase tracking-widest hover:bg-matrix-glow hover:text-black transition-all duration-300 overflow-hidden group">
+                            <span class="relative z-10">Initialize System</span>
+                            <div class="absolute inset-0 h-full w-0 bg-matrix-glow transition-all duration-300 ease-out group-hover:w-full z-0"></div>
+                        </button>
+                        <div class="font-mono text-xs text-gray-600 flex items-center gap-2">
+                            <i class="fa-solid fa-lock"></i> Connection Encrypted [256-bit]
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+                    <span class="font-mono text-[10px] tracking-[0.2em] uppercase">Descend</span>
+                    <div class="w-[1px] h-12 bg-gradient-to-b from-matrix-glow to-transparent"></div>
+                </div>
+            </section>
+
+            <!-- About / System Diagnostics -->
+            <section class="py-32 relative z-10 px-4 border-t border-white/5 bg-gradient-to-b from-transparent to-matrix-base">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="reveal-up">
+                        <h2 class="font-display text-3xl md:text-5xl font-bold metal-text mb-6 uppercase tracking-wider">System Architecture</h2>
+                        <div class="cyber-panel p-8 rounded-lg relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-matrix-glow to-transparent opacity-50"></div>
+                            <p class="font-sans text-gray-300 leading-relaxed mb-6">
+                                LENLU SC bridges the gap between keyboard injection scripting and compiled execution. Combining local WebGL shader matrices with a robust DuckyScript translation core, the platform allows security auditors to build, test, and package AutoIt payloads seamlessly.
+                            </p>
+                            <ul class="font-mono text-sm text-gray-400 space-y-4">
+                                <li class="flex items-center gap-4"><span class="text-matrix-glow">[+]</span> Keystroke to AutoIt Compiler Engine</li>
+                                <li class="flex items-center gap-4"><span class="text-matrix-glow">[+]</span> BLE &amp; Wifi Airspace Surveillance Core</li>
+                                <li class="flex items-center gap-4"><span class="text-matrix-glow">[+]</span> Encrypted Client-Side Session Vault</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="relative h-[400px] cyber-panel rounded-lg flex items-center justify-center reveal-up overflow-hidden group">
+                        <!-- Simulated Hologram Canvas Container -->
+                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,65,0.1)_0%,transparent_70%)]"></div>
+                        <canvas id="holo-ring" class="w-full h-full absolute inset-0"></canvas>
+                        <div class="relative z-10 text-center pointer-events-none">
+                            <div class="text-4xl font-display font-bold text-white mb-2 text-glow">99.9%</div>
+                            <div class="font-mono text-xs text-matrix-glow tracking-widest uppercase">System Stability</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services / Modules (3D Tilt Cards) -->
+            <section id="modules" class="py-32 relative z-10 bg-matrix-base px-4">
+                <div class="max-w-7xl mx-auto">
+                    <div class="mb-16 reveal-up">
+                        <p class="font-mono text-matrix-glow text-sm uppercase tracking-widest mb-2">// Active Modules</p>
+                        <h2 class="font-display text-4xl md:text-6xl font-bold metal-text uppercase">Operations</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 perspective-1000">
+                        <!-- Module 1 -->
+                        <div class="tilt-card cyber-panel p-8 rounded-xl h-[400px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up" style="background: linear-gradient(to bottom, rgba(10, 12, 10, 0.85), rgba(0, 0, 0, 0.95)), url('IMGS/ide_workspace.png') no-repeat center/cover;">
+                            <div class="absolute inset-0 bg-matrix-glow opacity-0 group-hover:opacity-5 transition-opacity duration-500"></div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 rounded border border-matrix-glow/30 flex items-center justify-center mb-6 text-matrix-glow group-hover:bg-matrix-glow group-hover:text-black transition-colors">
+                                    <span class="font-mono text-xl">01</span>
+                                </div>
+                                <h3 class="font-display text-xl font-bold text-white mb-4 tracking-wide uppercase">IDE Workbench</h3>
+                                <p class="font-sans text-sm text-gray-400">Integrated keystroke console equipped with real-time linter warnings, instant AutoIt compilation output, and themed PDF report exports.</p>
+                            </div>
+                            <div class="font-mono text-xs text-matrix-glow/50 group-hover:text-matrix-glow transition-colors mt-8 relative z-10">
+                                <a href="index.html?tab=ide" class="stretched-link">> OPEN IDE</a>
+                            </div>
+                        </div>
+
+                        <!-- Module 2 -->
+                        <div class="tilt-card cyber-panel p-8 rounded-xl h-[400px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up" style="background: linear-gradient(to bottom, rgba(10, 12, 10, 0.85), rgba(0, 0, 0, 0.95)), url('IMGS/ai_generator.png') no-repeat center/cover; transition-delay: 100ms;">
+                            <div class="absolute inset-0 bg-matrix-glow opacity-0 group-hover:opacity-5 transition-opacity duration-500"></div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 rounded border border-matrix-glow/30 flex items-center justify-center mb-6 text-matrix-glow group-hover:bg-matrix-glow group-hover:text-black transition-colors">
+                                    <span class="font-mono text-xl">02</span>
+                                </div>
+                                <h3 class="font-display text-xl font-bold text-white mb-4 tracking-wide uppercase">AI Synthesis Lab</h3>
+                                <p class="font-sans text-sm text-gray-400">Automated script architect utilizing Groq and OpenAI engines. Generate complex payloads via text prompts or direct voice dictation.</p>
+                            </div>
+                            <div class="font-mono text-xs text-matrix-glow/50 group-hover:text-matrix-glow transition-colors mt-8 relative z-10">
+                                <a href="index.html?tab=ai" class="stretched-link">> OPEN AI GENERATOR</a>
+                            </div>
+                        </div>
+
+                        <!-- Module 3 -->
+                        <div class="tilt-card cyber-panel p-8 rounded-xl h-[400px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up" style="background: linear-gradient(to bottom, rgba(10, 12, 10, 0.85), rgba(0, 0, 0, 0.95)), url('IMGS/scanner_systems.png') no-repeat center/cover; transition-delay: 200ms;">
+                            <div class="absolute inset-0 bg-matrix-glow opacity-0 group-hover:opacity-5 transition-opacity duration-500"></div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 rounded border border-matrix-glow/30 flex items-center justify-center mb-6 text-matrix-glow group-hover:bg-matrix-glow group-hover:text-black transition-colors">
+                                    <span class="font-mono text-xl">03</span>
+                                </div>
+                                <h3 class="font-display text-xl font-bold text-white mb-4 tracking-wide uppercase">Signal Scanners</h3>
+                                <p class="font-sans text-sm text-gray-400">Wireless signal monitor auditing local networks. Scan 802.11 SSID points, map BLE beacon telemetry, and trace active deauth frames.</p>
+                            </div>
+                            <div class="font-mono text-xs text-matrix-glow/50 group-hover:text-matrix-glow transition-colors mt-8 relative z-10">
+                                <a href="index.html?tab=scanners" class="stretched-link">> OPEN SCANNERS</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects (Horizontal Scroll) -->
+            <section id="archives" class="relative z-10 bg-[#020302] overflow-hidden py-32">
+                <div class="max-w-7xl mx-auto px-4 mb-16 reveal-up">
+                    <p class="font-mono text-matrix-glow text-sm uppercase tracking-widest mb-2">// Data Archives</p>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold metal-text uppercase">Constructs</h2>
+                </div>
+                
+                <!-- GSAP Horizontal Scroll Container -->
+                <div class="horizontal-scroll-container flex w-[300vw] h-[60vh] px-4 gap-8">
+                    <!-- Project 1 -->
+                    <div class="w-[80vw] md:w-[60vw] h-full cyber-panel rounded-2xl relative overflow-hidden flex-shrink-0 group">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+                        <!-- Simulated WebGL/Canvas Graphic for Project -->
+                        <div class="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.85)),url('IMGS/matrix_logs.png')] bg-cover bg-center opacity-50 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-105 transform"></div>
+                        <div class="absolute bottom-0 left-0 p-8 z-20 w-full">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="font-mono text-matrix-glow text-xs mb-2">Build v2.4</div>
+                                    <h3 class="font-display text-3xl text-white font-bold uppercase">Matrix Logs</h3>
+                                    <p class="font-sans text-sm text-gray-400 mt-2 max-w-xl">Stream active console events, compilation delays, and syntax flags in a scrolling green command rain interface.</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md">
+                                    <span class="font-mono text-white text-lg">↗</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Project 2 -->
+                    <div class="w-[80vw] md:w-[60vw] h-full cyber-panel rounded-2xl relative overflow-hidden flex-shrink-0 group">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.85)),url('IMGS/glass_cards.png')] bg-cover bg-center opacity-50 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-105 transform"></div>
+                        <div class="absolute bottom-0 left-0 p-8 z-20 w-full">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="font-mono text-matrix-glow text-xs mb-2">Build v3.1</div>
+                                    <h3 class="font-display text-3xl text-white font-bold uppercase">Glass Cards</h3>
+                                    <p class="font-sans text-sm text-gray-400 mt-2 max-w-xl">Futuristic command panels rendering local encrypted vault lists, custom models, and modular device toggle switches.</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md">
+                                    <span class="font-mono text-white text-lg">↗</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Project 3 -->
+                     <div class="w-[80vw] md:w-[60vw] h-full cyber-panel rounded-2xl relative overflow-hidden flex-shrink-0 group">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.85)),url('IMGS/terminal_interfaces.png')] bg-cover bg-center opacity-50 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-105 transform"></div>
+                        <div class="absolute bottom-0 left-0 p-8 z-20 w-full">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="font-mono text-matrix-glow text-xs mb-2">Build v1.0</div>
+                                    <h3 class="font-display text-3xl text-white font-bold uppercase">Terminal Interfaces</h3>
+                                    <p class="font-sans text-sm text-gray-400 mt-2 max-w-xl">Tactical retro command prompts outputting raw AutoIt assembly files, Bluetooth network node audits, and system handshakes.</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md">
+                                    <span class="font-mono text-white text-lg">↗</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Terminal -->
+            <section id="terminal" class="py-32 relative z-10 bg-black px-4 border-t border-matrix-glow/10">
+                <div class="max-w-4xl mx-auto reveal-up">
+                    <div class="cyber-panel p-1 border-t-4 border-t-matrix-glow">
+                        <!-- Terminal Header -->
+                        <div class="bg-metal px-4 py-2 flex items-center gap-2 border-b border-white/10">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                            <span class="font-mono text-xs text-gray-500 ml-4">root@lenlu-sc:~# execute secure_comm.sh</span>
+                        </div>
+                        
+                        <!-- Terminal Body -->
+                        <div class="p-8 font-mono text-sm">
+                            <p class="text-matrix-glow mb-6">> INITIATING SECURE HANDSHAKE...</p>
+                            <p class="text-gray-400 mb-8">> ENTER PARAMETERS BELOW TO TRANSMIT DATA PACKET.</p>
+                            
+                            <form class="space-y-6" onsubmit="event.preventDefault(); document.getElementById('terminal-response').innerText = '> TRANSMISSION SUCCESSFUL. DATA ENCRYPTED AND STORED.';">
+                                <div class="flex flex-col md:flex-row gap-4">
+                                    <div class="flex-1">
+                                        <label class="block text-matrix-glow/70 text-xs mb-2">> IDENTIFIER [NAME]</label>
+                                        <input type="text" required class="w-full bg-transparent border-b border-gray-700 text-white p-2 focus:outline-none focus:border-matrix-glow transition-colors placeholder-gray-600" placeholder="guest_user">
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="block text-matrix-glow/70 text-xs mb-2">> NODE ADDRESS [EMAIL]</label>
+                                        <input type="email" required class="w-full bg-transparent border-b border-gray-700 text-white p-2 focus:outline-none focus:border-matrix-glow transition-colors placeholder-gray-600" placeholder="alias@domain.net">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-matrix-glow/70 text-xs mb-2">> PAYLOAD [MESSAGE]</label>
+                                    <textarea required rows="4" class="w-full bg-transparent border border-gray-700 text-white p-4 focus:outline-none focus:border-matrix-glow transition-colors resize-none placeholder-gray-600" placeholder="Enter encrypted text here..."></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-4 border border-matrix-glow text-matrix-glow hover:bg-matrix-glow hover:text-black transition-colors uppercase tracking-widest font-bold">
+                                    Execute Transmission
+                                </button>
+                                <p id="terminal-response" class="text-matrix-glow mt-4 h-6"></p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Footer -->
+            <footer class="py-8 relative z-10 border-t border-white/5 bg-black text-center font-mono text-xs text-gray-600">
+                <p>DIAGNOSTIC_LOG: No errors detected. // LENLU SC © 2026 // END OF LINE.</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // ==========================================
+        // 1. BOOT SEQUENCE & LOADING
+        // ==========================================
+        const bootLines = [
+            "Initializing WebGL context...",
+            "Loading shaders...",
+            "Establishing neural link...",
+            "Decrypting matrix protocols...",
+            "Mounting virtual filesystem [OK]",
+            "Bypassing security nodes [OK]",
+            "WARNING: Unregistered user detected.",
+            "Granting temporary read access...",
+            "SYSTEM READY."
+        ];
+        
+        const bootTextEl = document.getElementById('boot-text');
+        const bootScreen = document.getElementById('boot-screen');
+        let lineIndex = 0;
+
+        function typeBootSequence() {
+            if (lineIndex < bootLines.length) {
+                const p = document.createElement('div');
+                p.textContent = `> ${bootLines[lineIndex]}`;
+                bootTextEl.appendChild(p);
+                lineIndex++;
+                setTimeout(typeBootSequence, Math.random() * 200 + 100);
+            } else {
+                // Boot finished, trigger GSAP reveal
+                sessionStorage.setItem('lenlu_booted', 'true');
+                gsap.to(bootScreen, {
+                    opacity: 0,
+                    duration: 1,
+                    delay: 0.5,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        bootScreen.style.display = 'none';
+                        initAnimations();
+                    }
+                });
+            }
+        }
+        
+        // Start boot
+        window.addEventListener('load', () => {
+            initThreeJS();
+            if (sessionStorage.getItem('lenlu_booted') === 'true') {
+                bootScreen.style.opacity = 0;
+                bootScreen.style.display = 'none';
+                initAnimations();
+            } else {
+                setTimeout(typeBootSequence, 500);
+            }
+        });
+
+
+        // ==========================================
+        // 2. SMOOTH SCROLLING (LENIS)
+        // ==========================================
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Integrate Lenis with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
+
+        // ==========================================
+        // 3. GSAP ANIMATIONS
+        // ==========================================
+        gsap.registerPlugin(ScrollTrigger);
+
+        function initAnimations() {
+            // Integrate Lenis with ScrollTrigger via scrollerProxy so GSAP uses Lenis' smooth scroll
+            try {
+                ScrollTrigger.scrollerProxy(document.body, {
+                    scrollTop(value) {
+                        return arguments.length ? lenis.scrollTo(value) : window.scrollY;
+                    },
+                    getBoundingClientRect() {
+                        return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+                    },
+                    // Pin type detection
+                    pinType: document.body.style.transform ? 'transform' : 'fixed'
+                });
+                window.addEventListener('resize', () => ScrollTrigger.refresh());
+            } catch (e) {
+                // If ScrollTrigger isn't ready, ignore and continue
+                console.warn('ScrollTrigger scrollerProxy not set:', e);
+            }
+            // Reveal animations for general elements
+            const revealElements = document.querySelectorAll('.reveal-up');
+            revealElements.forEach((el) => {
+                gsap.to(el, {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    },
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                });
+            });
+
+            // Horizontal Scroll for Projects
+            const horizontalSection = document.querySelector('.horizontal-scroll-container');
+            if (horizontalSection) {
+                gsap.to(horizontalSection, {
+                    x: () => -(horizontalSection.scrollWidth - window.innerWidth + 32) + "px",
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "#archives",
+                        pin: true,
+                        scrub: 1,
+                        start: "center center",
+                        end: () => "+=" + horizontalSection.scrollWidth,
+                        invalidateOnRefresh: true
+                    }
+                });
+            }
+        }
+
+
+        // ==========================================
+        // 4. THREE.JS CINEMATIC ENVIRONMENT
+        // ==========================================
+        let scene, camera, renderer, particles, terrain;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            
+            // Scene Setup
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x030503, 0.0015);
+
+            // Camera Setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+            camera.position.z = 400;
+            camera.position.y = 100;
+
+            // Renderer Setup
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // 1. Matrix Particle Field
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const sizes = [];
+            for ( let i = 0; i < 5000; i ++ ) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                vertices.push( x, y, z );
+                sizes.push(Math.random() * 2);
+            }
+            geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+            geometry.setAttribute( 'size', new THREE.Float32BufferAttribute( sizes, 1 ) );
+
+            // Custom shader for particles to glow and pulse
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    color: { value: new THREE.Color(0x00ff41) }
+                },
+                vertexShader: `
+                    uniform float time;
+                    attribute float size;
+                    varying vec3 vPosition;
+                    void main() {
+                        vPosition = position;
+                        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+                        gl_PointSize = size * ( 300.0 / -mvPosition.z ) * (1.0 + sin(time + position.x)*0.5);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 color;
+                    varying vec3 vPosition;
+                    void main() {
+                        // Create soft circle
+                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+                        float ll = length(xy);
+                        if(ll > 0.5) discard;
+                        
+                        // Add glow based on depth
+                        float alpha = (0.5 - ll) * 2.0;
+                        gl_FragColor = vec4( color, alpha * 0.6 );
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            particles = new THREE.Points( geometry, material );
+            scene.add( particles );
+
+            // 2. Wireframe Terrain (Industrial Grid)
+            const terrainGeo = new THREE.PlaneGeometry(2000, 2000, 40, 40);
+            // Disrupt terrain heights
+            const pos = terrainGeo.attributes.position;
+            for(let i=0; i<pos.count; i++) {
+                const x = pos.getX(i);
+                const y = pos.getY(i);
+                // Create rolling hills math
+                const z = Math.sin(x * 0.005) * Math.cos(y * 0.005) * 100;
+                pos.setZ(i, z);
+            }
+            terrainGeo.computeVertexNormals();
+            
+            const terrainMat = new THREE.MeshBasicMaterial({
+                color: 0x003b00,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.15
+            });
+            terrain = new THREE.Mesh(terrainGeo, terrainMat);
+            terrain.rotation.x = -Math.PI / 2;
+            terrain.position.y = -200;
+            scene.add(terrain);
+
+            // Holographic Ring for About Section (Mini Scene Rendered to secondary canvas)
+            initHoloRing();
+
+            // Event Listeners
+            document.addEventListener( 'mousemove', onDocumentMouseMove );
+            window.addEventListener( 'resize', onWindowResize );
+
+            // Start Animation Loop
+            animateThreeJS();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            // Resize holo renderer/camera if present
+            try {
+                const holoCanvas = document.getElementById('holo-ring');
+                if (holoRenderer && holoCamera && holoCanvas) {
+                    holoRenderer.setSize(holoCanvas.clientWidth, holoCanvas.clientHeight);
+                    holoCamera.aspect = holoCanvas.clientWidth / holoCanvas.clientHeight;
+                    holoCamera.updateProjectionMatrix();
+                }
+            } catch (err) {
+                // ignore
+            }
+        }
+
+        function onDocumentMouseMove( event ) {
+            mouseX = ( event.clientX - windowHalfX ) * 0.5;
+            mouseY = ( event.clientY - windowHalfY ) * 0.5;
+        }
+
+        function animateThreeJS() {
+            requestAnimationFrame( animateThreeJS );
+
+            const time = performance.now() * 0.001;
+
+            // Update uniforms
+            particles.material.uniforms.time.value = time;
+
+            // Gentle rotation and movement
+            particles.rotation.y = time * 0.05;
+            terrain.position.z = (time * 50) % 50; // Scrolling effect
+
+            // Mouse parallax effect with inertia
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+            
+            camera.rotation.y += 0.05 * ( targetX - camera.rotation.y );
+            camera.rotation.x += 0.05 * ( targetY - camera.rotation.x );
+
+            renderer.render( scene, camera );
+            
+            // Render secondary scene
+            if(holoRenderer && holoScene && holoCamera) {
+                holoMesh.rotation.x += 0.01;
+                holoMesh.rotation.y += 0.02;
+                holoRenderer.render(holoScene, holoCamera);
+            }
+        }
+
+        // Mini ThreeJS setup for the Holographic Ring in About Section
+        let holoScene, holoCamera, holoRenderer, holoMesh;
+        function initHoloRing() {
+            const canvas = document.getElementById('holo-ring');
+            if(!canvas) return;
+            
+            holoRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            holoRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            holoRenderer.setPixelRatio(window.devicePixelRatio);
+            
+            holoScene = new THREE.Scene();
+            holoCamera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 1, 1000);
+            holoCamera.position.z = 100;
+            
+            const geometry = new THREE.TorusGeometry(30, 0.5, 16, 100);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x08f7fe, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            holoMesh = new THREE.Mesh(geometry, material);
+            
+            // Add inner core
+            const coreGeo = new THREE.IcosahedronGeometry(15, 1);
+            const coreMat = new THREE.MeshBasicMaterial({
+                color: 0x00ff41,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            holoMesh.add(coreMesh);
+            
+            holoScene.add(holoMesh);
+        }
+
+        // ==========================================
+        // 5. 3D CARD TILT EFFECT (Vanilla JS)
+        // ==========================================
+        const cards = document.querySelectorAll('.tilt-card');
+        
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // Max rotation degrees
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                card.style.transition = 'none';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                card.style.transition = 'transform 0.5s ease';
+            });
+        });
+
+    </script>
+</body>
+</html>

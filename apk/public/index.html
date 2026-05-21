@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>LENLU SC // Cyber Assembly Grid</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,7 +15,7 @@
   <div id="terminalSplash" class="d-flex flex-column justify-content-center align-items-center p-3">
     <div class="splash-box text-center p-4 w-100 max-w-400 border border-matrix rounded shadow-matrix backdrop-blur">
       <div class="brand-icon-large mb-3">
-        <i class="fa-solid fa-microchip text-matrix fa-3x"></i>
+        <img src="IMGS/playstore.png" alt="Playstore Logo" class="img-fluid rounded border border-matrix shadow-matrix" style="max-width: 150px; filter: drop-shadow(0 0 10px var(--matrix-color));">
       </div>
       <h1 class="header-brand tracking-widest text-matrix mb-2 small-screen-title">LENLU SC</h1>
       <p class="text-matrix-dim font-mono mb-4 text-xs">// INITIALIZING V6.0 MOBILE CORE //</p>
@@ -29,9 +29,9 @@
     
     <nav class="navbar navbar-dark bg-dark-eval border-bottom border-matrix px-2 py-2 sticky-top backdrop-blur">
       <div class="container-fluid d-flex justify-content-between align-items-center">
-        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="#">
-          <div class="brand-logo p-1 rounded border border-matrix">
-            <i class="fa-solid fa-terminal text-matrix text-xs"></i>
+        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="../../index.html">
+          <div class="brand-logo p-1 rounded border border-matrix d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+            <img src="IMGS/L 2.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
           </div>
           <span class="header-brand fs-5">LENLU SC</span>
         </a>
@@ -69,10 +69,14 @@
             <div class="card bg-dark-eval border-matrix shadow-matrix backdrop-blur">
               <div class="card-header bg-black border-bottom border-matrix d-flex justify-content-between align-items-center py-2 px-3">
                 <span class="text-xs text-matrix tracking-widest fw-bold"><i class="fa-solid fa-file-code me-2"></i>payload.ds</span>
-                <span class="text-xs text-matrix-dim font-mono" id="lineCount">L: 0</span>
+                <div class="d-flex align-items-center gap-3">
+                  <button class="btn btn-dark-eval btn-sm text-[9px] border-matrix py-0 px-2" onclick="toggleCodePreview()">PREVIEW</button>
+                  <span class="text-xs text-matrix-dim font-mono" id="lineCount">L: 0</span>
+                </div>
               </div>
               <div class="card-body p-0">
                 <textarea id="sourceEditor" class="form-control bg-transparent text-matrix border-0 p-3 code-area style-scrollbar" rows="6" oninput="handleSourceInput()" placeholder="REM Enter code here..."></textarea>
+                <div id="codePreview" class="p-3 d-none code-area style-scrollbar whitespace-pre-wrap overflow-auto" style="height: 150px; border-top: 1px solid var(--matrix-dark);"></div>
               </div>
             </div>
           </div>
@@ -87,6 +91,7 @@
                 <button class="btn btn-outline-danger btn-sm text-xs py-2 mobile-touch-target" onclick="resetGrid()">WIPE</button>
                 <button class="btn btn-outline-cyan btn-sm text-xs text-cyan border-cyan py-2 mobile-touch-target" onclick="copyPipelineOutput()">COPY</button>
                 <button class="btn btn-outline-light btn-sm text-xs text-white border-light py-2 mobile-touch-target" onclick="downloadAu3()">.AU3</button>
+                <button class="btn btn-outline-primary btn-sm text-xs text-primary border-primary py-2 mobile-touch-target" onclick="downloadPs1()">.PS1</button>
               </div>
             </div>
           </div>
@@ -270,6 +275,18 @@
       </button>
     </nav>
     
+  </div>
+
+  <!-- Matrix Modal Overlay -->
+  <div id="matrixModal" class="matrix-modal-overlay">
+    <div class="matrix-modal-box">
+      <div id="matrixModalTitle" class="matrix-modal-title">SYSTEM ALERT</div>
+      <div id="matrixModalText" class="matrix-modal-text">Connection established.</div>
+      <div class="matrix-modal-actions">
+        <button id="matrixModalCancel" class="matrix-modal-btn secondary" style="display:none">CANCEL</button>
+        <button id="matrixModalOk" class="matrix-modal-btn">ACKNOWLEDGE</button>
+      </div>
+    </div>
   </div>
 
   <!-- Load Scripts -->

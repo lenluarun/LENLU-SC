@@ -93,6 +93,40 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Studio Hero Styles */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 20px var(--matrix-color);
+}
+.hero-title span {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--matrix-color);
+}
+
+.glass-card {
+  background: rgba(10, 15, 10, 0.7);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+}
+
+.module-panel {
+  background: rgba(5, 5, 5, 0.8);
+  border: 1px solid var(--matrix-dark);
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.module-panel:active {
+  background: var(--matrix-dark);
+  transform: scale(0.95);
+}
+
 /* Mobile Touch Standards */
 .mobile-touch-target {
   min-height: 48px;
@@ -134,11 +168,6 @@ body::before {
   font-size: 0.85rem !important;
 }
 
-.form-control:focus {
-  border-color: var(--matrix-color) !important;
-  box-shadow: 0 0 8px rgba(0, 255, 65, 0.2) !important;
-}
-
 /* Code Area Styles */
 .code-area {
   font-size: 0.85rem;
@@ -159,7 +188,7 @@ body::before {
 .mobile-nav-bar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: 70px;
+  height: calc(70px + env(safe-area-inset-bottom));
   background: rgba(5, 10, 5, 0.95);
   border-top: 1px solid var(--glass-border);
   display: flex;
@@ -175,13 +204,13 @@ body::before {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 4px;
-  width: 25%;
+  width: 20%;
   transition: all 0.2s;
   padding: 8px 0;
 }
 
-.nav-item i { font-size: 1.2rem; }
-.nav-item span { font-size: 0.65rem; font-weight: bold; letter-spacing: 1px; }
+.nav-item i { font-size: 1.1rem; }
+.nav-item span { font-size: 0.6rem; font-weight: bold; letter-spacing: 1px; }
 
 .nav-item.active {
   color: var(--matrix-color);
@@ -221,4 +250,36 @@ body::before {
 /* Utilities */
 .text-[10px] { font-size: 10px !important; }
 .max-h-250 { max-height: 250px; }
-.hover-glow:active { background: rgba(0, 255, 65, 0.1) !important; }
+
+/* Modal Styles */
+/* Notch / Safe Area Support */
+.navbar {
+  padding-top: env(safe-area-inset-top) !important;
+}
+
+#appContainer {
+  padding-top: env(safe-area-inset-top);
+  position: relative;
+  z-index: 5;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.matrix-modal-overlay {
+  position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.85);
+  display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+  padding: 20px;
+}
+.matrix-modal-box {
+  background: var(--glass-bg);
+  border: 1px solid var(--matrix-color);
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 0 30px rgba(0,255,65,0.2);
+}
+.matrix-modal-title { font-family: var(--font-display); color: #fff; border-bottom: 1px solid var(--matrix-dark); padding-bottom: 8px; margin-bottom: 12px; }
+.matrix-modal-text { font-size: 0.85rem; color: #fff; margin-bottom: 20px; }
+.matrix-modal-actions { display: flex; gap: 10px; }
+.matrix-modal-btn { flex: 1; border: 1px solid var(--matrix-color); background: var(--matrix-color); color: #000; padding: 10px; font-weight: bold; border-radius: 4px; font-size: 0.8rem; }
+.matrix-modal-btn.secondary { background: transparent; color: var(--matrix-color); }

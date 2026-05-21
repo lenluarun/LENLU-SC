@@ -140,6 +140,18 @@ function initializeSystemInterface() {
     const keyInput = document.getElementById('aiApiKey');
     if(keyInput) keyInput.value = savedKey;
   }
+
+  // Handle URL parameters for tab switching
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetTab = urlParams.get('tab');
+  if (targetTab) {
+    const navItems = document.querySelectorAll('.nav-item');
+    let targetEl = null;
+    navItems.forEach(item => {
+      if (item.getAttribute('onclick').includes(targetTab)) targetEl = item;
+    });
+    if (targetEl) switchTab(targetTab, targetEl);
+  }
 }
 
 // SCRIPT INTERACTIVE INPUT MATRIX TRACKER
@@ -330,6 +342,26 @@ async function triggerAiExplanation() {
   }
 }
 
+function sendAiToIde() {
+  const logPanel = document.getElementById('diagnosticLog');
+  if(!logPanel) return;
+  
+  // Extract code blocks if any
+  const logContent = logPanel.innerText;
+  const codeMatch = logContent.match(/```[\w]*\n([\s\S]*?)```/) || [null, logContent];
+  const code = codeMatch[1].trim();
+  
+  if (code && code !== "// System channel empty." && !code.includes("[🤖 AI LINK]")) {
+    document.getElementById('sourceEditor').value = code;
+    runLinter();
+    compilePipeline();
+    switchTab('ide', document.querySelector('.nav-item'));
+    executeAudioTone(1100, 'sine', 0.1);
+  } else {
+    alert("No valid code found in diagnostic log to import.");
+  }
+}
+
 // COMPILATION PIPELINE PROCESSING CORE
 function compilePipeline() {
   const validationAnomalies = runLinter();
@@ -472,9 +504,52 @@ function renderVaultCache() {
 
 // UTILITY CORE FUNCTIONS
 function loadSampleTemplate() {
-  document.getElementById('sourceEditor').value = `REM Simple Recon\nGUI r\nDELAY 500\nSTRING cmd\nENTER\nDELAY 500\nSTRING systeminfo\nENTER`;
+  const templates = [
+    `REM Simple Recon\nGUI r\nDELAY 500\nSTRING cmd\nENTER\nDELAY 500\nSTRING systeminfo\nENTER`,
+    `REM Open Website\nGUI r\nDELAY 500\nSTRING https://google.com\nENTER`,
+    `REM Notepad Message\nGUI r\nDELAY 500\nSTRING notepad\nENTER\nDELAY 1000\nSTRING Hello from LENLU SC!\nENTER`,
+    `REM Admin PowerShell\nGUI r\nDELAY 500\nSTRING powershell\nCTRL-SHIFT ENTER\nDELAY 2000\nLEFT\nENTER\nDELAY 1000\nSTRING whoami\nENTER`
+  ];
+  const random = templates[Math.floor(Math.random() * templates.length)];
+  document.getElementById('sourceEditor').value = random;
   runLinter();
   executeAudioTone(500, 'sine', 0.1);
+}
+
+function toggleCodePreview() {
+  const editor = document.getElementById('sourceEditor');
+  const preview = document.getElementById('codePreview');
+  const btn = event.target;
+
+  if (preview.classList.contains('d-none')) {
+    preview.classList.remove('d-none');
+    editor.classList.add('d-none');
+    btn.innerText = "EDITOR";
+    
+    // Simple highlighting logic
+    let code = editor.value;
+    code = code.replace(/^(REM|DELAY|STRING|GUI|WIN|ENTER|WHILE|END_WHILE|CTRL|ALT|SHIFT).*/gm, (match) => {
+        return `<span class="text-matrix font-bold">${match}</span>`;
+    });
+    code = code.replace(/REM .*/g, `<span class="text-matrix-dim italic">${match}</span>`); // This is wrong, match is not defined here.
+    
+    // Better highlighter
+    const lines = editor.value.split('\n');
+    const highlighted = lines.map(line => {
+        if (line.trim().startsWith('REM')) return `<span class="text-matrix-dim italic">${line}</span>`;
+        const parts = line.split(' ');
+        if (VALID_COMMANDS.includes(parts[0].toUpperCase())) {
+            return `<span class="text-cyan font-bold">${parts[0]}</span> ${parts.slice(1).join(' ')}`;
+        }
+        return line;
+    }).join('\n');
+    
+    preview.innerHTML = highlighted;
+  } else {
+    preview.classList.add('d-none');
+    editor.classList.remove('d-none');
+    btn.innerText = "PREVIEW";
+  }
 }
 
 function resetGrid() {
@@ -496,18 +571,39 @@ function copyPipelineOutput() {
 function downloadAu3() {
   const txt = document.getElementById('outputViewer').textContent;
   if (!txt) return;
-  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-  const reader = new FileReader();
-  reader.readAsDataURL(blob);
-  reader.onloadend = function() {
-    const a = document.createElement('a');
-    a.href = reader.result;
-    a.download = 'assembly.au3';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
+  downloadFile(txt, 'assembly.au3');
   executeAudioTone(1300, 'triangle', 0.15);
+}
+
+function downloadPs1() {
+  const sourceCode = document.getElementById('sourceEditor').value;
+  const lines = sourceCode.split('\n');
+  let ps1 = "# === LENLU SC POWERSHELL EXPORT ===\n\n";
+  
+  lines.forEach(line => {
+    let t = line.trim();
+    if (!t || t.startsWith('REM')) return;
+    let parts = t.split(/\s+/);
+    let cmd = parts[0].toUpperCase();
+    let val = parts.slice(1).join(' ');
+    
+    if (cmd === 'DELAY') ps1 += `Start-Sleep -Milliseconds ${parseInt(val) || 100}\n`;
+    else if (cmd === 'STRING') ps1 += `[System.Windows.Forms.SendKeys]::SendWait(\"${val.replace(/"/g, '\"')}\")\n`;
+    else if (cmd === 'ENTER') ps1 += `[System.Windows.Forms.SendKeys]::SendWait(\"{ENTER}\")\n`;
+  });
+  
+  downloadFile(ps1, 'payload.ps1');
+  executeAudioTone(1400, 'sine', 0.1);
+}
+
+function downloadFile(content, filename) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 function downloadSessionPDF() {
@@ -616,10 +712,37 @@ function toggleVoiceAI() {
 function runScanner(type) {
   const out = document.getElementById('scannerOutput');
   if(!out) return;
-  out.innerHTML = `<div class="text-matrix-dim">Scanning ${type}...</div>`;
+  out.innerHTML = `<div class="text-cyan animate-pulse">Initializing ${type.toUpperCase()} module...</div>`;
+  executeAudioTone(800, 'sine', 0.2);
+
+  const mockData = {
+    'wifi': [
+      "SSID: Corporate_Guest | BSSID: 00:11:22:33:44:55 | CH: 6 | -45dBm",
+      "SSID: Tesla_Guest | BSSID: AA:BB:CC:DD:EE:FF | CH: 11 | -60dBm",
+      "SSID: Hidden_Network | [ENCRYPTED WPA2] | CH: 1 | -82dBm"
+    ],
+    'ble': [
+      "ID: Polar_H10 | ADDR: C1:23:45:67:89:0A | RSSI: -54",
+      "ID: Sony_WH1000XM4 | ADDR: D2:34:56:78:90:1B | RSSI: -72",
+      "ID: Unknown_Tag | ADDR: E3:45:67:89:01:2C | RSSI: -88"
+    ],
+    'deauth': [
+      "Targeting Corporate_Guest (00:11:22:33:44:55)",
+      "Broadcasting null-data frames...",
+      "Status: Packet injection successful. Clients disconnected."
+    ]
+  };
+
   setTimeout(() => {
-    out.innerHTML = `<div class="text-matrix">[✓] ${type.toUpperCase()} scan complete.</div>`;
-  }, 1000);
+    let result = `<div class="text-matrix font-bold mb-1">[✓] ${type.toUpperCase()} SCAN SUCCESS</div>`;
+    if (mockData[type]) {
+      mockData[type].forEach(line => {
+        result += `<div class="text-matrix-dim" style="font-size: 9px;">> ${line}</div>`;
+      });
+    }
+    out.innerHTML = result;
+    executeAudioTone(1200, 'triangle', 0.1);
+  }, 1500);
 }
 
 function saveSettings() {

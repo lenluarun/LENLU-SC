@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0fc99351-1d95-4baf-896a-203c9a2e0b56" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-hdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-hdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-mdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-mdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-xhdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-xhdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-xxhdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-xxhdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-xxxhdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-land-xxxhdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-hdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-hdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-mdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-mdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-xhdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-xhdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-xxhdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-xxhdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-xxxhdpi/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable-port-xxxhdpi/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/drawable/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/android/variables.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/apk/android/variables.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/aar_main_jar/debug/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/aar_main_jar/debug/classes.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/compile_library_classes_jar/debug/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/compile_library_classes_jar/debug/classes.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/Bridge.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/Bridge.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/BridgeWebChromeClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/BridgeWebChromeClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/FileUtils$Type.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/FileUtils$Type.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/JSObject.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/JSObject.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/MessageHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/MessageHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/PermissionState.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/PermissionState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/Plugin.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/Plugin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/PluginCall$PluginCallDataTypeException.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/PluginCall$PluginCallDataTypeException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/ServerPath$PathType.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/ServerPath$PathType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/WebViewLocalServer$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/WebViewLocalServer$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/cordova/MockCordovaWebViewImpl$CapacitorEvalBridgeMode.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/cordova/MockCordovaWebViewImpl$CapacitorEvalBridgeMode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/cordova/MockCordovaWebViewImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/cordova/MockCordovaWebViewImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/CapacitorCookies.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/CapacitorCookies.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/CapacitorHttp$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/CapacitorHttp$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/HttpRequestHandler$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/HttpRequestHandler$ResponseType.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/HttpRequestHandler$ResponseType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/HttpRequestHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/HttpRequestHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/MimeType.class" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/javac/debug/classes/com/getcapacitor/plugin/util/MimeType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/runtime_library_classes_jar/debug/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/intermediates/runtime_library_classes_jar/debug/classes.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/outputs/aar/capacitor-android-debug.aar" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/outputs/aar/capacitor-android-debug.aar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/apk/node_modules/@capacitor/android/capacitor/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/public/compiler.js" beforeDir="false" afterPath="$PROJECT_DIR$/apk/public/compiler.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/apk/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apk/public/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/apk/public/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3DzsFUFE7qM7jkoFtHZP9w8frm4" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;AnalyzeApkAction.lastApkPath&quot;: &quot;C:/Users/arune/Downloads/LENLU-SC.apk&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/arune/OneDrive/Documents/github_f/code convetor&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;device.mirroring&quot;
+  }
+}</component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0fc99351-1d95-4baf-896a-203c9a2e0b56" name="Changes" comment="" />
+      <created>1779296129067</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779296129067</updated>
+    </task>
+    <servers />
+  </component>
+</project>

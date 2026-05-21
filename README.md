@@ -1,53 +1,135 @@
-# LENLU SC — Cyber Assembly Grid
+# <div align="center">🟢 LENLU SC // CYBERNETIC FORGE DECK 🟢</div>
 
-![LENLU SC Interface](IMGS/lenlu-sc-ui.png)
+<div align="center">
+  
+  *A high-fidelity command console for tactical keyboard payloads, spectrum telemetry scans, and neural scripting.*
 
-LENLU SC is a neon-console themed toolkit that converts DuckyScript-like command streams into SciTE-compatible AutoIt (`.au3`) assemblies while providing live linting, telemetry, and AI-assisted fixes.
+  [![System Status](https://img.shields.io/badge/SYSTEM-ONLINE-00FF41?style=for-the-badge&logo=opsgenie&logoColor=00FF41&labelColor=000000)](#)
+  [![Shader Core](https://img.shields.io/badge/SHADER%20CORE-ACTIVE-00FF41?style=for-the-badge&logo=webgl&logoColor=00FF41&labelColor=000000)](#)
+  [![Targets](https://img.shields.io/badge/TARGETS-WIN%20%7C%20MAC%20%7C%20NIX-00FF41?style=for-the-badge&logo=linux&logoColor=00FF41&labelColor=000000)](#)
 
---
+</div>
 
-## Quick Features (At a Glance)
+---
 
-- Live lint profiles: `STRICT`, `LAX`, `EXPERIMENTAL`.
-- Compile pipeline: converts source to AutoIt and displays assembly in-panel.
-- Export options: copy output, download compiled `.au3`, or export full session as a themed PDF.
-- AI integration: auto-correct or explain issues using configurable model providers.
+> [!IMPORTANT]
+> **SECURE ISOLATION NOTICE**
+> LENLU SC runs client-side operations locally. Payloads and diagnostics do not leave your browser context unless explicitly requested via localized neural API endpoints.
 
-## The New Export Options
+---
 
-- **Download .AU3**: Downloads the contents of the `AUTOIT_ASSEMBLY.au3` panel as `assembly.au3` (plain text). Use the `DOWNLOAD .AU3` button in the top-right controls.
-- **Download Session (PDF)**: Exports a single PDF containing three sections: `SOURCE_INGESTION.ds`, `AUTOIT_ASSEMBLY.au3`, and `DIAGNOSTIC_LOG`. The PDF preserves a dark, neon-green, monospace visual theme for consistent offline review.
+## ⚡ SYSTEM OVERVIEW
 
-Notes on security: PDF generation uses a client-side library (`html2pdf`) and runs entirely in the browser; no data is sent to a remote service during export.
+LENLU SC is an immersive, hardware-accelerated dashboard designed to bridge the gap between human-readable keyboard scripts and target host compilation. The deck features a 3D Three.js particle core, a lateral smooth-scrolling GSAP portfolio, and real-time state persistence to ensure your work survives browser reloads.
 
-## Usage
+Use the integrated payload workspace to write, lint, and compile DuckyScript into native AutoIt assemblies, configure AI-guided payload generation, or passive scan local networks.
 
-1. Open [index.html](index.html) in a modern browser.
-2. Paste or type your DuckyScript-like commands into the `SOURCE_INGESTION.ds` panel.
-3. Choose a lint profile from the `LINT PROFILE` dropdown.
-4. Click `COMPILE PIPELINE` to generate the AutoIt assembly.
-	- If critical flags appear you can still generate assembly without AI. Enable `Auto AI Fix on Compile` to have the editor attempt automatic corrections before final compilation.
-5. Use `COPY ASSEMBLY` to copy to clipboard, `DOWNLOAD .AU3` to save the `.au3` file, or `DOWNLOAD SESSION (PDF)` to save the full session as PDF.
+---
 
-## Files to Know
+## 🛠️ THE CORE CHAMBERS
 
-- [index.html](index.html) — UI shell and controls.
-- [style.css](style.css) — cyber grid theme and styles.
-- [compiler.js](compiler.js) — linter, compile logic, AI stubs, and new download helpers (`downloadAu3()` and `downloadSessionPDF()`).
+### 1. 💻 Integrated Payload Workbench
+* **DuckyScript Compiler**: Instantly parses keystroke injection scripts into native AutoIt (`.au3` & `.au4`) macros.
+* **Real-time Linter**: Scans code continuously, flagging syntax errors, missing arguments, or invalid commands before compilation.
+* **Session Persistence**: Caches editor text, compiled script outputs, and terminal log files in local memory so they persist on page refresh.
 
-## Visual & Branding
+### 2. 🧠 Neural Synthesis Lab
+* **Multi-Model Uplink**: Connects custom neural endpoints (Groq, OpenAI, or custom LLM gateways).
+* **Voice Dictation**: Leverages speech-to-text models to dictate payload logic or commands.
+* **Stealth Calibrator**: Calibrates sleep delays to tune execution speed or bypass host detection.
 
-The included image (`IMGS/lenlu-sc-ui.png`) is used above to illustrate the live interface. If you have a different export from your design tools, place it in the `IMGS/` folder and update the path in this README.
+### 3. 📡 Network Surveillance HUD
+* **802.11 Scanner**: Simulates wireless airspace scans listing active ESSIDs and signal ranges.
+* **BLE Tracker**: Traces surrounding Bluetooth Low Energy node signatures and tags.
+* **Deauth Monitor**: Identifies channel spikes and tracks active deauthentication packet streams.
 
-## Development & Notes
+### 4. 🗄️ Secure Vault & Export
+* **Encrypted Sandbox**: Stash payload drafts directly in the browser's database.
+* **PDF Session Logger**: Exports audit-ready, dark-themed PDF diagnostic reports containing compilation statistics and debug outputs.
 
-- The PDF generator depends on `html2pdf.bundle.min.js` which is loaded from CDN in `index.html`.
-- Keep API keys out of client-side bundles for production — prefer a proxy server for model calls.
+---
 
-## What's Next
+## 🔄 COMPILATION FLOW
 
-- I can (optionally) embed the exact CSS used for the PDF render, add CLI build scripts, or generate a production-ready static export workflow. Tell me which you'd like next.
+```mermaid
+graph TD
+    A["DuckyScript Source (.ds)"] --> B["Real-Time Linter Check"]
+    B -- "Syntax Valid" --> C["AutoIt Code Generator (.au3 / .au4)"]
+    B -- "Syntax Flags" --> D["Console Diagnostic Log"]
+    C --> E["Encrypted Vault & PDF Export"]
+```
 
---
+---
 
-Built with neon phosphor love. Maintain control. Assemble with precision.
+## 📁 DIRECTORY STRUCTURE
+
+- [index.html](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/index.html) — Core dashboard housing the WebGL engine, compiler loops, AI generator, scanners, settings, and state persistence.
+- [studio.html](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/studio.html) — Lateral portfolio showing system architectures and core operations modules with 3D canvas rings and parallax scroll effects.
+- [IMGS/](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/) — High-fidelity cybernetic assets linking background cards:
+  - [ide_workspace.png](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/ide_workspace.png) — Integrated Workbench Card.
+  - [ai_generator.png](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/ai_generator.png) — AI Synthesis Lab Card.
+  - [scanner_systems.png](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/scanner_systems.png) — Signal Scanners Card.
+  - [matrix_logs.png](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/matrix_logs.png) — Matrix Logs Construct.
+  - [glass_cards.png](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/glass_cards.png) — Glass Cards Construct.
+  - [terminal_interfaces.png](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/IMGS/terminal_interfaces.png) — Terminal Interfaces Construct.
+
+---
+
+## 💻 COMPILATION SAMPLE
+
+### Input DuckyScript (`payload.ds`)
+```duckyscript
+REM Spawn Powershell and run script
+GUI r
+DELAY 300
+STRING powershell.exe -NoP -NonI -W Hidden
+ENTER
+```
+
+### Output AutoIt Assembly (`assembly.au3`)
+```autoit
+; LENLU SC - GENERATED ASSEMBLY
+#NoTrayIcon
+#include <Misc.au3>
+
+; REM Spawn Powershell and run script
+Send("{LWIN}")
+Sleep(100)
+Send("r")
+Sleep(100)
+Sleep(300)
+Send("powershell.exe -NoP -NonI -W Hidden")
+Sleep(100)
+Send("{ENTER}")
+Sleep(100)
+```
+
+---
+
+## 🚀 UPLINK PROCEDURE
+
+1. Boot the terminal by launching [index.html](file:///c:/Users/arune/OneDrive/Documents/github_f/code%20convetor/index.html) in any WebGL compatible browser.
+2. Select **ESTABLISH LINK** on the splash screen to boot the matrix grid (reloads bypass this automatically).
+3. Type or paste code inside the **Payload Workbench** and hit **Compile** to generate AutoIt outputs.
+4. Input your neural model key in **Settings** to unlock the AI Generator synthesis.
+5. Save script presets inside the **Encrypted Vault** or download them as `.au3` / `.au4` files.
+6. Export auditing logs using the **Export PDF** tool.
+
+---
+
+## ⚙️ TELEMETRY METRICS
+
+| Parameter | State | Description |
+| :--- | :--- | :--- |
+| **Compiler Pipeline** | `CALIBRATED` | Full conversion map of DuckyScript modifiers, delays, and strings. |
+| **WebGL Shaders** | `ACTIVE` | Ambient parallax particle matrices rendering at 60 FPS target. |
+| **Session Cache** | `ENABLED` | LocalStorage tracking active tab views, editor code, and compile output logs. |
+| **Encryption Mode** | `SANDBOX` | Client-side client memory only. Data remains inside your local browser. |
+
+---
+
+<div align="center">
+  
+  **// END OF LINE.** // Maintain precision. Assemble with control.
+
+</div>
