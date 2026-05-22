@@ -1,15 +1,18 @@
 package com.example.lenlusc
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.webkit.JavascriptInterface
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,17 +24,29 @@ class MainActivity : AppCompatActivity() {
         
         // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        // You can hide status bar if needed, but user said "below the notification status bar"
-        // so we'll just handle the insets.
+        
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode = android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
         
         webView = WebView(this)
         setContentView(webView)
 
+        // Handle Back button
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         val settings = webView.settings
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
-        settings.databaseEnabled = true
         settings.allowFileAccess = true
         settings.allowContentAccess = true
         settings.loadWithOverviewMode = true
@@ -44,8 +59,7 @@ class MainActivity : AppCompatActivity() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                // Inject some CSS to handle padding for the notch/status bar if needed
-                // But the HTML already has some mobile-first enhancements.
+                injectStatusHeight()
             }
         }
 
@@ -54,27 +68,52 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl("file:///android_asset/index.html")
     }
 
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
+    private fun injectStatusHeight() {
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+            val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            val density = resources.displayMetrics.density
+            val topInsetDp = statusBarInsets.top / density
+            webView.evaluateJavascript("document.documentElement.style.setProperty('--status-bar-height', '${topInsetDp}px');", null)
+            insets
         }
+        // Force an inset dispatch
+        ViewCompat.requestApplyInsets(window.decorView)
     }
 
     class WebAppInterface(private val activity: MainActivity) {
-        @JavascriptInterface
-        fun runNativeScan(type: String) {
-            // Here we would implement real Android scanning
-            // For now, we can callback to JS with results or just log
-            activity.runOnUiThread {
-                // Example: activity.webView.loadUrl("javascript:onNativeScanResult('$type', '...')")
-            }
-        }
         
         @JavascriptInterface
-        fun playNativeSound(freq: Int, duration: Int) {
-            // Implementation for native sound if needed
+        fun runNativeScan(type: String) {
+            // Placeholder for native scan logic
+        }
+
+        @JavascriptInterface
+        fun openUrl(url: String) {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                activity.runOnUiThread {
+                    Toast.makeText(activity, "Could not open link", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        @JavascriptInterface
+        fun sendEmail(subject: String, body: String) {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf("lenluarun@gmail.com"))
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_TEXT, body)
+            }
+            try {
+                activity.startActivity(Intent.createChooser(intent, "Send Email via..."))
+            } catch (e: Exception) {
+                activity.runOnUiThread {
+                    Toast.makeText(activity, "No email client found", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }

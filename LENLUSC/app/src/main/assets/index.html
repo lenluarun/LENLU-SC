@@ -47,6 +47,7 @@
        FORGE V2 — DESIGN SYSTEM
     ========================================= */
     :root {
+      --status-bar-height: 0px;
       --g: #00ff41;
       --g2: #00c831;
       --g-dim: #007a20;
@@ -79,6 +80,7 @@
     html { scroll-behavior:smooth; }
 
     body {
+      padding-top: 0;
       background: var(--base);
       color: var(--white);
       font-family: var(--font-mono);
@@ -163,44 +165,93 @@
     }
     #app.visible { opacity:1; }
 
-    /* ── Top Nav ── */
+    /* ── Side Nav ── */
+    .side-nav {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100vh;
+      background: rgba(1, 4, 2, 0.95);
+      backdrop-filter: blur(30px);
+      border-right: 1px solid var(--gbord);
+      z-index: 10000;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      padding: calc(var(--status-bar-height) + 1.5rem) 1.2rem 1.5rem;
+    }
+    .side-nav.open { left: 0; box-shadow: 20px 0 80px rgba(0,0,0,0.8), 5px 0 30px rgba(0,255,65,0.1); }
+
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .nav-overlay.open { opacity: 1; visibility: visible; }
+
     .top-nav {
-      position:sticky; top:0; z-index:500;
-      padding:.75rem clamp(1rem,3vw,2rem);
-      background:rgba(1,4,2,.82);
-      backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--gbord);
-      box-shadow:0 1px 0 rgba(0,255,65,0.06), 0 8px 40px rgba(0,0,0,.6);
-      display:flex; justify-content:space-between; align-items:center; gap:1rem;
+      position: sticky;
+      top: 0;
+      padding-top: var(--status-bar-height);
+      z-index: 500;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(1,4,2,0.4) 100%);
+      border-bottom: 1px solid rgba(0,255,65,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      height: calc(var(--status-bar-height) + 50px);
     }
-    .brand {
-      font-family:var(--font-display); font-size:1.2rem; font-weight:900;
-      letter-spacing:.12em; color:var(--white);
-      text-shadow:0 0 16px rgba(0,255,65,.6);
-      display:flex; align-items:center; gap:.7rem; white-space:nowrap;
-    }
-    .brand-dot { width:8px; height:8px; border-radius:50%; background:var(--g); box-shadow:0 0 12px var(--g); animation:blink 2s step-end infinite; }
-    @keyframes blink { 50%{opacity:0} }
-    .brand-version { font-size:.58rem; color:var(--g-dim); letter-spacing:.2em; border-left:1px solid var(--gbord); padding-left:.7rem; margin-left:.2rem; }
 
-    .nav-tabs { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .menu-toggle {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--g);
+      font-size: 1.4rem;
+      cursor: pointer;
+      background: rgba(0,255,65,0.05);
+      border: 1px solid var(--gbord);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .menu-toggle:hover { background: var(--g-dark); box-shadow: 0 0 15px rgba(0,255,65,0.3); }
+
+    .nav-tabs {
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 2rem;
+      width: 100%;
+    }
     .nav-btn {
-      background:transparent; border:1px solid transparent;
-      color:var(--muted); font-family:var(--font-mono); font-size:.72rem;
-      padding:.45rem .9rem; border-radius:3px; cursor:pointer;
-      letter-spacing:.1em; text-transform:uppercase;
-      transition:all var(--dur) var(--ease); white-space:nowrap;
-      display:flex; align-items:center; gap:.4rem;
+      width: 100%;
+      justify-content: flex-start;
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+      border: 1px solid transparent;
+      background: rgba(255,255,255,0.02);
     }
-    .nav-btn:hover { color:var(--g); border-color:var(--gbord); background:rgba(0,255,65,.06); }
-    .nav-btn.active { color:#000; background:linear-gradient(180deg,#b3ffc3,var(--g)); border-color:var(--g); box-shadow:0 0 18px rgba(0,255,65,.35); }
-    .nav-status { display:flex; align-items:center; gap:.75rem; font-size:.7rem; color:var(--muted); }
-    .status-dot { width:6px; height:6px; border-radius:50%; }
-    .status-dot.ok { background:var(--g); box-shadow:0 0 8px var(--g); animation:blink 3s step-end infinite; }
-    .status-dot.warn { background:var(--amber); box-shadow:0 0 8px var(--amber); }
-    .status-dot.err { background:var(--red); box-shadow:0 0 8px var(--red); }
+    .nav-btn i { width: 24px; font-size: 1.1rem; }
 
-    /* ── Main ── */
+    .side-nav-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gbord);
+    }
+
+    .brand {
+      font-size: 1rem;
+    }
+
     .main {
       flex:1; overflow-y:auto; position:relative; z-index:20;
     }
@@ -720,9 +771,20 @@
   <!-- Top Nav -->
   <nav class="top-nav">
     <div class="brand">
-      <img src="IMGS/logo_nav_bar.png" alt="LENLU SC Logo" style="height:28px; width:auto; object-fit:contain; filter:drop-shadow(0 0 8px rgba(0,255,65,0.6)); margin-right:4px;" />
+      <img src="IMGS/logo_nav_bar.png" alt="LENLU SC Logo" style="height:24px; width:auto; object-fit:contain; filter:drop-shadow(0 0 8px rgba(0,255,65,0.6)); margin-right:6px;" />
       LENLU SC
-      <span class="brand-version">v2.0 FORGE</span>
+    </div>
+    <div class="menu-toggle" onclick="toggleNav()">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+
+  <!-- Side Nav -->
+  <div class="nav-overlay" id="navOverlay" onclick="toggleNav()"></div>
+  <aside class="side-nav" id="sideNav">
+    <div class="brand mb-md">
+      <img src="IMGS/logo_nav_bar.png" alt="Logo" style="height:20px;" />
+      LENLU SC <span class="brand-version" style="border:none; padding:0; margin-left:4px;">v2.0</span>
     </div>
     <div class="nav-tabs" id="navTabs">
       <button class="nav-btn active" data-view="studio" onclick="switchView('studio',this)"><i class="fas fa-cubes"></i>Studio</button>
@@ -735,12 +797,16 @@
       <button class="nav-btn" data-view="terminal" onclick="switchView('terminal',this)"><i class="fas fa-code"></i>Shell</button>
       <button class="nav-btn" data-view="settings" onclick="switchView('settings',this)"><i class="fas fa-sliders-h"></i>Settings</button>
     </div>
-    <div class="nav-status">
-      <div class="status-dot ok"></div>
-      <span id="sysTime">--:--:--</span>
-      <span id="compileCount" style="color:var(--g);font-family:var(--font-display);font-size:.7rem">0 ops</span>
+    <div class="side-nav-footer">
+      <div class="nav-status" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="flex items-center gap-sm">
+          <div class="status-dot ok"></div>
+          <span id="sysTime">--:--:--</span>
+        </div>
+        <span id="compileCount" style="color:var(--g);font-family:var(--font-display);font-size:.6rem">0 ops</span>
+      </div>
     </div>
-  </nav>
+  </aside>
 
   <!-- Main Content -->
   <div class="main">
@@ -762,11 +828,6 @@
                         <span class="relative z-10">Initialize System</span>
                         <div class="absolute inset-0 h-full w-0 bg-matrix-glow transition-all duration-300 ease-out group-hover:w-full z-0"></div>
                     </button>
-                    <a href="https://github.com/lenluarun/LENLU-SC/raw/main/LENLUSC.apk" download="LENLUSC.apk" class="relative px-8 py-4 bg-transparent border border-matrix-glow text-matrix-glow font-mono text-sm uppercase tracking-widest hover:bg-matrix-glow hover:text-black transition-all duration-300 overflow-hidden group cursor-pointer flex items-center gap-2">
-                        <i class="fab fa-android"></i>
-                        <span class="relative z-10">LENLU-SC-Android</span>
-                        <div class="absolute inset-0 h-full w-0 bg-matrix-glow transition-all duration-300 ease-out group-hover:w-full z-0"></div>
-                    </a>
                     <div class="font-mono text-xs text-gray-600 flex items-center gap-2">
                         <i class="fa-solid fa-lock"></i> Connection Encrypted [256-bit]
                     </div>
@@ -943,9 +1004,14 @@
                     <!-- Terminal Body -->
                     <div class="p-8 font-mono text-sm">
                         <p class="text-matrix-glow mb-6">> INITIATING SECURE HANDSHAKE...</p>
-                        <p class="text-gray-400 mb-8">> ENTER PARAMETERS BELOW TO TRANSMIT DATA PACKET.</p>
+                        <p class="text-gray-400 mb-4">> ENTER PARAMETERS BELOW TO TRANSMIT DATA PACKET.</p>
                         
-                        <form class="space-y-6" onsubmit="event.preventDefault(); document.getElementById('studio-terminal-response').innerText = '> TRANSMISSION SUCCESSFUL. DATA ENCRYPTED AND STORED.';">
+                        <div class="flex gap-4 mb-8">
+                            <button onclick="if(window.AndroidInterface) AndroidInterface.openUrl('https://instagram.com/lenlu_arun')" class="btn btn-ghost btn-xs"><i class="fab fa-instagram"></i> Instagram</button>
+                            <button onclick="if(window.AndroidInterface) AndroidInterface.openUrl('mailto:lenluarun@gmail.com')" class="btn btn-ghost btn-xs"><i class="fas fa-envelope"></i> Email</button>
+                        </div>
+
+                        <form class="space-y-6" onsubmit="event.preventDefault(); transmitData(this);">
                             <div class="flex flex-col md:flex-row gap-4">
                                 <div class="flex-1">
                                     <label class="block text-matrix-glow/70 text-xs mb-2">> IDENTIFIER [NAME]</label>
@@ -1363,6 +1429,8 @@
                 <div class="sr-left"><div class="sr-title">Audio Feedback</div><div class="sr-desc">Tone generation on interactions</div></div>
                 <div class="toggle on" id="tog-audio" onclick="toggleSetting('audio',this)"></div>
               </div>
+              <hr>
+              <button class="btn btn-cyan w100" onclick="if(window.AndroidInterface) AndroidInterface.openUrl('https://github.com/lenluarun/LENLU-SC/tree/main/LENLUSC')"><i class="fas fa-sync"></i> Check for App Updates</button>
             </div>
           </div>
 
@@ -1520,6 +1588,14 @@ function logFeed(msg, cls='tl-sys') {
   feed.scrollTop = feed.scrollHeight;
 }
 
+function toggleNav() {
+  const sn = document.getElementById('sideNav');
+  const ov = document.getElementById('navOverlay');
+  sn.classList.toggle('open');
+  ov.classList.toggle('open');
+  playTone(sn.classList.contains('open') ? 660 : 440, 'sine', 0.05);
+}
+
 // ── View Switch ──
 function switchView(id, btn) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1531,6 +1607,12 @@ function switchView(id, btn) {
   if(m) m.scrollTop = 0;
   S.currentView = id;
   playTone(660,'sine',0.06);
+
+  // Close side nav on view switch
+  const sn = document.getElementById('sideNav');
+  const ov = document.getElementById('navOverlay');
+  if(sn.classList.contains('open')) { sn.classList.remove('open'); ov.classList.remove('open'); }
+
   if(id==='vault') renderVault();
   if(id==='history') renderHistory();
   if(id==='terminal') document.getElementById('shellInput').focus();
@@ -2055,6 +2137,9 @@ function rndMAC(){return Array.from({length:6},()=>Math.floor(Math.random()*256)
 function rndIP(){return Array.from({length:4},()=>Math.floor(Math.random()*254)+1).join('.')}
 
 function runScan(type) {
+  if (window.AndroidInterface) {
+    window.AndroidInterface.runNativeScan(type);
+  }
   if(S.scanActive) return;
   S.scanActive = true;
   const out = document.getElementById('scanOutput');
@@ -2128,6 +2213,9 @@ function simulateAI(msg) {
 }
 
 function addChatMsg(text, role) {
+  if (role === 'ai') {
+    playTone(660, 'sine', 0.2, 0.05); // Play a sound when AI responds
+  }
   const container = document.getElementById('chatMessages');
   const el = document.createElement('div');
   el.className = `msg ${role}`;
@@ -2680,6 +2768,25 @@ window.addEventListener('DOMContentLoaded',()=>{
   buildAITags();
   document.getElementById('sessionId') && (document.getElementById('sessionId').textContent = S.sessionId);
 });
+
+function transmitData(form) {
+  const name = form.querySelector('input[type="text"]').value;
+  const email = form.querySelector('input[type="email"]').value;
+  const message = form.querySelector('textarea').value;
+  const subject = `LENLU SC TRANSMISSION: From ${name}`;
+  const body = `Identifier: ${name}\nNode Address: ${email}\n\nPayload:\n${message}\n\n---\nSent from LENLU SC App`;
+
+  if (window.AndroidInterface) {
+    window.AndroidInterface.sendEmail(subject, body);
+    document.getElementById('studio-terminal-response').innerText = '> TRANSMISSION HANDOFF TO SYSTEM CORE SUCCESSFUL.';
+  } else {
+    document.getElementById('studio-terminal-response').innerText = '> ERROR: SYSTEM LINK NOT FOUND. FALLBACK TO CONSOLE.';
+    console.log(subject, body);
+  }
+}
 </script>
+<div style="position:fixed; bottom:8px; left:50%; transform:translateX(-50%); z-index:99999; font-family:var(--font-mono); font-size:9px; color:var(--g); pointer-events:none; opacity:0.4; text-transform:uppercase; letter-spacing:3px; text-shadow: 0 0 5px var(--g);">
+  [ Made by ARUNESH // @lenlu_arun ]
+</div>
 </body>
 </html>
