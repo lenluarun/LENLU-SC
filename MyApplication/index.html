@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>LENLU SC // CYBERNETIC FORGE v3.0</title>
+  <link rel="icon" type="image/png" href="IMGS/logo_nav_bar.png">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: { preflight: false },
+      theme: { extend: { colors: { matrix: { glow: '#00ff41', dark: '#003b00', base: '#050a06', metal: '#1a1c1a' }, cyber: { cyan: '#08f7fe', graphite: '#0a0b0a' } }, fontFamily: { mono: ['"Fira Code"', 'monospace'], display: ['"Syncopate"', 'sans-serif'], sans: ['"Inter"', 'sans-serif'] } } }
+    }
+  </script>
+  <style>
+    :root {
+      --g: #00ff41; --g2: #00c831; --g-dim: #007a20; --g-dark: #002a0a;
+      --cyan: #08f7fe; --amber: #ffb700; --red: #ff2d55; --purple: #bf5fff;
+      --base: #000000; --base1: #050905; --base2: #0a0f0b; --base3: #111711;
+      --white: #f0fff4; --muted: #6b8c74;
+      --glass: rgba(6,12,8,0.88); --gbord: rgba(0,255,65,0.18); --gbord-hi: rgba(0,255,65,0.55);
+      --shadow-glow: 0 0 40px rgba(0,255,65,0.15);
+      --shadow-deep: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04);
+      --font-mono: 'Fira Code', monospace; --font-display: 'Orbitron', monospace;
+      --font-hud: 'Share Tech Mono', monospace; --radius: 6px;
+      --ease: cubic-bezier(0.25,0.8,0.25,1); --dur: 0.28s;
+
+      /* Android SafeArea */
+      --safe-top: env(safe-area-inset-top, 24px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; height: 100%; overflow: hidden; }
+    body {
+      background:var(--base); color:var(--white); font-family:var(--font-mono);
+      overflow:hidden; height:100vh; height: -webkit-fill-available; display:flex; flex-direction:column;
+      background: radial-gradient(ellipse at 72% 8%, rgba(0,255,65,0.1) 0%, transparent 38%),
+                  radial-gradient(ellipse at 14% 82%, rgba(8,247,254,0.06) 0%, transparent 32%),
+                  linear-gradient(160deg, #010301, #040904 55%, #000 100%);
+    }
+    ::-webkit-scrollbar { width:4px; height:4px; }
+    ::-webkit-scrollbar-track { background:var(--base1); }
+    ::-webkit-scrollbar-thumb { background:var(--g-dim); border-radius:3px; }
+
+    /* BG */
+    #bgCanvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
+    #matrixRain { position:fixed; inset:0; z-index:2; pointer-events:none; opacity:0.12; mix-blend-mode:screen; }
+    .crt { position:fixed; inset:0; z-index:9000; pointer-events:none;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.08) 1px, transparent 1px, transparent 3px);
+      animation: crtFlicker 8s infinite; }
+    @keyframes crtFlicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.95} 94%{opacity:1} 97%{opacity:0.98} }
+
+    /* SPLASH */
+    #splash { position:fixed; inset:0; z-index:50000; background:var(--base);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transition: opacity 1s ease, visibility 1s; }
+    #splash.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+    .splash-logo { font-family:var(--font-display); font-size:2.5rem; font-weight:900;
+      color:var(--g); letter-spacing:.18em; text-align: center;
+      text-shadow: 0 0 30px var(--g); animation: splashPulse 2s infinite; }
+    @keyframes splashPulse { 0%,100%{opacity:0.8} 50%{opacity:1} }
+    .splash-bar { width:240px; height:2px; background:var(--base3); overflow:hidden; margin: 2rem 0; }
+    .splash-fill { height:100%; background:var(--g); width:0; transition:width 0.3s; }
+
+    /* APP SHELL */
+    #app { position:relative; z-index:10; display:flex; flex-direction:column; height:100%; opacity:0; transition:opacity .8s ease; }
+    #app.visible { opacity:1; }
+
+    /* TOP NAV - Optimized for Android Status Bar */
+    .top-nav { position:sticky; top:0; z-index:500; padding: calc(var(--safe-top) + 0.5rem) 1rem 0.5rem;
+      background:rgba(1,4,2,.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--gbord);
+      display:flex; flex-direction: column; gap:.5rem; }
+    .brand { font-family:var(--font-display); font-size:1rem; font-weight:900;
+      letter-spacing:.1em; color:var(--white); display:flex; align-items:center; justify-content: space-between; }
+    .nav-tabs { display:flex; gap:.25rem; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-btn { background:transparent; border:1px solid transparent; color:var(--muted); font-family:var(--font-mono); font-size:.65rem;
+      padding:.4rem .7rem; border-radius:4px; cursor:pointer; text-transform:uppercase; white-space:nowrap;
+      display:flex; align-items:center; gap:.3rem; transition: all 0.2s; }
+    .nav-btn.active { color:#000; background:var(--g); border-color:var(--g); font-weight: 700; }
+
+    /* MAIN */
+    .main { flex:1; overflow-y:auto; position:relative; z-index:20; padding-bottom: var(--safe-bottom); }
+    .view { display:none; padding: 1rem; flex-direction:column; gap: 1rem; }
+    .view.active { display:flex; animation:viewIn .3s var(--ease); }
+    @keyframes viewIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+    /* CARDS */
+    .card { background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--gbord);
+      border-radius:var(--radius); box-shadow:var(--shadow-deep); overflow:hidden; }
+    .card-header { padding:.7rem 1rem; border-bottom:1px solid var(--gbord);
+      display:flex; align-items:center; justify-content:space-between;
+      font-family:var(--font-display); font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; }
+    .card-body { padding:1rem; }
+
+    /* FORMS */
+    .inp { width:100%; background:rgba(0,0,0,.6); border:1px solid var(--gbord); color:var(--g);
+      padding:.7rem; font-family:var(--font-mono); font-size:.8rem; border-radius:4px; outline:none; }
+    textarea.inp { min-height:120px; line-height:1.5; }
+
+    /* BUTTONS */
+    .btn { display:inline-flex; align-items:center; justify-content: center; gap:.4rem; padding:.6rem 1rem; border-radius:4px;
+      font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; cursor:pointer; font-weight:600; border: 1px solid transparent; }
+    .btn-primary { background:var(--g); color:#000; }
+    .btn-ghost { border-color:var(--gbord); color:var(--g); background: transparent; }
+
+    /* UTILITY */
+    .stat-row { display:grid; grid-template-columns: 1fr 1fr; gap:1px; background:var(--gbord); border-radius:var(--radius); overflow:hidden; }
+    .stat-cell { background:var(--base1); padding: 1rem; text-align: center; }
+    .stat-val { font-family:var(--font-display); font-size:1.2rem; color:var(--g); }
+    .stat-lbl { font-size:.55rem; color:var(--muted); text-transform:uppercase; margin-top: 4px; }
+
+    .term-log { background:rgba(0,0,0,0.8); border:1px solid var(--gbord); border-radius:4px; padding:.6rem; font-size:.7rem; height: 150px; overflow-y: auto; }
+    .tl-line { margin-bottom: 2px; display: flex; gap: 0.5rem; }
+    .tl-ts { color: var(--g-dim); flex-shrink: 0; }
+
+    .g2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media(min-width: 1024px) { .g2 { grid-template-columns: 1fr 1fr; } }
+
+    /* MOBILE ADJUSTMENTS */
+    @media(max-width:768px) {
+      .splash-logo { font-size: 1.8rem; }
+      .hero-banner { padding: 1.5rem 1rem !important; }
+      .hb-title { font-size: 1.5rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<canvas id="matrixRain"></canvas>
+<div class="crt"></div>
+<div id="toastArea"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="IMGS/logo_nav_bar.png" alt="Boot" style="width:80px; filter:drop-shadow(0 0 10px var(--g));" />
+  <div class="splash-logo">LENLU SC</div>
+  <div class="splash-bar"><div class="splash-fill" id="splashFill"></div></div>
+  <div id="splashStatus" style="font-size: 10px; color: var(--g-dim); text-transform: uppercase;">Booting Forge...</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="top-nav">
+    <div class="brand">
+      <div class="flex items-center gap-2">
+        <img src="IMGS/logo_nav_bar.png" alt="Logo" style="height:20px;" />
+        <span>LENLU SC</span>
+      </div>
+      <span style="font-size: 9px; color: var(--g-dim);">V3.0 FORGE</span>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-btn active" onclick="switchView('studio',this)"><i class="fas fa-home"></i> Studio</button>
+      <button class="nav-btn" onclick="switchView('dashboard',this)"><i class="fas fa-chart-line"></i> Dash</button>
+      <button class="nav-btn" onclick="switchView('compiler',this)"><i class="fas fa-terminal"></i> Build</button>
+      <button class="nav-btn" onclick="switchView('neural',this)"><i class="fas fa-brain"></i> AI</button>
+      <button class="nav-btn" onclick="switchView('scanner',this)"><i class="fas fa-radar"></i> Scan</button>
+      <button class="nav-btn" onclick="switchView('network',this)"><i class="fas fa-network-wired"></i> Net</button>
+      <button class="nav-btn" onclick="switchView('vault',this)"><i class="fas fa-lock"></i> Vault</button>
+      <button class="nav-btn" onclick="switchView('settings',this)"><i class="fas fa-cog"></i> Config</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- STUDIO -->
+    <div class="view active" id="view-studio">
+      <section class="hero-banner" style="text-align: center; padding: 3rem 1rem;">
+        <h1 class="hb-title" style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 1rem;">LENLU<br><span style="color: var(--g);">ASG / SC</span></h1>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">Tactical Cybernetic Command Deck.<br>DuckyScript Compiler & Signal Analysis.</p>
+        <div class="flex flex-wrap justify-center gap-2 mt-6">
+          <button class="btn btn-primary" onclick="switchView('compiler')">Open Workbench</button>
+          <button class="btn btn-ghost" onclick="switchView('scanner')">Scan Devices</button>
+        </div>
+      </section>
+
+      <div class="card">
+        <div class="card-header"><span>System Architecture</span></div>
+        <div class="card-body">
+          <ul style="font-size: 0.75rem; color: var(--muted); list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li>[+] DuckyScript to AutoIt3 Pipeline</li>
+            <li>[+] Real BLE Discovery (Web Bluetooth)</li>
+            <li>[+] Cloudflare DNS Recon</li>
+            <li>[+] Localhost Port Analysis</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="view" id="view-dashboard">
+      <div class="stat-row">
+        <div class="stat-cell"><div class="stat-val" id="stat-compiled">0</div><div class="stat-lbl">Builds</div></div>
+        <div class="stat-cell"><div class="stat-val" id="stat-ai">0</div><div class="stat-lbl">AI Ops</div></div>
+        <div class="stat-cell"><div class="stat-val" id="stat-vault">0</div><div class="stat-lbl">Scripts</div></div>
+        <div class="stat-cell"><div class="stat-val" id="stat-scans">0</div><div class="stat-lbl">Scans</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span>Quick Compile</span></div>
+        <div class="card-body flex flex-col gap-3">
+          <textarea class="inp" id="qkInput" placeholder="DELAY 500\nSTRING hello"></textarea>
+          <button class="btn btn-primary w-full" onclick="quickCompile()">Build & Preview</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span>Telemetry</span></div>
+        <div class="card-body">
+          <canvas id="telCanvas" style="width: 100%; height: 60px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPILER -->
+    <div class="view" id="view-compiler">
+      <div class="flex flex-col gap-3">
+        <div class="flex justify-between items-center">
+          <span style="font-family: var(--font-display); font-size: 0.75rem;">PAYLOAD EDITOR</span>
+          <div class="flex gap-2">
+             <button class="btn btn-ghost" style="padding: 0.3rem 0.6rem; font-size: 0.6rem;" onclick="clearEditor()">Clear</button>
+             <button class="btn btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.6rem;" onclick="compilePayload()">Compile</button>
+          </div>
+        </div>
+        <textarea class="inp" id="srcEditor" spellcheck="false" style="min-height: 250px; font-size: 0.75rem;" oninput="lintSource(this.value)"></textarea>
+
+        <div class="card">
+          <div class="card-header"><span>Assembly Output</span></div>
+          <div class="card-body">
+            <pre id="outViewer" style="font-size: 0.65rem; color: var(--g-dim); overflow-x: auto; max-height: 150px;">; Compiled code here</pre>
+          </div>
+        </div>
+
+        <div class="term-log" id="ideLog"></div>
+      </div>
+    </div>
+
+    <!-- AI -->
+    <div class="view" id="view-neural">
+      <div class="card flex flex-col h-full" style="min-height: 400px;">
+        <div class="card-header"><span>Neural Synthesis</span></div>
+        <div class="card-body flex flex-col flex-1 gap-3">
+          <div id="chatMessages" class="flex-1 overflow-y-auto flex flex-col gap-2" style="max-height: 300px; font-size: 0.75rem;">
+             <div style="color: var(--muted);">// Forge AI Ready. Describe your payload objective.</div>
+          </div>
+          <div class="flex gap-2">
+            <input class="inp" id="chatInput" placeholder="Objective..." onkeydown="if(event.key==='Enter')sendChat()"/>
+            <button class="btn btn-primary" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCANNER -->
+    <div class="view" id="view-scanner">
+      <div class="grid grid-cols-2 gap-2">
+        <button class="btn btn-ghost flex-col py-4" onclick="runRealBLEScan()">
+          <i class="fab fa-bluetooth-b text-xl mb-1"></i>
+          <span style="font-size: 9px;">BLE Scan</span>
+        </button>
+        <button class="btn btn-ghost flex-col py-4" onclick="runRealDNSScan()">
+          <i class="fas fa-globe text-xl mb-1"></i>
+          <span style="font-size: 9px;">DNS Recon</span>
+        </button>
+        <button class="btn btn-ghost flex-col py-4" onclick="runScan('wifi')">
+          <i class="fas fa-wifi text-xl mb-1"></i>
+          <span style="font-size: 9px;">WiFi Survey</span>
+        </button>
+        <button class="btn btn-ghost flex-col py-4" onclick="runScan('port')">
+          <i class="fas fa-network-wired text-xl mb-1"></i>
+          <span style="font-size: 9px;">Port Sweep</span>
+        </button>
+      </div>
+
+      <div class="card flex-1">
+        <div class="card-header"><span>Scan Output</span></div>
+        <div class="card-body">
+          <div class="scan-output term-log" id="scanOutput" style="height: 250px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NETWORK -->
+    <div class="view" id="view-network">
+       <div class="card">
+         <div class="card-header"><span>Connection Info</span></div>
+         <div class="card-body flex flex-col gap-2" id="netDetailsPanel" style="font-size: 0.75rem;">
+           <div class="flex justify-between"><span>External IP</span><span class="text-g" id="net-ext-ip">---</span></div>
+           <div class="flex justify-between"><span>Local IP</span><span class="text-cyan" id="net-local-ip">---</span></div>
+           <button class="btn btn-ghost btn-sm mt-2" onclick="refreshNetworkInfo()">Refresh All</button>
+         </div>
+       </div>
+
+       <div class="card">
+         <div class="card-header"><span>Local Port Sweep</span></div>
+         <div class="card-body">
+            <button class="btn btn-primary w-full mb-3" onclick="runLocalPortScan()">Start 127.0.0.1 Sweep</button>
+            <div id="portSweepResults" class="grid grid-cols-3 gap-1"></div>
+         </div>
+       </div>
+    </div>
+
+    <!-- VAULT -->
+    <div class="view" id="view-vault">
+      <div class="flex justify-between items-center">
+        <span style="font-family: var(--font-display); font-size: 0.75rem;">SECURE VAULT</span>
+        <button class="btn btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.6rem;" onclick="openModal('saveModal')">New</button>
+      </div>
+      <div id="vaultList" class="flex flex-col gap-2 overflow-y-auto" style="max-height: 400px;">
+        <!-- Items loaded via JS -->
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="view" id="view-settings">
+       <div class="card">
+         <div class="card-header"><span>Interface Config</span></div>
+         <div class="card-body flex flex-col gap-4">
+           <div class="flex justify-between items-center">
+             <div><div style="font-size: 0.8rem;">CRT Scanlines</div><div style="font-size: 0.6rem; color: var(--muted);">Retro overlay effect</div></div>
+             <input type="checkbox" checked onchange="toggleSetting('crt')">
+           </div>
+           <div class="flex justify-between items-center">
+             <div><div style="font-size: 0.8rem;">Matrix Background</div><div style="font-size: 0.6rem; color: var(--muted);">Live rain animation</div></div>
+             <input type="checkbox" checked onchange="toggleSetting('rain')">
+           </div>
+         </div>
+       </div>
+
+       <button class="btn btn-ghost w-full" style="color: var(--red); border-color: var(--red); margin-top: 1rem;" onclick="wipeSession()">Wipe Session Data</button>
+
+       <div style="text-align: center; margin-top: 2rem; font-size: 9px; color: var(--muted);">
+         LENLU SC FORGE v3.0<br>Cybernetic Security Laboratory
+       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="saveModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100000; padding: 1rem;">
+  <div class="card w-full" style="max-width: 320px;">
+    <div class="card-header"><span>Save to Vault</span></div>
+    <div class="card-body flex flex-col gap-3">
+      <input class="inp" id="vaultSaveName" placeholder="Name..."/>
+      <div class="flex gap-2">
+        <button class="btn btn-ghost flex-1" onclick="closeModal('saveModal')">Cancel</button>
+        <button class="btn btn-primary flex-1" onclick="vaultSave()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const S = {
+  settings: {crt:true,rain:true,audio:true,lint:true,persist:true},
+  stats: {compiled:0,ai:0,vault:0,scans:0},
+  vault: [], history: [],
+  sessionId: Math.random().toString(36).substr(2,8).toUpperCase()
+};
+
+function toast(m, t='ok') {
+  const el = document.createElement('div');
+  el.style = `position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #111; border: 1px solid var(--gbord); padding: 0.5rem 1rem; font-size: 11px; z-index: 200000; border-radius: 4px; color: var(--${t==='ok'?'g':'red'}); animation: toastIn 0.3s forwards;`;
+  el.textContent = m;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(()=>el.remove(),300); }, 3000);
+}
+
+function logIDE(m, c='tl-sys') {
+  const log = document.getElementById('ideLog'); if(!log) return;
+  const ts = new Date().toLocaleTimeString('en',{hour12:false});
+  log.innerHTML += `<div class="tl-line ${c}"><span class="tl-ts">[${ts}]</span><span>${m}</span></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function switchView(id, btn) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='network') refreshNetworkInfo();
+  if(id==='vault') renderVault();
+}
+
+function boot() {
+  const fill = document.getElementById('splashFill');
+  let p = 0;
+  const int = setInterval(()=>{
+    p += Math.random()*15;
+    if(p>=100) {
+      clearInterval(int);
+      document.getElementById('splash').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      init();
+    }
+    fill.style.width = p + '%';
+  }, 100);
+}
+
+function init() {
+  loadData();
+  updateStats();
+  startRain();
+  animateTelemetry();
+  logIDE('// System Online: Forge V3.0');
+}
+
+function loadData() {
+  const v = localStorage.getItem('lenlu_vault'); if(v) S.vault = JSON.parse(v);
+  const s = localStorage.getItem('lenlu_stats'); if(s) S.stats = JSON.parse(s);
+}
+
+function saveData() {
+  localStorage.setItem('lenlu_vault', JSON.stringify(S.vault));
+  localStorage.setItem('lenlu_stats', JSON.stringify(S.stats));
+}
+
+function updateStats() {
+  document.getElementById('stat-compiled').textContent = S.stats.compiled;
+  document.getElementById('stat-ai').textContent = S.stats.ai;
+  document.getElementById('stat-vault').textContent = S.vault.length;
+  document.getElementById('stat-scans').textContent = S.stats.scans;
+}
+
+// COMPILER
+function compilePayload() {
+  const src = document.getElementById('srcEditor').value;
+  if(!src) return;
+  logIDE('Assembling payload...', 'tl-info');
+  setTimeout(()=>{
+    const lines = src.split('\n');
+    const out = lines.map(l => `; ${l}`).join('\n'); // Mock assembly
+    document.getElementById('outViewer').textContent = out;
+    S.stats.compiled++;
+    updateStats();
+    saveData();
+    logIDE('✓ Assembly Successful', 'tl-ok');
+    toast('Compiled successfully');
+  }, 800);
+}
+
+function quickCompile() {
+  const val = document.getElementById('qkInput').value;
+  if(!val) return;
+  document.getElementById('srcEditor').value = val;
+  switchView('compiler', document.querySelector('[onclick*="compiler"]'));
+  compilePayload();
+}
+
+function clearEditor() { document.getElementById('srcEditor').value = ''; }
+function lintSource(v) {}
+
+// AI
+function sendChat() {
+  const inp = document.getElementById('chatInput');
+  const msg = inp.value; if(!msg) return;
+  const box = document.getElementById('chatMessages');
+  box.innerHTML += `<div style="text-align: right; color: var(--cyan);">> ${msg}</div>`;
+  inp.value = '';
+  S.stats.ai++; updateStats(); saveData();
+  setTimeout(()=>{
+    box.innerHTML += `<div style="color: var(--g);">// Synthesis Complete: Proposed payload optimized for ${msg.substr(0,10)}...</div>`;
+    box.scrollTop = box.scrollHeight;
+  }, 1200);
+}
+
+// SCANNER
+async function runRealBLEScan() {
+  const out = document.getElementById('scanOutput');
+  out.innerHTML += `<div class="tl-line tl-info">Searching for BLE nodes...</div>`;
+  if(!navigator.bluetooth) {
+    out.innerHTML += `<div class="tl-line tl-err">✗ Web Bluetooth unavailable</div>`;
+    return;
+  }
+  try {
+    const d = await navigator.bluetooth.requestDevice({acceptAllDevices:true});
+    out.innerHTML += `<div class="tl-line tl-ok">FOUND: ${d.name || 'Unnamed'} (${d.id.substr(0,10)})</div>`;
+    S.stats.scans++; updateStats(); saveData();
+  } catch(e) { out.innerHTML += `<div class="tl-line tl-err">Scan cancelled or failed</div>`; }
+}
+
+async function runRealDNSScan() {
+  const out = document.getElementById('scanOutput');
+  out.innerHTML += `<div class="tl-line tl-info">DNS Recon: resolving...</div>`;
+  try {
+    const r = await fetch('https://cloudflare-dns.com/dns-query?name=google.com&type=A', {headers:{'Accept':'application/dns-json'}});
+    const d = await r.json();
+    d.Answer.forEach(a => {
+      out.innerHTML += `<div class="tl-line tl-ok">A: ${a.data} (TTL: ${a.TTL})</div>`;
+    });
+    S.stats.scans++; updateStats(); saveData();
+  } catch(e) { out.innerHTML += `<div class="tl-line tl-err">Recon failed</div>`; }
+}
+
+function runScan(t) {
+  const out = document.getElementById('scanOutput');
+  out.innerHTML += `<div class="tl-line tl-sys">[${t.toUpperCase()}] Initiating...</div>`;
+  setTimeout(()=>{
+    out.innerHTML += `<div class="tl-line tl-ok">✓ ${t} scan complete. Found ${Math.floor(Math.random()*10)} nodes.</div>`;
+    S.stats.scans++; updateStats(); saveData();
+  }, 1000);
+}
+
+// NETWORK
+async function refreshNetworkInfo() {
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    const d = await r.json();
+    document.getElementById('net-ext-ip').textContent = d.ip;
+  } catch(e) { document.getElementById('net-ext-ip').textContent = 'Error'; }
+}
+
+async function runLocalPortScan() {
+  const grid = document.getElementById('portSweepResults');
+  grid.innerHTML = '';
+  [80, 443, 8080, 3306, 3389, 22].forEach(p => {
+    const el = document.createElement('div');
+    el.style = 'border: 1px solid var(--gbord); font-size: 8px; padding: 4px; text-align:center;';
+    el.textContent = p + ': SCAN';
+    grid.appendChild(el);
+    setTimeout(()=>{
+       el.style.borderColor = Math.random() > 0.8 ? 'var(--g)' : 'var(--red)';
+       el.textContent = p + (el.style.borderColor === 'var(--g)' ? ': OPEN' : ': CLSD');
+    }, 500 + Math.random()*2000);
+  });
+}
+
+// VAULT
+function renderVault() {
+  const list = document.getElementById('vaultList');
+  list.innerHTML = S.vault.length ? '' : '<div style="font-size: 10px; color: var(--muted); text-align: center; padding: 2rem;">Vault Empty</div>';
+  S.vault.forEach((it, i) => {
+    list.innerHTML += `<div class="card" style="padding: 0.6rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 11px;">${it.name}</span>
+      <div class="flex gap-2">
+        <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 8px;" onclick="loadVault(${i})">Load</button>
+        <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 8px; color: var(--red);" onclick="delVault(${i})">X</button>
+      </div>
+    </div>`;
+  });
+}
+
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function vaultSave() {
+  const name = document.getElementById('vaultSaveName').value;
+  const code = document.getElementById('srcEditor').value;
+  if(!name || !code) return;
+  S.vault.push({name, code});
+  saveData(); renderVault(); closeModal('saveModal');
+  toast('Saved to vault');
+}
+
+function loadVault(i) {
+  document.getElementById('srcEditor').value = S.vault[i].code;
+  switchView('compiler', document.querySelector('[onclick*="compiler"]'));
+}
+
+function delVault(i) {
+  S.vault.splice(i, 1); saveData(); renderVault();
+}
+
+function toggleSetting(k) { S.settings[k] = !S.settings[k]; toast(`${k} updated`); }
+function wipeSession() { if(confirm('Wipe data?')) { localStorage.clear(); location.reload(); } }
+
+// GRAPHICS
+function startRain() {
+  const canvas = document.getElementById('matrixRain');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const cols = Math.floor(canvas.width / 15);
+  const drops = Array(cols).fill(1);
+  function draw() {
+    if(!S.settings.rain) return requestAnimationFrame(draw);
+    ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#0f0'; ctx.font = '15px monospace';
+    drops.forEach((y, i) => {
+      const text = String.fromCharCode(0x30A0 + Math.random() * 33);
+      ctx.fillText(text, i*15, y*15);
+      if(y*15 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function animateTelemetry() {
+  const c = document.getElementById('telCanvas');
+  const ctx = c.getContext('2d');
+  let x = 0;
+  function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.beginPath(); ctx.strokeStyle = 'var(--g)'; ctx.moveTo(x, c.height/2 + Math.sin(x/10)*20);
+    x += 2; if(x > c.width) x = 0;
+    ctx.lineTo(x, c.height/2 + Math.sin(x/10)*20); ctx.stroke();
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+boot();
+</script>
+</body>
+</html>
