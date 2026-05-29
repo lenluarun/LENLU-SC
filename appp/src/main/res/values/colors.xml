@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF010302</color>
+    <color name="base2">#070d08</color>
+    <color name="white">#e8fff0</color>
     <color name="matrix_green">#00FF41</color>
+    <color name="matrix_green_dim">#007a20</color>
+    <color name="matrix_green_alpha">#2200FF41</color>
+    <color name="cyan">#08f7fe</color>
+    <color name="muted">#4a6b54</color>
 </resources>

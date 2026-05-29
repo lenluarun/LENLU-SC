@@ -53,7 +53,8 @@
       }
       .top-nav {
         height: var(--nav-h) !important;
-        background: rgba(1, 3, 2, 0.98) !important;
+        background: transparent !important;
+        backdrop-filter: blur(8px) !important;
         border-bottom: 1px solid var(--gbord) !important;
         justify-content: flex-start !important;
         padding: 0 12px !important;
@@ -82,8 +83,7 @@
         padding-bottom: calc(var(--bottom-nav-h) + 30px) !important;
       }
       .hamburger {
-        display: block !important;
-        margin-right: 2px;
+        display: none !important;
       }
     }
 
@@ -128,14 +128,13 @@
       left: 0;
     }
     .drawer-header {
-      padding: 20px;
+      padding: 5px;
       border-bottom: 1px solid var(--gbord);
       display: flex;
       align-items: center;
-      gap: 12px;
     }
     .drawer-logo {
-      height: 35px;
+      height: 50px;
     }
     .drawer-content {
       flex: 1;
@@ -705,8 +704,8 @@
       z-index: 500;
       height: var(--nav-h);
       padding: 0 clamp(.7rem, 2vw, 1.4rem);
-      background: rgba(1, 3, 2, .97);
-      backdrop-filter: blur(32px) saturate(180%);
+      background: transparent;
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--gbord);
       box-shadow: 0 1px 0 rgba(0, 255, 65, .04), 0 8px 40px rgba(0, 0, 0, .8);
       display: flex;
@@ -727,6 +726,13 @@
       text-shadow: 0 0 18px rgba(0, 255, 65, .45);
       white-space: nowrap;
       flex-shrink: 0
+    }
+    .brand img {
+      cursor: pointer;
+      transition: filter 0.28s var(--ease);
+    }
+    .brand img:hover {
+      filter: drop-shadow(0 0 8px var(--g));
     }
 
     .brand-logo {
@@ -1079,38 +1085,7 @@
       }
     }
 
-    @media(max-width:1100px) {
-      .top-nav {
-        height: auto;
-        min-height: var(--nav-h);
-        padding-top: .55rem;
-        padding-bottom: .65rem;
-        align-items: flex-start
-      }
-
-      .brand {
-        width: 100%;
-        justify-content: space-between
-      }
-
-      .nav-div {
-        display: none
-      }
-
-      .nav-tabs {
-        order: 3;
-        flex: 1 1 100%;
-        width: 100%;
-        padding-top: .15rem
-      }
-
-      .nav-status {
-        order: 4;
-        width: 100%;
-        justify-content: space-between;
-        padding-top: .2rem
-      }
-    }
+    /* Media query for top-nav removed since header only contains brand logo and name */
 
     @media(max-width:720px) {
       .brand {
@@ -2701,6 +2676,99 @@
       text-overflow: ellipsis;
       white-space: nowrap
     }
+
+    /* CUSTOM SELECT */
+    .custom-select-container {
+      position: relative;
+      width: 100%;
+      user-select: none;
+    }
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: rgba(0, 0, 0, .7);
+      border: 1px solid var(--gbord);
+      color: var(--g);
+      padding: .6rem .8rem;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      border-radius: 3px;
+      cursor: pointer;
+      outline: none;
+      transition: all var(--dur) var(--ease);
+    }
+    .custom-select-trigger:hover {
+      border-color: var(--g);
+      box-shadow: 0 0 8px rgba(0, 255, 65, .15);
+    }
+    .custom-select-container.open .custom-select-trigger {
+      border-color: var(--g);
+      box-shadow: 0 0 12px rgba(0, 255, 65, .2), inset 0 0 20px rgba(0, 255, 65, .04);
+    }
+    .custom-select-trigger i {
+      font-size: .75rem;
+      transition: transform var(--dur) var(--ease);
+      color: var(--g-dim);
+    }
+    .custom-select-container.open .custom-select-trigger i {
+      transform: rotate(180deg);
+      color: var(--g);
+    }
+    .custom-select-options {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: rgba(6, 12, 8, .98);
+      border: 1px solid var(--g);
+      border-radius: 3px;
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .8), 0 0 15px rgba(0, 255, 65, .1);
+      display: none;
+      flex-direction: column;
+      animation: selectFadeIn .18s var(--ease);
+    }
+    .custom-select-container.open .custom-select-options {
+      display: flex;
+    }
+    .custom-option {
+      padding: .55rem .8rem;
+      font-family: var(--font-mono);
+      font-size: .76rem;
+      color: var(--white);
+      cursor: pointer;
+      transition: all var(--dur) var(--ease);
+      border-bottom: 1px solid rgba(0, 255, 65, .05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .custom-option:last-child {
+      border-bottom: none;
+    }
+    .custom-option:hover {
+      background: var(--g-dark);
+      color: var(--g);
+      padding-left: .95rem;
+    }
+    .custom-option.selected {
+      background: rgba(0, 255, 65, .12);
+      color: var(--g);
+    }
+    .custom-option.selected::after {
+      content: '✓';
+      font-size: .7rem;
+      color: var(--g);
+      text-shadow: 0 0 5px var(--g);
+    }
+    @keyframes selectFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -2780,6 +2848,38 @@
     </div>
   </div>
 
+  <!-- MODAL: APK & CONTACT INFO -->
+  <div class="modal-overlay" id="modal-contact">
+    <div class="modal" style="max-width:480px">
+      <div class="modal-header">
+        <span><i class="fab fa-android" style="color:var(--g);margin-right:.45rem"></i>LENLU SC Mobile App</span>
+        <button class="btn btn-ghost btn-xs" onclick="closeModal('modal-contact')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:0.75rem;padding:1.2rem;font-family:var(--font-ui);font-size:0.9rem;line-height:1.5;">
+        <div style="text-align:center;margin-bottom:0.5rem;">
+          <i class="fab fa-android" style="font-size:2.5rem;color:var(--g);text-shadow:0 0 10px var(--g);"></i>
+        </div>
+        <p style="color:var(--white);">To obtain the Android mobile application (APK), please get in touch with the developer directly.</p>
+        
+        <div style="border:1px solid var(--gbord);background:rgba(0,255,65,0.04);padding:0.75rem;border-radius:4px;font-family:var(--font-mono);font-size:0.75rem;display:flex;flex-direction:column;gap:0.35rem;">
+          <div style="color:var(--muted);text-transform:uppercase;font-family:var(--font-hud);font-size:0.6rem;letter-spacing:1px;">Developer Info</div>
+          <div><span style="color:var(--g);">Name:</span> Arunesh</div>
+          <div><span style="color:var(--g);">Contact:</span> lenluarun@gmail.com</div>
+          <div><span style="color:var(--g);">Instagram:</span> @lenlu_arun</div>
+        </div>
+
+        <p style="color:var(--white);font-size:0.8rem;opacity:0.9;">Click the button below to send a Direct Message (DM) on Instagram to the administrator and request the app.</p>
+        
+        <a href="https://instagram.com/direct/t/lenlu_arun" target="_blank" class="btn btn-primary" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.5rem;font-family:var(--font-display);font-size:0.75rem;letter-spacing:1px;padding:0.65rem 0;" onclick="closeModal('modal-contact')">
+          <i class="fab fa-instagram"></i> DM ON INSTAGRAM
+        </a>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-contact')">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SPLASH -->
   <div id="splash">
     <div class="sp-bg"></div>
@@ -2787,7 +2887,7 @@
     <div class="sp-content">
       <img src="IMGS/boot_loading.png" class="sp-img" alt="Loading">
       <div class="sp-logo">LENLU SC</div>
-      <div class="sp-sub">∥ CYBERNETIC FORGE v4.0 ∥ BLACKBOX EDITION ∥</div>
+      <div class="sp-sub">∥ Developer : Arunesh ∥ V1.1.0 ∥</div>
       <div style="font-family:var(--font-hud); font-size: 0.6rem; color: var(--g-dim); letter-spacing: 0.2em; margin-bottom: 1.5rem; text-transform: uppercase;">
         Developed by Arunesh | @lenlu_arun
       </div>
@@ -2803,46 +2903,9 @@
   <!-- APP -->
   <div id="app">
     <nav class="top-nav">
-      <div class="hamburger" onclick="toggleDrawer()"><i class="fas fa-bars"></i></div>
       <div class="brand">
-        <img src="IMGS/logo_nav_bar.png" style="height:28px; object-fit:contain" alt="Logo">
+        <img src="IMGS/logo_nav_bar.png" style="height:28px; object-fit:contain;" alt="Logo" onclick="toggleDrawer()">
         <span>LENLU SC</span>
-      </div>
-      <div class="nav-div"></div>
-      <div class="nav-tabs">
-        <button class="nav-btn active" data-view="home" onclick="switchView('home',this)"><i
-            class="fas fa-home"></i>Home</button>
-        <button class="nav-btn" data-view="dashboard" onclick="switchView('dashboard',this)"><i
-            class="fas fa-tachometer-alt"></i>Dashboard</button>
-        <button class="nav-btn" data-view="compiler" onclick="switchView('compiler',this)"><i
-            class="fas fa-code"></i>IDE</button>
-        <button class="nav-btn" data-view="neural" onclick="switchView('neural',this)"><i
-            class="fas fa-robot"></i>Neural</button>
-        <button class="nav-btn" data-view="scanner" onclick="switchView('scanner',this)"><i
-            class="fas fa-broadcast-tower"></i>Scanner</button>
-        <button class="nav-btn" data-view="network" onclick="switchView('network',this)"><i
-            class="fas fa-network-wired"></i>Network</button>
-        <button class="nav-btn" data-view="encoder" onclick="switchView('encoder',this)"><i
-            class="fas fa-lock"></i>Encoder</button>
-        <button class="nav-btn" data-view="keymap" onclick="switchView('keymap',this)"><i
-            class="fas fa-keyboard"></i>Keymap<span class="nav-badge">NEW</span></button>
-        <button class="nav-btn" data-view="osint" onclick="switchView('osint',this)"><i
-            class="fas fa-fingerprint"></i>OSINT<span class="nav-badge">NEW</span></button>
-        <button class="nav-btn" data-view="vault" onclick="switchView('vault',this)"><i
-            class="fas fa-shield-alt"></i>Vault</button>
-        <button class="nav-btn" data-view="history" onclick="switchView('history',this)"><i
-            class="fas fa-history"></i>History</button>
-        <button class="nav-btn" data-view="terminal" onclick="switchView('terminal',this)"><i
-            class="fas fa-terminal"></i>Shell</button>
-        <button class="nav-btn" data-view="settings" onclick="switchView('settings',this)"><i
-            class="fas fa-cog"></i>Config</button>
-      </div>
-      <div class="nav-status">
-        <div class="flex items-center gap-sm">
-          <div class="s-dot ok"></div><span>ONLINE</span>
-        </div>
-        <div class="nav-div"></div>
-        <div class="nav-clock" id="navClock">--:--:--</div>
       </div>
     </nav>
 
@@ -2851,10 +2914,10 @@
     <div class="drawer" id="sideDrawer">
       <div class="drawer-header" style="flex-direction: column; align-items: flex-start; gap: 8px;">
         <div class="flex items-center gap-sm">
-          <img src="IMGS/logo_nav_bar.png" class="drawer-logo" alt="Logo">
+          <img src="IMGS/logo_nav_bar.png"  class="drawer-logo" alt="Logo">
           <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;letter-spacing:0.1em">LENLU SC</div>
         </div>
-        <div style="font-family:var(--font-ui); font-size: 0.75rem; color: var(--g); opacity: 0.8;">Developer: Arunesh</div>
+        <div style="font-family:var(--font-ui); font-size: 0.75rem; color: var(--g); opacity: 0.8;">Developer : Arunesh<br>Contact : lenluarun@gmail.com<br>Instagram : @lenlu_arun</div>
       </div>
       <div class="drawer-content">
         <a href="javascript:void(0)" class="drawer-item active" data-view="home" onclick="switchView('home',this);toggleDrawer()"><i class="fas fa-home"></i>Home</a>
@@ -2870,6 +2933,7 @@
         <a href="javascript:void(0)" class="drawer-item" data-view="history" onclick="switchView('history',this);toggleDrawer()"><i class="fas fa-history"></i>History</a>
         <a href="javascript:void(0)" class="drawer-item" data-view="terminal" onclick="switchView('terminal',this);toggleDrawer()"><i class="fas fa-terminal"></i>Shell</a>
         <a href="javascript:void(0)" class="drawer-item" data-view="settings" onclick="switchView('settings',this);toggleDrawer()"><i class="fas fa-cog"></i>Config</a>
+        <a href="javascript:void(0)" class="drawer-item" data-view="uipreview" onclick="switchView('uipreview',this);toggleDrawer()"><i class="fas fa-eye"></i>UI Lab</a>
       </div>
     </div>
 
@@ -2912,10 +2976,10 @@
           <div style="position:relative;z-index:1">
             <div
               style="font-family:var(--font-hud);font-size:.65rem;color:var(--g-dim);letter-spacing:.35em;text-transform:uppercase;margin-bottom:1rem;animation:fadeUp .6s ease .2s both">
-              // BLACKBOX EDITION // v4.0 // CLASSIFIED //</div>
+              // Developer : Arunesh // v1.1.0//</div>
             <div
               style="font-family:var(--font-display);font-size:clamp(2.8rem,9vw,6.5rem);font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--white);text-shadow:0 0 40px rgba(0,255,65,.28),0 0 80px rgba(0,255,65,.1);line-height:1;animation:glitch 10s ease-in-out infinite,fadeUp .6s ease .4s both">
-              BLACKBOX<br><span style="color:var(--g)">FORGE</span></div>
+              LENLU SC<br><span style="color:var(--g)">C-Edition</span></div>
             <div
               style="font-family:var(--font-display);font-size:clamp(.75rem,1.8vw,1.1rem);letter-spacing:.4em;color:var(--g-dim);text-transform:uppercase;margin:1rem 0 2.5rem;animation:fadeUp .6s ease .6s both">
               CYBERNETIC COMMAND CONSOLE</div>
@@ -3030,14 +3094,14 @@
       <div class="view" id="view-dashboard">
         <div class="hero-banner">
           <div class="hb-grid"></div>
-          <div class="hb-title">BLACKBOX <em>FORGE</em> v4.0</div>
+          <div class="hb-title">BLACKBOX <em>CYBER</em>Edition</div>
           <div class="hb-sub">Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE
             scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.</div>
           <div class="hb-tags">
             <span class="badge badge-g"><i class="fas fa-circle" style="font-size:.4rem"></i>System Online</span>
             <span class="badge badge-c">WebGL Active</span><span class="badge badge-a">Session Live</span>
             <span class="badge badge-p">Neural Ready</span><span class="badge badge-g">BLE API Ready</span><span
-              class="badge badge-h">v4.0</span>
+              class="badge badge-h">v1.1.0</span>
           </div>
         </div>
         <div class="stat-row">
@@ -3332,7 +3396,7 @@
               <div class="ai-chat" style="flex:1">
                 <div class="chat-messages" id="chatMessages">
                   <div class="msg ai">
-                    <div class="msg-bubble">// LENLU SC Neural Interface v4.0 online. Provide your objective and I will
+                    <div class="msg-bubble">// LENLU SC Neural Interface v1.1.0 online. Provide your objective and I will
                       synthesize a tactical DuckyScript payload or AutoIt3 assembly. API key required for live synthesis
                       — offline mode available.</div>
                     <div class="msg-meta">LENLU SC · System</div>
@@ -4202,7 +4266,7 @@
                 <div class="flex justify-between"><span class="text-muted">Instagram</span><span class="text-cyan">@lenlu_arun</span></div>
                 <div class="flex justify-between"><span class="text-muted">Email</span><span class="text-amber">lenluarun@gmail.com</span></div>
                 <hr>
-                <div class="flex justify-between"><span class="text-muted">Version</span><span class="text-g">v4.0
+                <div class="flex justify-between"><span class="text-muted">Version</span><span class="text-g">v1.1.0
                     FORGE</span></div>
                 <hr>
                 <div class="flex justify-between"><span class="text-muted">Compiler</span><span
@@ -4241,6 +4305,113 @@
                 <div class="flex justify-between"><code>Ctrl+Shift+O</code><span class="text-muted">OSINT panel</span>
                 </div>
                 <div class="flex justify-between"><code>F1</code><span class="text-muted">Dashboard</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI PREVIEW -->
+      <div class="view" id="view-uipreview">
+        <div class="flex items-center justify-between gap-md mb-sm" style="flex-wrap:wrap">
+          <div>
+            <div style="font-family:var(--font-display);font-size:.92rem;letter-spacing:.12em;color:var(--white)">
+              SYSTEM POPUPS &amp; OPTIONS LAB</div>
+            <div class="text-xs text-muted mt-sm">Preview, trigger, and test UI components in the unified cybernetic theme</div>
+          </div>
+        </div>
+        
+        <div class="g2">
+          <div class="flex-col gap-md">
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-window-restore ch-icon"></i>System Modals</span><span class="card-tag">POPUPS</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// Trigger the classification/blackbox overlay modals mapped inside the application.</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:.8rem;">
+                  <button class="btn btn-primary btn-sm" onclick="openModal('modal-save')"><i class="fas fa-lock"></i> Save to Vault</button>
+                  <button class="btn btn-cyan btn-sm" onclick="openModal('modal-import')"><i class="fas fa-file-import"></i> Import JSON</button>
+                  <button class="btn btn-amber btn-sm" onclick="openModal('modal-template')"><i class="fas fa-file-code"></i> Templates</button>
+                  <button class="btn btn-purple btn-sm" onclick="openModal('modal-snippet')"><i class="fas fa-puzzle-piece"></i> Snippets</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-bell ch-icon"></i>HUD Toast Notifications</span><span class="card-tag">SYSTEM</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// Test the dynamic, micro-animated toast popups that slide in from the bottom right.</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:.8rem;">
+                  <button class="btn btn-primary btn-sm" onclick="toast('Payload compile pipeline established.', 'ok')"><i class="fas fa-check-circle"></i> Success Toast</button>
+                  <button class="btn btn-red btn-sm" onclick="toast('Critical breach detected. Terminating connection.', 'err')"><i class="fas fa-times-circle"></i> Error Toast</button>
+                  <button class="btn btn-amber btn-sm" onclick="toast('High latency on port sweep.', 'warn')"><i class="fas fa-exclamation-triangle"></i> Warning Toast</button>
+                  <button class="btn btn-cyan btn-sm" onclick="toast('Syncing configuration variables...', 'info')"><i class="fas fa-info-circle"></i> Info Toast</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex-col gap-md">
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-list ch-icon"></i>Custom Cybernetic Option Selects</span><span class="card-tag">SELECTS</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// Fully custom HTML/CSS/JS dropdown widgets built to override ugly browser default option views.</p>
+                
+                <div class="inp-group">
+                  <label class="inp-label">Select Target Module</label>
+                  <div class="custom-select-container" id="customSelectModule">
+                    <div class="custom-select-trigger"><span>DuckyScript IDE</span><i class="fas fa-chevron-down"></i></div>
+                    <input type="hidden" id="customModuleVal" value="ide" />
+                    <div class="custom-select-options">
+                      <div class="custom-option selected" data-value="ide">DuckyScript IDE</div>
+                      <div class="custom-option" data-value="scanner">BLE Signal Scanner</div>
+                      <div class="custom-option" data-value="encoder">Payload Obfuscator</div>
+                      <div class="custom-option" data-value="osint">OSINT Fingerprinting</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="inp-group">
+                  <label class="inp-label">Select Encryption Obfuscation</label>
+                  <div class="custom-select-container" id="customSelectObfuscation">
+                    <div class="custom-select-trigger"><span>ROT13 + Base64</span><i class="fas fa-chevron-down"></i></div>
+                    <input type="hidden" id="customObfVal" value="rot13b64" />
+                    <div class="custom-select-options">
+                      <div class="custom-option" data-value="none">None (Plaintext)</div>
+                      <div class="custom-option" data-value="b64">Standard Base64</div>
+                      <div class="custom-option selected" data-value="rot13b64">ROT13 + Base64</div>
+                      <div class="custom-option" data-value="binary">Raw Binary Stream</div>
+                      <div class="custom-option" data-value="aes">AES-256 GCM (Classified)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-caret-square-down ch-icon"></i>Standard Select Components</span><span class="card-tag">STANDARD</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// The default styled HTML standard select dropdown menus used in other sub-panels.</p>
+                
+                <div class="inp-group">
+                  <label class="inp-label">Standard select (DNS query type)</label>
+                  <select class="inp" id="demoDnsSelect">
+                    <option>A (IPv4 Address)</option>
+                    <option>AAAA (IPv6 Address)</option>
+                    <option>MX (Mail Exchanger)</option>
+                    <option>TXT (Text Record)</option>
+                    <option>CNAME (Canonical Name)</option>
+                  </select>
+                </div>
+                
+                <div class="inp-group">
+                  <label class="inp-label">Standard select (LLM Gateway)</label>
+                  <select class="inp" id="demoLlmSelect">
+                    <option value="anthropic">Anthropic Claude</option>
+                    <option value="openai">OpenAI GPT</option>
+                    <option value="groq">Groq LLaMA</option>
+                    <option value="custom">Custom Endpoint</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -4310,6 +4481,7 @@
       document.getElementById('splash').classList.add('hidden');
       document.getElementById('app').classList.add('visible');
       initApp();
+      setTimeout(() => openModal('modal-contact'), 300);
     }
 
     // ─── INIT ───
@@ -4318,6 +4490,7 @@
       buildDuckRef(); loadSettings(); checkBLE(); checkWebGL();
       initTelemetry(); initShell(); initRevealObserver(); initHeroCanvas();
       loadAIConfig(); buildAITags(); renderVault(); renderHistory();
+      initCustomSelects();
       document.getElementById('sessionId').textContent = S.sessionId;
       document.getElementById('homeSessionId').textContent = S.sessionId;
       const initialView = (location.hash || '#home').replace('#', '').trim() || 'home';
@@ -4338,10 +4511,54 @@
       setTimeout(() => { refreshNetworkInfo(); runOSINT(); startActivityFeed(); }, 900);
     }
 
+    function initCustomSelects() {
+      document.querySelectorAll('.custom-select-container').forEach(container => {
+        const trigger = container.querySelector('.custom-select-trigger');
+        const triggerText = trigger.querySelector('span');
+        const optionsContainer = container.querySelector('.custom-select-options');
+        const options = container.querySelectorAll('.custom-option');
+        const hiddenInput = container.querySelector('input[type="hidden"]');
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          document.querySelectorAll('.custom-select-container').forEach(other => {
+            if (other !== container) other.classList.remove('open');
+          });
+          container.classList.toggle('open');
+          if (typeof playTone === 'function') playTone(600, 'sine', .03, .04);
+        });
+
+        options.forEach(opt => {
+          opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const val = opt.getAttribute('data-value');
+            const text = opt.childNodes[0].textContent.trim();
+            
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            
+            triggerText.textContent = text;
+            if (hiddenInput) {
+              hiddenInput.value = val;
+              hiddenInput.dispatchEvent(new Event('change'));
+            }
+            
+            container.classList.remove('open');
+            if (typeof playTone === 'function') playTone(880, 'sine', .05, .05);
+            if (typeof toast === 'function') toast(`Selected option: ${text}`, 'info');
+          });
+        });
+      });
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-container').forEach(c => c.classList.remove('open'));
+      });
+    }
+
     // ─── NAV CLOCK ───
     function startNavClock() {
       const el = document.getElementById('navClock');
-      const update = () => el.textContent = new Date().toTimeString().substr(0, 8);
+      const update = () => { if (el) el.textContent = new Date().toTimeString().substr(0, 8); };
       update(); setInterval(update, 1000);
       const t0 = Date.now();
       setInterval(() => {
@@ -4756,7 +4973,15 @@
     function exportAu3() { const v = document.getElementById('outViewer')?.textContent; if (!v || v.startsWith(';')) return toast('No assembly to export', 'warn'); downloadTxt(v, 'payload.au3'); }
     function exportIDELog() { const l = document.getElementById('ideLog'); if (l) downloadTxt(l.innerText, 'ide_log.txt'); }
     function exportShellLog() { const l = document.getElementById('shellOutput'); if (l) downloadTxt(l.innerText, 'shell_log.txt'); }
-    function downloadTxt(content, fn) { if (!content) return; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type: 'text/plain' })); a.download = fn; a.click(); toast('Downloaded ' + fn, 'ok'); }
+    function downloadTxt(content, fn) {
+      if (!content) return;
+      if (typeof Android !== 'undefined') {
+        Android.saveFile(fn, content);
+        toast('Exporting ' + fn + '...', 'info');
+        return;
+      }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type: 'text/plain' })); a.download = fn; a.click(); toast('Downloaded ' + fn, 'ok');
+    }
     function importFile(input) {
       const file = input.files[0]; if (!file) return;
       const reader = new FileReader();
@@ -4776,8 +5001,19 @@
       const zip = new JSZip();
       zip.file('payload.au3', au3); zip.file(`compile_${arch}.bat`, bat); zip.file('README.txt', readme);
       const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${name}_${arch}_package.zip`; a.click();
-      toast(`${arch.toUpperCase()} package downloaded`, 'ok');
+
+      if (typeof Android !== 'undefined') {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          const base64data = reader.result.split(',')[1];
+          Android.saveBinaryFile(`${name}_${arch}_package.zip`, base64data);
+        }
+        reader.readAsDataURL(blob);
+        toast(`Building ${arch.toUpperCase()} package...`, 'info');
+      } else {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${name}_${arch}_package.zip`; a.click();
+        toast(`${arch.toUpperCase()} package downloaded`, 'ok');
+      }
       addLog(document.getElementById('ideLog'), `EXE package built: ${arch.toUpperCase()}`, 'tl-ok');
     }
 
@@ -4984,10 +5220,83 @@
     }
     function sendMicToChat() { const t = document.getElementById('micOutput')?.textContent?.trim(); if (!t) return; document.getElementById('chatInput').value = t; sendChat(); }
 
+    // ─── ANDROID BRIDGE ───
+    function updateAndroidInfo() {
+      if (typeof Android === 'undefined') return;
+      try {
+        const info = JSON.parse(Android.getSystemInfo());
+        const infoHtml = `
+          <div class="flex justify-between"><span class="text-muted">Device</span><span class="text-g">${info.brand} ${info.model}</span></div>
+          <div class="flex justify-between"><span class="text-muted">Android Ver</span><span class="text-cyan">${info.android_ver} (SDK ${info.sdk_int})</span></div>
+          <div class="flex justify-between"><span class="text-muted">Memory</span><span class="text-amber">${info.avail_mem}MB / ${info.total_mem}MB</span></div>
+          <hr>
+        `;
+        const settPanel = document.querySelector('#view-settings .card-body.flex-col');
+        if (settPanel) {
+          const oldInfo = settPanel.querySelector('div:first-child');
+          if (oldInfo) oldInfo.insertAdjacentHTML('beforebegin', infoHtml);
+        }
+      } catch (e) { console.error("Android info error", e); }
+    }
+
+    window.onBleDeviceFoundBase64 = function(base64) {
+      try {
+        const json = atob(base64);
+        const device = JSON.parse(json);
+        const out = document.getElementById('scanOutput');
+        if (out) {
+          if (out.textContent.includes('BLE NATIVE SCAN STARTED')) out.textContent = '';
+          out.textContent += `\n[BLE DEVICE] ${device.name} | ${device.address} | RSSI: ${device.rssi}dBm`;
+          out.scrollTop = out.scrollHeight;
+          const count = document.getElementById('sc-ble');
+          if (count) count.textContent = parseInt(count.textContent) + 1;
+        }
+      } catch (e) { console.error("BLE decode error", e); }
+    };
+
+    window.onWifiScanResultBase64 = function(base64) {
+      try {
+        const json = atob(base64);
+        const results = JSON.parse(json);
+        const out = document.getElementById('scanOutput');
+        if (out) {
+          let text = `[WiFi Networks Detected - NATIVE]\n${'─'.repeat(50)}\n`;
+          results.forEach(r => {
+            text += `[+] SSID: ${r.ssid || '<Hidden>'} | BSSID: ${r.bssid} | Signal: ${r.level}dBm | Freq: ${r.frequency}MHz\n`;
+          });
+          out.textContent = text;
+          const count = document.getElementById('sc-nets');
+          if (count) count.textContent = results.length;
+        }
+        S.scanActive = false;
+        document.getElementById('scanProgressBar').className = 'scan-progress';
+        toast('WiFi scan complete', 'ok');
+      } catch (e) { console.error("WiFi decode error", e); }
+    };
+
+    window.onBleError = function(err) {
+      toast('BLE Error: ' + err, 'err');
+      S.scanActive = false;
+      document.getElementById('scanProgressBar').className = 'scan-progress';
+    };
+
     // ─── SCANNER ───
     function runScan(type) {
       const prog = document.getElementById('scanProgressBar'); const msg = document.getElementById('scanProgressMsg');
       if (S.scanActive) { toast('Scan already running', 'warn'); return; }
+
+      if (typeof Android !== 'undefined') {
+        if (type === 'wifi') {
+          S.scanActive = true; prog.className = 'scan-progress active';
+          msg.textContent = 'Scanning WiFi (Native)…';
+          Android.startWifiScan();
+          return;
+        }
+        if (type === 'port' && document.getElementById('portSweepTarget')?.value === '127.0.0.1') {
+           // Local port scan works in webview too, but we can add native probes later
+        }
+      }
+
       S.scanActive = true; prog.className = 'scan-progress active';
       const scanTypes = { wifi: 'WiFi networks', deauth: 'Deauth events', port: 'Port sweep', signal: 'RF spectrum' };
       msg.textContent = 'Scanning ' + scanTypes[type] + '…';
@@ -5015,6 +5324,13 @@
     function clearScanResults() { document.getElementById('scanOutput').textContent = '// Cleared'; toast('Scan results cleared', 'info'); }
     function exportScanResults() { downloadTxt(document.getElementById('scanOutput').textContent, 'scan_results.txt'); }
     async function runRealBLEScan() {
+      if (typeof Android !== 'undefined') {
+        const out = document.getElementById('scanOutput');
+        out.textContent = '[BLE NATIVE SCAN STARTED]\nListening for devices…\n';
+        Android.startBleScan();
+        toast('BLE Native scan started', 'info');
+        return;
+      }
       if (!navigator.bluetooth) { toast('Web Bluetooth not available (Chrome/Edge only)', 'err'); return; }
       try {
         const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['battery_service', 'device_information'] });
@@ -5347,7 +5663,7 @@
     const _baseRenderHistory = renderHistory; renderHistory = function () { if (!S.history.length) { try { S.history = JSON.parse(localStorage.getItem('lenlu_hist4') || '[]'); } catch { S.history = []; } } _baseRenderHistory(); }; clearHistory = function () { S.history = []; localStorage.removeItem('lenlu_hist4'); renderHistory(); toast('History cleared', 'info'); };
     renderVault = function () { loadVault(); const list = document.getElementById('vaultList'); if (!list) return; const q = document.getElementById('vaultSearch')?.value?.toLowerCase() || ''; list.innerHTML = ''; S.vault.map((item, index) => ({ item, index })).filter(x => x.item.name.toLowerCase().includes(q)).forEach(({ item, index }) => { const div = document.createElement('div'); div.className = 'vault-item' + (index === selVaultIdx ? ' active' : ''); div.innerHTML = `<i class="fas fa-file-code vi-icon"></i><div><div class="vi-name">${item.name}</div><div class="vi-meta">${new Date(item.ts).toLocaleString()} - ${item.code.length} chars</div></div><div class="vi-actions"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();deleteVaultItem(${index})"><i class="fas fa-trash"></i></button></div>`; div.onclick = () => selectVaultItem(index); list.appendChild(div); }); if (!S.vault.length) list.innerHTML = '<div class="text-muted text-xs" style="padding:.5rem">Vault empty. Compile and save scripts.</div>'; else if (!list.children.length) list.innerHTML = '<div class="text-muted text-xs" style="padding:.5rem">No vault entries match.</div>'; const vc = document.getElementById('vaultCount'); if (vc) vc.textContent = S.vault.length + ' items'; };
 
-    window.addEventListener('DOMContentLoaded', () => { runBoot(); if (localStorage.getItem('lenlu_booted4') === '1') { document.getElementById('splash')?.classList.add('hidden'); document.getElementById('app')?.classList.add('visible'); initApp(); } });
+    window.addEventListener('DOMContentLoaded', () => { runBoot(); if (localStorage.getItem('lenlu_booted4') === '1') { document.getElementById('splash')?.classList.add('hidden'); document.getElementById('app')?.classList.add('visible'); initApp(); setTimeout(() => openModal('modal-contact'), 600); } });
   </script>
 </body>
 

@@ -1,6 +1,47 @@
-<resources>
-    <style name="Theme.LENLUSC" parent="Theme.AppCompat.NoActionBar">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.LENLUSC" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Primary brand colors. -->
+        <item name="colorPrimary">@color/matrix_green</item>
+        <item name="colorPrimaryVariant">@color/matrix_green_dim</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand colors. -->
+        <item name="colorSecondary">@color/cyan</item>
+        <item name="colorSecondaryVariant">@color/cyan</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Status bar and navigation bar. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/black</item>
         <item name="android:windowBackground">@color/black</item>
+
+        <!-- UI Component Styles -->
+        <item name="alertDialogTheme">@style/Theme.LENLUSC.Dialog</item>
+        <item name="android:colorBackground">@color/black</item>
+        <item name="android:textColorPrimary">@color/matrix_green</item>
+        <item name="android:textColorSecondary">@color/muted</item>
+
+        <!-- Control highlights for buttons/selectors -->
+        <item name="colorControlHighlight">@color/matrix_green_alpha</item>
+        <item name="colorControlActivated">@color/matrix_green</item>
+
+        <!-- Selection handles and highlighting -->
+        <item name="android:textColorHighlight">@color/matrix_green_alpha</item>
+        <item name="android:textSelectHandle">@color/matrix_green</item>
+        <item name="android:textSelectHandleLeft">@color/matrix_green</item>
+        <item name="android:textSelectHandleRight">@color/matrix_green</item>
+    </style>
+
+    <style name="Theme.LENLUSC.Dialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:background">@color/base2</item>
+        <item name="android:windowBackground">@color/base2</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorAccent">@color/matrix_green</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.LENLUSC.MediumComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.LENLUSC.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
     </style>
 </resources>

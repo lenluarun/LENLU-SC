@@ -521,8 +521,8 @@
       z-index: 500;
       height: var(--nav-h);
       padding: 0 clamp(.7rem, 2vw, 1.4rem);
-      background: rgba(1, 3, 2, .97);
-      backdrop-filter: blur(32px) saturate(180%);
+      background: transparent;
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--gbord);
       box-shadow: 0 1px 0 rgba(0, 255, 65, .04), 0 8px 40px rgba(0, 0, 0, .8);
       display: flex;
@@ -2517,6 +2517,99 @@
       text-overflow: ellipsis;
       white-space: nowrap
     }
+
+    /* CUSTOM SELECT */
+    .custom-select-container {
+      position: relative;
+      width: 100%;
+      user-select: none;
+    }
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: rgba(0, 0, 0, .7);
+      border: 1px solid var(--gbord);
+      color: var(--g);
+      padding: .6rem .8rem;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      border-radius: 3px;
+      cursor: pointer;
+      outline: none;
+      transition: all var(--dur) var(--ease);
+    }
+    .custom-select-trigger:hover {
+      border-color: var(--g);
+      box-shadow: 0 0 8px rgba(0, 255, 65, .15);
+    }
+    .custom-select-container.open .custom-select-trigger {
+      border-color: var(--g);
+      box-shadow: 0 0 12px rgba(0, 255, 65, .2), inset 0 0 20px rgba(0, 255, 65, .04);
+    }
+    .custom-select-trigger i {
+      font-size: .75rem;
+      transition: transform var(--dur) var(--ease);
+      color: var(--g-dim);
+    }
+    .custom-select-container.open .custom-select-trigger i {
+      transform: rotate(180deg);
+      color: var(--g);
+    }
+    .custom-select-options {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: rgba(6, 12, 8, .98);
+      border: 1px solid var(--g);
+      border-radius: 3px;
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .8), 0 0 15px rgba(0, 255, 65, .1);
+      display: none;
+      flex-direction: column;
+      animation: selectFadeIn .18s var(--ease);
+    }
+    .custom-select-container.open .custom-select-options {
+      display: flex;
+    }
+    .custom-option {
+      padding: .55rem .8rem;
+      font-family: var(--font-mono);
+      font-size: .76rem;
+      color: var(--white);
+      cursor: pointer;
+      transition: all var(--dur) var(--ease);
+      border-bottom: 1px solid rgba(0, 255, 65, .05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .custom-option:last-child {
+      border-bottom: none;
+    }
+    .custom-option:hover {
+      background: var(--g-dark);
+      color: var(--g);
+      padding-left: .95rem;
+    }
+    .custom-option.selected {
+      background: rgba(0, 255, 65, .12);
+      color: var(--g);
+    }
+    .custom-option.selected::after {
+      content: '✓';
+      font-size: .7rem;
+      color: var(--g);
+      text-shadow: 0 0 5px var(--g);
+    }
+    @keyframes selectFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -2596,13 +2689,45 @@
     </div>
   </div>
 
+  <!-- MODAL: APK & CONTACT INFO -->
+  <div class="modal-overlay" id="modal-contact">
+    <div class="modal" style="max-width:480px">
+      <div class="modal-header">
+        <span><i class="fab fa-android" style="color:var(--g);margin-right:.45rem"></i>LENLU SC Mobile App</span>
+        <button class="btn btn-ghost btn-xs" onclick="closeModal('modal-contact')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:0.75rem;padding:1.2rem;font-family:var(--font-ui);font-size:0.9rem;line-height:1.5;">
+        <div style="text-align:center;margin-bottom:0.5rem;">
+          <i class="fab fa-android" style="font-size:2.5rem;color:var(--g);text-shadow:0 0 10px var(--g);"></i>
+        </div>
+        <p style="color:var(--white);">To obtain the Android mobile application (APK), please get in touch with the developer directly.</p>
+        
+        <div style="border:1px solid var(--gbord);background:rgba(0,255,65,0.04);padding:0.75rem;border-radius:4px;font-family:var(--font-mono);font-size:0.75rem;display:flex;flex-direction:column;gap:0.35rem;">
+          <div style="color:var(--muted);text-transform:uppercase;font-family:var(--font-hud);font-size:0.6rem;letter-spacing:1px;">Developer Info</div>
+          <div><span style="color:var(--g);">Name:</span> Arunesh</div>
+          <div><span style="color:var(--g);">Contact:</span> lenluarun@gmail.com</div>
+          <div><span style="color:var(--g);">Instagram:</span> @lenlu_arun</div>
+        </div>
+
+        <p style="color:var(--white);font-size:0.8rem;opacity:0.9;">Click the button below to send a Direct Message (DM) on Instagram to the administrator and request the app.</p>
+        
+        <a href="https://instagram.com/direct/t/lenlu_arun" target="_blank" class="btn btn-primary" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.5rem;font-family:var(--font-display);font-size:0.75rem;letter-spacing:1px;padding:0.65rem 0;" onclick="closeModal('modal-contact')">
+          <i class="fab fa-instagram"></i> DM ON INSTAGRAM
+        </a>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-contact')">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SPLASH -->
   <div id="splash">
     <div class="sp-bg"></div>
     <div class="sp-scan"></div>
     <div class="sp-content">
       <div class="sp-logo">LENLU SC</div>
-      <div class="sp-sub">∥ CYBERNETIC FORGE v4.0 ∥ BLACKBOX EDITION ∥</div>
+      <div class="sp-sub">∥ Developer : Arunesh ∥ CYBER EDITION ∥</div>
       <div class="sp-log" id="spLog"></div>
       <div class="sp-bar">
         <div class="sp-fill" id="spFill"></div>
@@ -2616,7 +2741,7 @@
   <div id="app">
     <nav class="top-nav">
       <div class="brand">
-        <div class="brand-logo"><i class="fas fa-radiation" style="font-size:.6rem"></i></div>
+        <div class="brand-logo"><img src="IMGS\logo_nav_bar.png" height="25px"></div>
         <span>LENLU SC</span>
         <div class="brand-dot"></div>
         <span class="brand-ver">v4.0</span>
@@ -2649,6 +2774,8 @@
             class="fas fa-terminal"></i>Shell</button>
         <button class="nav-btn" data-view="settings" onclick="switchView('settings',this)"><i
             class="fas fa-cog"></i>Config</button>
+        <button class="nav-btn" data-view="uipreview" onclick="switchView('uipreview',this)"><i
+            class="fas fa-eye"></i>UI Lab<span class="nav-badge">NEW</span></button>
       </div>
       <div class="nav-status">
         <div class="flex items-center gap-sm">
@@ -2669,7 +2796,7 @@
           <div style="position:relative;z-index:1">
             <div
               style="font-family:var(--font-hud);font-size:.65rem;color:var(--g-dim);letter-spacing:.35em;text-transform:uppercase;margin-bottom:1rem;animation:fadeUp .6s ease .2s both">
-              // BLACKBOX EDITION // v4.0 // CLASSIFIED //</div>
+              // Developer : Arunesh // v4.0 //</div>
             <div
               style="font-family:var(--font-display);font-size:clamp(2.8rem,9vw,6.5rem);font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--white);text-shadow:0 0 40px rgba(0,255,65,.28),0 0 80px rgba(0,255,65,.1);line-height:1;animation:glitch 10s ease-in-out infinite,fadeUp .6s ease .4s both">
               BLACKBOX<br><span style="color:var(--g)">FORGE</span></div>
@@ -3999,6 +4126,113 @@
           </div>
         </div>
       </div>
+
+      <!-- UI PREVIEW -->
+      <div class="view" id="view-uipreview">
+        <div class="flex items-center justify-between gap-md mb-sm" style="flex-wrap:wrap">
+          <div>
+            <div style="font-family:var(--font-display);font-size:.92rem;letter-spacing:.12em;color:var(--white)">
+              SYSTEM POPUPS &amp; OPTIONS LAB</div>
+            <div class="text-xs text-muted mt-sm">Preview, trigger, and test UI components in the unified cybernetic theme</div>
+          </div>
+        </div>
+        
+        <div class="g2">
+          <div class="flex-col gap-md">
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-window-restore ch-icon"></i>System Modals</span><span class="card-tag">POPUPS</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// Trigger the classification/blackbox overlay modals mapped inside the application.</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:.8rem;">
+                  <button class="btn btn-primary btn-sm" onclick="openModal('modal-save')"><i class="fas fa-lock"></i> Save to Vault</button>
+                  <button class="btn btn-cyan btn-sm" onclick="openModal('modal-import')"><i class="fas fa-file-import"></i> Import JSON</button>
+                  <button class="btn btn-amber btn-sm" onclick="openModal('modal-template')"><i class="fas fa-file-code"></i> Templates</button>
+                  <button class="btn btn-purple btn-sm" onclick="openModal('modal-snippet')"><i class="fas fa-puzzle-piece"></i> Snippets</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-bell ch-icon"></i>HUD Toast Notifications</span><span class="card-tag">SYSTEM</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// Test the dynamic, micro-animated toast popups that slide in from the bottom right.</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:.8rem;">
+                  <button class="btn btn-primary btn-sm" onclick="toast('Payload compile pipeline established.', 'ok')"><i class="fas fa-check-circle"></i> Success Toast</button>
+                  <button class="btn btn-red btn-sm" onclick="toast('Critical breach detected. Terminating connection.', 'err')"><i class="fas fa-times-circle"></i> Error Toast</button>
+                  <button class="btn btn-amber btn-sm" onclick="toast('High latency on port sweep.', 'warn')"><i class="fas fa-exclamation-triangle"></i> Warning Toast</button>
+                  <button class="btn btn-cyan btn-sm" onclick="toast('Syncing configuration variables...', 'info')"><i class="fas fa-info-circle"></i> Info Toast</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex-col gap-md">
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-list ch-icon"></i>Custom Cybernetic Option Selects</span><span class="card-tag">SELECTS</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// Fully custom HTML/CSS/JS dropdown widgets built to override ugly browser default option views.</p>
+                
+                <div class="inp-group">
+                  <label class="inp-label">Select Target Module</label>
+                  <div class="custom-select-container" id="customSelectModule">
+                    <div class="custom-select-trigger"><span>DuckyScript IDE</span><i class="fas fa-chevron-down"></i></div>
+                    <input type="hidden" id="customModuleVal" value="ide" />
+                    <div class="custom-select-options">
+                      <div class="custom-option selected" data-value="ide">DuckyScript IDE</div>
+                      <div class="custom-option" data-value="scanner">BLE Signal Scanner</div>
+                      <div class="custom-option" data-value="encoder">Payload Obfuscator</div>
+                      <div class="custom-option" data-value="osint">OSINT Fingerprinting</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="inp-group">
+                  <label class="inp-label">Select Encryption Obfuscation</label>
+                  <div class="custom-select-container" id="customSelectObfuscation">
+                    <div class="custom-select-trigger"><span>ROT13 + Base64</span><i class="fas fa-chevron-down"></i></div>
+                    <input type="hidden" id="customObfVal" value="rot13b64" />
+                    <div class="custom-select-options">
+                      <div class="custom-option" data-value="none">None (Plaintext)</div>
+                      <div class="custom-option" data-value="b64">Standard Base64</div>
+                      <div class="custom-option selected" data-value="rot13b64">ROT13 + Base64</div>
+                      <div class="custom-option" data-value="binary">Raw Binary Stream</div>
+                      <div class="custom-option" data-value="aes">AES-256 GCM (Classified)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-caret-square-down ch-icon"></i>Standard Select Components</span><span class="card-tag">STANDARD</span></div>
+              <div class="card-body flex-col gap-md">
+                <p class="text-xs text-muted">// The default styled HTML standard select dropdown menus used in other sub-panels.</p>
+                
+                <div class="inp-group">
+                  <label class="inp-label">Standard select (DNS query type)</label>
+                  <select class="inp" id="demoDnsSelect">
+                    <option>A (IPv4 Address)</option>
+                    <option>AAAA (IPv6 Address)</option>
+                    <option>MX (Mail Exchanger)</option>
+                    <option>TXT (Text Record)</option>
+                    <option>CNAME (Canonical Name)</option>
+                  </select>
+                </div>
+                
+                <div class="inp-group">
+                  <label class="inp-label">Standard select (LLM Gateway)</label>
+                  <select class="inp" id="demoLlmSelect">
+                    <option value="anthropic">Anthropic Claude</option>
+                    <option value="openai">OpenAI GPT</option>
+                    <option value="groq">Groq LLaMA</option>
+                    <option value="custom">Custom Endpoint</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -4063,6 +4297,7 @@
       document.getElementById('splash').classList.add('hidden');
       document.getElementById('app').classList.add('visible');
       initApp();
+      setTimeout(() => openModal('modal-contact'), 300);
     }
 
     // ─── INIT ───
@@ -4071,6 +4306,7 @@
       buildDuckRef(); loadSettings(); checkBLE(); checkWebGL();
       initTelemetry(); initShell(); initRevealObserver(); initHeroCanvas();
       loadAIConfig(); buildAITags(); renderVault(); renderHistory();
+      initCustomSelects();
       document.getElementById('sessionId').textContent = S.sessionId;
       document.getElementById('homeSessionId').textContent = S.sessionId;
       const initialView = (location.hash || '#home').replace('#', '').trim() || 'home';
@@ -4089,6 +4325,50 @@
         else if (e.key === 'F1') { e.preventDefault(); switchView('dashboard', document.querySelector('[data-view=dashboard]')); }
       });
       setTimeout(() => { refreshNetworkInfo(); runOSINT(); startActivityFeed(); }, 900);
+    }
+
+    function initCustomSelects() {
+      document.querySelectorAll('.custom-select-container').forEach(container => {
+        const trigger = container.querySelector('.custom-select-trigger');
+        const triggerText = trigger.querySelector('span');
+        const optionsContainer = container.querySelector('.custom-select-options');
+        const options = container.querySelectorAll('.custom-option');
+        const hiddenInput = container.querySelector('input[type="hidden"]');
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          document.querySelectorAll('.custom-select-container').forEach(other => {
+            if (other !== container) other.classList.remove('open');
+          });
+          container.classList.toggle('open');
+          if (typeof playTone === 'function') playTone(600, 'sine', .03, .04);
+        });
+
+        options.forEach(opt => {
+          opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const val = opt.getAttribute('data-value');
+            const text = opt.childNodes[0].textContent.trim();
+            
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            
+            triggerText.textContent = text;
+            if (hiddenInput) {
+              hiddenInput.value = val;
+              hiddenInput.dispatchEvent(new Event('change'));
+            }
+            
+            container.classList.remove('open');
+            if (typeof playTone === 'function') playTone(880, 'sine', .05, .05);
+            if (typeof toast === 'function') toast(`Selected option: ${text}`, 'info');
+          });
+        });
+      });
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-container').forEach(c => c.classList.remove('open'));
+      });
     }
 
     // ─── NAV CLOCK ───
@@ -5080,7 +5360,7 @@
     const _baseRenderHistory = renderHistory; renderHistory = function () { if (!S.history.length) { try { S.history = JSON.parse(localStorage.getItem('lenlu_hist4') || '[]'); } catch { S.history = []; } } _baseRenderHistory(); }; clearHistory = function () { S.history = []; localStorage.removeItem('lenlu_hist4'); renderHistory(); toast('History cleared', 'info'); };
     renderVault = function () { loadVault(); const list = document.getElementById('vaultList'); if (!list) return; const q = document.getElementById('vaultSearch')?.value?.toLowerCase() || ''; list.innerHTML = ''; S.vault.map((item, index) => ({ item, index })).filter(x => x.item.name.toLowerCase().includes(q)).forEach(({ item, index }) => { const div = document.createElement('div'); div.className = 'vault-item' + (index === selVaultIdx ? ' active' : ''); div.innerHTML = `<i class="fas fa-file-code vi-icon"></i><div><div class="vi-name">${item.name}</div><div class="vi-meta">${new Date(item.ts).toLocaleString()} - ${item.code.length} chars</div></div><div class="vi-actions"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();deleteVaultItem(${index})"><i class="fas fa-trash"></i></button></div>`; div.onclick = () => selectVaultItem(index); list.appendChild(div); }); if (!S.vault.length) list.innerHTML = '<div class="text-muted text-xs" style="padding:.5rem">Vault empty. Compile and save scripts.</div>'; else if (!list.children.length) list.innerHTML = '<div class="text-muted text-xs" style="padding:.5rem">No vault entries match.</div>'; const vc = document.getElementById('vaultCount'); if (vc) vc.textContent = S.vault.length + ' items'; };
 
-    window.addEventListener('DOMContentLoaded', () => { runBoot(); if (localStorage.getItem('lenlu_booted4') === '1') { document.getElementById('splash')?.classList.add('hidden'); document.getElementById('app')?.classList.add('visible'); initApp(); } });
+    window.addEventListener('DOMContentLoaded', () => { runBoot(); if (localStorage.getItem('lenlu_booted4') === '1') { document.getElementById('splash')?.classList.add('hidden'); document.getElementById('app')?.classList.add('visible'); initApp(); setTimeout(() => openModal('modal-contact'), 600); } });
   </script>
 </body>
 
