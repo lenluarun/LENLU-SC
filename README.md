@@ -14,15 +14,21 @@
 
 > [!IMPORTANT]
 > **SECURE ISOLATION NOTICE**
-> LENLU SC runs client-side operations locally. Payloads and diagnostics do not leave your browser or device context unless explicitly requested via localized neural API endpoints.
+> LENLU SC runs client-side operations locally. Payloads and diagnostics do not leave your browser or device context unless explicitly requested via user-configured neural API endpoints.
 
 ---
 
 ## ⚡ SYSTEM OVERVIEW
 
-LENLU SC is an immersive, hardware-accelerated dashboard designed to bridge the gap between human-readable keyboard scripts and target host compilation. The deck features a 3D Three.js particle core, a lateral smooth-scrolling GSAP portfolio, and real-time state persistence to ensure your work survives browser reloads.
+LENLU SC is an immersive, hardware-accelerated command console designed to bridge the gap between human-readable keyboard scripts and target host executable packages. 
 
-In addition to the Web Console, the **LENLU SC Android Application** extends this workspace to mobile form factors. It wraps the WebGL core inside a native hardware-accelerated WebView container, injecting display insets dynamically for a borderless, edge-to-edge experience.
+The console features:
+- A real-time **DuckyScript Linter and Compiler** targeting AutoIt3 scripting.
+- An **AI Neural Synthesis Lab** for speech-dictated or prompt-based payload generation.
+- A **Signal Scanners HUD** for wireless BLE scanning, local port mapping, WebRTC diagnostics, and live DNS queries.
+- A dynamic cybernetic visual interface featuring a **3D Three.js particle core**, retro **CRT screen scanlines**, **chromatic aberration**, and smooth **GSAP animations**.
+
+To extend accessibility, the **LENLU SC Android Application** (`appp` module) wraps this high-fidelity WebGL system inside a native container, optimizing rendering speed and automatically calibrating safe display boundaries.
 
 ---
 
@@ -50,7 +56,7 @@ In addition to the Web Console, the **LENLU SC Android Application** extends thi
     <td align="center" width="50%" style="border: none; padding: 10px; vertical-align: top;">
       <b>📱 LENLU SC Android Wrapper</b><br>
       <sub>Edge-to-edge Native WebView container with hardware acceleration and API bridge.</sub><br><br>
-      <img src="LENLUSC/IMGS/apk.png" alt="Android App UI" width="100%" style="border-radius: 8px; border: 1px solid #1a1c1a; box-shadow: 0 4px 20px rgba(0,255,65,0.1);"/>
+      <img src="IMGS/apk.png" alt="Android App UI" width="100%" style="border-radius: 8px; border: 1px solid #1a1c1a; box-shadow: 0 4px 20px rgba(0,255,65,0.1);"/>
     </td>
   </tr>
 </table>
@@ -81,44 +87,63 @@ In addition to the Web Console, the **LENLU SC Android Application** extends thi
 ## 🛠️ THE CORE CHAMBERS
 
 ### 1. 💻 Integrated Payload Workbench
-* **DuckyScript Compiler**: Instantly parses keystroke injection scripts into native AutoIt (`.au3` & `.au4`) macros.
-* **Real-time Linter**: Scans code continuously, flagging syntax errors, missing arguments, or invalid commands before compilation.
-* **Session Persistence**: Caches editor text, compiled script outputs, and terminal log files in local memory so they persist on page refresh.
+- **DuckyScript Parser & Compiler**: Translates keystroke injection commands (`DELAY`, `STRING`, `GUI`, `ENTER`, etc.) directly into executable AutoIt3 (`.au3`/`.au4`) assembly code structures.
+- **Real-Time Interactive Linter**: Continuously evaluates typed scripts inside the editor. It catches syntax anomalies, invalid keywords, and missing arguments immediately, rendering warning/error decorators in the compiler logs.
+- **Session Cache & Memory**: Seamlessly saves your workspace configuration, editor contents, terminal outputs, and selected tab index into local web storage. Reloading the browser does not lose your current session.
 
 ### 2. 🧠 Neural Synthesis Lab
-* **Multi-Model Uplink**: Connects custom neural endpoints (Groq, OpenAI, or custom LLM gateways).
-* **Voice Dictation**: Leverages speech-to-text models to dictate payload logic or commands.
-* **Stealth Calibrator**: Calibrates sleep delays to tune execution speed or bypass host detection.
+- **Multi-Model AI uplink**: Allows connecting to advanced AI language endpoints (e.g., Groq, OpenAI, or Anthropic) by entering your private token in the settings card.
+- **Voice Payload Builder**: Utilizes the browser's speech recognition APIs to translate voice commands into functional script logic.
+- **Stealth Calibration**: Provides a delay calibrator that scales all execution timers inside the compiled scripts, letting you adjust timing constraints to bypass host defenses.
 
 ### 3. 📡 Network Surveillance HUD
-* **802.11 Scanner**: Simulates wireless airspace scans listing active ESSIDs and signal ranges.
-* **BLE Tracker**: Traces surrounding Bluetooth Low Energy node signatures and tags.
-* **Deauth Monitor**: Identifies channel spikes and tracks active deauthentication packet streams.
+- **Live BLE Node Discovery**: Employs the **Web Bluetooth API** (supported in Chrome/Edge) to perform real-time scans of surrounding Bluetooth Low Energy signals, displaying device identifiers and RSSI values.
+- **Simulated Airspace Scan**: Simulates active 802.11 network scanning, tracking simulated ESSIDs, channel allocations, and deauthentication event logs.
+- **DNS Surveillance**: Resolves real domains using Cloudflare's **DNS-over-HTTPS (DoH)** API directly inside the client dashboard.
+- **WebRTC IP Leak Checker**: Queries local RTC candidate tables to output the current user's local and public IPv4/IPv6 endpoints.
+- **Local Port Sweeper**: Performs asynchronous WebSocket connection sweeps across common localhost development ports (e.g., `80`, `443`, `3000`, `8080`) to log active network endpoints on the user's host machine.
 
 ### 4. 🗄️ Secure Vault & Export
-* **Encrypted Sandbox**: Stash payload drafts directly in the browser's database.
-* **PDF Session Logger**: Exports audit-ready, dark-themed PDF diagnostic reports containing compilation statistics and debug outputs.
+- **Encrypted Database Sandbox**: Saves custom payload drafts inside the local browser storage context, sandbox-isolated from other websites.
+- **Dark-Themed PDF Audits**: Exports detailed documentation containing source code, compiled assembly, compiler flags, and build statistics into a ready-to-share PDF report.
 
 ---
 
 ## 📱 LENLU SC ANDROID APPLICATION
 
-The Android terminal expands the reach of the cybernetic deck, compiling and running inside a high-performance native container.
+The **Android companion application** wraps the WebGL console inside a native Android container (`appp` module), maximizing performance and adapting the interface to phone form factors.
 
-### Core App Implementations:
-* **Edge-to-Edge Fluidity**: Automatically queries Android system window insets via `WindowInsetsCompat` and injects the dynamic status bar height `--status-bar-height` as a CSS custom property into the DOM. This provides an immersive, bezel-free panel UI.
-* **GPU Hardware Acceleration**: Enables native hardware layers (`LAYER_TYPE_HARDWARE`) on the rendering viewport to guarantee fluid Three.js 3D particle animations and scroll events.
-* **Hybrid Javascript Bridge (`AndroidInterface`)**:
-  - `openUrl(url)`: Directs links out of the sandbox and executes native `Intent.ACTION_VIEW` actions.
-  - `sendEmail(subject, body)`: Triggers Android's native email chooser addressing `lenluarun@gmail.com` to export raw payload scripts.
-  - `runNativeScan(type)`: Exposes a callback hooks framework designed for binding actual device sensors (Wi-Fi/BLE) to the scanning interfaces.
-* **Seamless Back Navigation**: Integrates into the Activity's `onBackPressedDispatcher`, redirecting physical back gestures to step through the WebView history or safely shut down the instance.
+### Core Architecture & Implementations:
+1. **Edge-to-Edge Fluidity**: 
+   The application enables full-screen rendering using:
+   ```kotlin
+   WindowCompat.setDecorFitsSystemWindows(window, false)
+   window.statusBarColor = Color.TRANSPARENT
+   ```
+   It captures display insets dynamically via `WindowInsetsCompat` and exposes the status bar offset (`topInsetDp`) to the WebView DOM as a CSS custom property:
+   ```kotlin
+   webView.evaluateJavascript("document.documentElement.style.setProperty('--safe-top', '${topInsetDp}px')", null)
+   ```
+   This ensures visual panels adapt to devices with status bar offsets, curved corners, or camera notches.
+
+2. **GPU Hardware Acceleration**: 
+   The WebView container is configured with hardware-accelerated drawing layers to ensure smooth rendering of the Three.js 3D hologram grids, gsaps, and retro terminal scanlines.
+
+3. **WebView Configuration**:
+   The web rendering configuration is tuned for asset storage and modern web operations:
+   - Enabling JavaScript execution and DOM Database storage mechanisms.
+   - Enforcing local file and content access (`allowFileAccess = true`, `allowContentAccess = true`).
+   - Mixed content mode is set to always allow HTTPS/HTTP assets inside the local package scope.
+
+4. **Traversal Navigation**:
+   The activity intercepts hardware back key gestures using `onBackPressed()`. Instead of immediately exiting the application, it navigates backward through the WebView page history (`webView.goBack()`) if it's available.
 
 ### App Target Specifications:
-* **Package Name**: `com.example.lenlusc`
-* **Compile SDK**: Android 16 (API Level 36)
-* **Target SDK**: API Level 36
-* **Minimum SDK**: Android 7.0 (API Level 24)
+- **Package Namespace / Application ID**: `com.lenlu.sc`
+- **Compile SDK Version**: API Level 34 (Android 14)
+- **Target SDK Version**: API Level 34 (Android 14)
+- **Minimum SDK Version**: API Level 24 (Android 7.0)
+- **Primary Source File**: [MainActivity.kt](./appp/src/main/java/com/lenlu/sc/MainActivity.kt)
 
 ---
 
@@ -136,20 +161,17 @@ graph TD
 
 ## 📁 DIRECTORY STRUCTURE
 
-- [index.html](./index.html) — Core dashboard housing the WebGL engine, compiler loops, AI generator, scanners, settings, and state persistence.
-- [studio.html](./studio.html) — Lateral portfolio showing system architectures and core operations modules with 3D canvas rings and parallax scroll effects.
-- [IMGS/](./IMGS/) — High-fidelity cybernetic assets, screenshots, and visual branding assets:
+- [index.html](./index.html) — Core desktop dashboard hosting WebGL shaders, compiler engine, scanners, and settings panels.
+- [studio.html](./studio.html) — Dynamic lateral portfolio displaying architectural overlays with GSAP scroll links.
+- [IMGS/](./IMGS/) — High-fidelity branding elements and dashboard mockup assets:
   - [logo_nav_bar.png](./IMGS/logo_nav_bar.png) — Vector-aligned nav deck logo.
-  - [ide_workspace.png](./IMGS/ide_workspace.png) — Integrated Workbench Card.
-  - [ai_generator.png](./IMGS/ai_generator.png) — AI Synthesis Lab Card.
-  - [scanner_systems.png](./IMGS/scanner_systems.png) — Signal Scanners Card.
-  - [matrix_logs.png](./IMGS/matrix_logs.png) — Matrix Logs Construct.
-  - [glass_cards.png](./IMGS/glass_cards.png) — Glass Cards Construct.
-  - [terminal_interfaces.png](./IMGS/terminal_interfaces.png) — Terminal Interfaces Construct.
-- [LENLUSC/](./LENLUSC/) — Android Kotlin application root directory:
-  - [app/src/main/java/com/example/lenlusc/MainActivity.kt](./LENLUSC/app/src/main/java/com/example/lenlusc/MainActivity.kt) — WebView host logic, JavaScript interfaces, back-history control, and insets calculations.
-  - [app/src/main/assets/](./LENLUSC/app/src/main/assets/) — Embedded static assets mirror serving local terminal interface layers.
-  - [IMGS/apk.png](./LENLUSC/IMGS/apk.png) — Android screenshot showing mobile wrapper styling.
+  - [ide_workspace.png](./IMGS/ide_workspace.png) — Workbench workspace preview.
+  - [ai_generator.png](./IMGS/ai_generator.png) — Neural Synthesis workbench preview.
+  - [scanner_systems.png](./IMGS/scanner_systems.png) — Signal scanners panel preview.
+- [appp/](./appp/) — Android application workspace module:
+  - [appp/src/main/java/com/lenlu/sc/MainActivity.kt](./appp/src/main/java/com/lenlu/sc/MainActivity.kt) — Native WebView coordinator, status bar translucency, safe top inset updater, and back history handler.
+  - [appp/src/main/assets/htm.html](./appp/src/main/assets/htm.html) — Local web UI rendered inside the mobile application WebView.
+  - [appp/build.gradle](./appp/build.gradle) — Build and compiler targeting configuration.
 
 ---
 
@@ -186,18 +208,17 @@ Sleep(100)
 
 ## 🚀 UPLINK PROCEDURE
 
-### Web Terminal
-1. Boot the terminal by launching [index.html](./index.html) in any WebGL compatible browser.
+### Web Console
+1. Run the terminal console by launching [index.html](./index.html) in a WebGL-compatible browser.
 2. Select **ESTABLISH LINK** on the splash screen to boot the matrix grid (reloads bypass this automatically).
-3. Type or paste code inside the **Payload Workbench** and hit **Compile** to generate AutoIt outputs.
-4. Input your neural model key in **Settings** to unlock the AI Generator synthesis.
-5. Save script presets inside the **Encrypted Vault** or download them as `.au3` / `.au4` files.
-6. Export auditing logs using the **Export PDF** tool.
+3. Input script content inside the **Payload Workbench** and select **Compile** to generate AutoIt script logs.
+4. Input your AI models key in the **Settings** card to activate the AI synthesis features.
+5. Save draft presets inside the **Encrypted Vault** or download them directly as file structures.
 
 ### Android Application
-1. Open the [LENLUSC/](./LENLUSC/) directory in Android Studio.
-2. Allow Gradle sync to complete and download appropriate dependencies (Target SDK 36, Kotlin JDK 11).
-3. Run or build the app on an emulator or a physical device running Android 7.0 (API 24) or higher.
+1. Import the root repository in **Android Studio**.
+2. Allow Gradle sync to complete and resolve target libraries.
+3. Build and execute the application on an emulator or standard hardware device running Android 7.0+ (API 24+).
 
 ---
 
@@ -210,6 +231,7 @@ Sleep(100)
 | **Session Cache** | `ENABLED` | LocalStorage tracking active tab views, editor code, and compile output logs. |
 | **Encryption Mode** | `SANDBOX` | Client-side client memory only. Data remains inside your local browser. |
 | **Android Inset Bridge** | `OPERATIONAL` | Calculates dynamic device offsets to optimize layout on curved screen mobiles. |
+| **Neural Synthesis Uplink** | `STANDBY` | Remote neural endpoint connection for automated payload generation. |
 
 ---
 

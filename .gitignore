@@ -1,0 +1,26 @@
+# Android Studio / IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle / Android Build Outputs
+.gradle/
+build/
+appp/build/
+**/build/
+captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+
+# APK and general binary files
+*.apk
+*.aar
+*.jar
+*.class
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
