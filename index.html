@@ -913,7 +913,7 @@
 
     @media(max-width:700px) {
       .stat-row {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
       }
     }
 
@@ -2080,14 +2080,29 @@
 
       .brand {
         font-size: .95rem;
-        justify-content: space-between;
-        flex-wrap: wrap;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        gap: .4rem;
+      }
+
+      .brand-logo {
+        height: 22px;
+      }
+
+      .brand-version {
+        font-size: .5rem;
+        padding-left: .4rem;
       }
 
       .navbar-lenlu .navbar-collapse {
         margin-top: .75rem;
-        padding-top: .75rem;
+        padding: .75rem 1rem;
         border-top: 1px solid var(--gbord);
+        background: rgba(1, 4, 2, 0.94);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--radius);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
       }
 
       .nav-grid .nav-btn {
@@ -2111,16 +2126,25 @@
         grid-template-columns: 1fr !important;
       }
 
+      /* Premium horizontal swipable snap-carousel */
       .horizontal-scroll-container {
-        flex-direction: column !important;
+        flex-direction: row !important;
         width: 100% !important;
         height: auto !important;
-        gap: 1rem !important;
+        gap: 1.2rem !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 1rem !important;
       }
 
       .horizontal-scroll-container>div {
-        width: 100% !important;
-        height: 250px !important;
+        width: 85vw !important;
+        height: 45vh !important;
+        min-height: 300px !important;
+        flex-shrink: 0 !important;
+        scroll-snap-align: start;
       }
 
       #sys-core h1 {
@@ -2129,6 +2153,19 @@
 
       .splash-logo {
         font-size: 2.2rem !important;
+      }
+
+      /* Responsive Modal Fixes */
+      .modal {
+        align-items: flex-start !important;
+        padding: 2rem 0 !important;
+        overflow-y: auto !important;
+      }
+
+      .modal-box {
+        margin: auto !important;
+        min-width: unset !important;
+        width: 95% !important;
       }
     }
   </style>
