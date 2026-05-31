@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -53,6 +55,26 @@ class WebAppInterface(private val mContext: Context, private val webView: WebVie
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(duration)
+        }
+    }
+
+    @JavascriptInterface
+    fun copyToClipboard(text: String) {
+        val clipboard = mContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("LENLU SC", text)
+        clipboard.setPrimaryClip(clip)
+        (mContext as? Activity)?.runOnUiThread {
+            Toast.makeText(mContext, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @JavascriptInterface
+    fun readFromClipboard(): String {
+        val clipboard = mContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        return if (clipboard.hasPrimaryClip()) {
+            clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+        } else {
+            ""
         }
     }
 

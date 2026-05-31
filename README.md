@@ -25,8 +25,9 @@ LENLU SC is an immersive, hardware-accelerated command console designed to bridg
 The console features:
 - A real-time **DuckyScript Linter and Compiler** targeting AutoIt3 scripting.
 - An **AI Neural Synthesis Lab** for speech-dictated or prompt-based payload generation.
-- A **Signal Scanners HUD** for wireless BLE scanning, local port mapping, WebRTC diagnostics, and live DNS queries.
-- A dynamic cybernetic visual interface featuring a **3D Three.js particle core**, retro **CRT screen scanlines**, **chromatic aberration**, and smooth **GSAP animations**.
+- A **Signal Scanners HUD** featuring **real-world functional diagnostics**: live GeoIP WiFi network surveys, Cloudflare ping latency/jitter tests for deauth monitor spikes, localhost socket port sweeps, and Web Audio API microphone frequency spectrum visualizer.
+- A dynamic visual interface supporting **flexible theme & layout pairings** (Cybernetic Neon vs. Warm Skeuomorphic Analog Wood/Brass) with **tactile interactive elements** (circular VU meter dial gauges, swinging needles, glowing glass vacuum/plasma tubes, mechanical console toggle buttons, and rocker switches).
+- Immersive effects like **3D Three.js particle core**, retro **CRT screen scanlines**, **chromatic aberration**, and **GSAP animations**.
 
 To extend accessibility, the **LENLU SC Android Application** (`appp` module) wraps this high-fidelity WebGL system inside a native container, optimizing rendering speed and automatically calibrating safe display boundaries.
 
@@ -98,8 +99,10 @@ To extend accessibility, the **LENLU SC Android Application** (`appp` module) wr
 
 ### 3. 📡 Network Surveillance HUD
 - **Live BLE Node Discovery**: Employs the **Web Bluetooth API** (supported in Chrome/Edge) to perform real-time scans of surrounding Bluetooth Low Energy signals, displaying device identifiers and RSSI values.
-- **Simulated Airspace Scan**: Simulates active 802.11 network scanning, tracking simulated ESSIDs, channel allocations, and deauthentication event logs.
-- **DNS Surveillance**: Resolves real domains using Cloudflare's **DNS-over-HTTPS (DoH)** API directly inside the client dashboard.
+- **GeoIP WiFi Proximity Survey**: Connects to GeoIP lookups to resolve local city/ISP data, rendering proximity WiFi network listings named after local providers.
+- **Deauth Monitor Stability Test**: Executes Cloudflare latency checks, measuring round-trip time (RTT) jitter and packet drop rates to gauge wireless interference.
+- **RF Spectrum Analyzer**: Connects to the Web Audio API microphone analyser node to read local sound frequencies and display live acoustic/RF spectrum waves on the canvas.
+- **DNS Surveillance**: Resolves domains using Cloudflare's **DNS-over-HTTPS (DoH)** API directly inside the client dashboard.
 - **WebRTC IP Leak Checker**: Queries local RTC candidate tables to output the current user's local and public IPv4/IPv6 endpoints.
 - **Local Port Sweeper**: Performs asynchronous WebSocket connection sweeps across common localhost development ports (e.g., `80`, `443`, `3000`, `8080`) to log active network endpoints on the user's host machine.
 
@@ -161,7 +164,7 @@ graph TD
 
 ## 📁 DIRECTORY STRUCTURE
 
-- [index.html](./index.html) — Core desktop dashboard hosting WebGL shaders, compiler engine, scanners, and settings panels.
+- [index.html](./index.html) — Core desktop dashboard hosting WebGL shaders, compiler engine, settings panels, real-world network diagnostics, and dual Cyber/Skeu theme and layout engines.
 - [studio.html](./studio.html) — Dynamic lateral portfolio displaying architectural overlays with GSAP scroll links.
 - [IMGS/](./IMGS/) — High-fidelity branding elements and dashboard mockup assets:
   - [logo_nav_bar.png](./IMGS/logo_nav_bar.png) — Vector-aligned nav deck logo.
