@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        webView.loadUrl("file:///android_asset/htm.html")
+        webView.loadUrl("file:///android_asset/index.html")
         
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)

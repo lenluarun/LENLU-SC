@@ -173,7 +173,7 @@ graph TD
   - [scanner_systems.png](./IMGS/scanner_systems.png) — Signal scanners panel preview.
 - [appp/](./appp/) — Android application workspace module:
   - [appp/src/main/java/com/lenlu/sc/MainActivity.kt](./appp/src/main/java/com/lenlu/sc/MainActivity.kt) — Native WebView coordinator, status bar translucency, safe top inset updater, and back history handler.
-  - [appp/src/main/assets/htm.html](./appp/src/main/assets/htm.html) — Local web UI rendered inside the mobile application WebView.
+  - [appp/src/main/assets/index.html](./appp/src/main/assets/index.html) — Local web UI rendered inside the mobile application WebView.
   - [appp/build.gradle](./appp/build.gradle) — Build and compiler targeting configuration.
 
 ---
