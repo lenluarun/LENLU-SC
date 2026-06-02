@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@android:drawable/ic_menu_today"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/nav_compiler"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="IDE / Compiler" />
+        <item
+            android:id="@+id/nav_neural"
+            android:icon="@android:drawable/ic_menu_call"
+            android:title="Neural Lab" />
+        <item
+            android:id="@+id/nav_scanner"
+            android:icon="@android:drawable/ic_menu_search"
+            android:title="Signal Scanners" />
+        <item
+            android:id="@+id/nav_network"
+            android:icon="@android:drawable/ic_menu_share"
+            android:title="Network Analyzer" />
+        <item
+            android:id="@+id/nav_encoder"
+            android:icon="@android:drawable/ic_lock_idle_lock"
+            android:title="Payload Encoder" />
+        <item
+            android:id="@+id/nav_keymap"
+            android:icon="@android:drawable/ic_dialog_dialer"
+            android:title="Keymap Visualizer" />
+        <item
+            android:id="@+id/nav_osint"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="OSINT Panel" />
+        <item
+            android:id="@+id/nav_vault"
+            android:icon="@android:drawable/ic_lock_idle_lock"
+            android:title="Encrypted Vault" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:title="History" />
+        <item
+            android:id="@+id/nav_terminal"
+            android:icon="@android:drawable/ic_media_play"
+            android:title="Shell" />
+        <item
+            android:id="@+id/nav_speedtest"
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="Speed Test" />
+        <item
+            android:id="@+id/nav_clipboard"
+            android:icon="@android:drawable/ic_menu_agenda"
+            android:title="Clipboard" />
+        <item
+            android:id="@+id/nav_whois"
+            android:icon="@android:drawable/ic_menu_mapmode"
+            android:title="WHOIS" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="Settings" />
+    </group>
+</menu>

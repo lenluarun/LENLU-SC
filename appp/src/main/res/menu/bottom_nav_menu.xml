@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/nav_compiler"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="IDE" />
+    <item
+        android:id="@+id/nav_neural"
+        android:icon="@android:drawable/ic_menu_call"
+        android:title="Neural" />
+    <item
+        android:id="@+id/nav_scanner"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Scanner" />
+</menu>

@@ -184,4 +184,18 @@ class WebAppInterface(private val mContext: Context, private val webView: WebVie
             }
         }, 15000)
     }
+
+    @JavascriptInterface
+    fun openDrawer() {
+        (mContext as? MainActivity)?.runOnUiThread {
+            mContext.openDrawer()
+        }
+    }
+
+    @JavascriptInterface
+    fun onViewChanged(viewName: String) {
+        (mContext as? MainActivity)?.runOnUiThread {
+            mContext.updateNavigationSelection(viewName)
+        }
+    }
 }

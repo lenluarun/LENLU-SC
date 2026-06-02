@@ -1,19 +1,19 @@
-# <div align="center"><img src="IMGS/logo_nav_bar.png" alt="LENLU SC Logo" width="220"><br>🟢 LENLU SC // CYBERNETIC FORGE DECK & MOBILE UPLINK 🟢</div>
+# <div align="center"><img src="IMGS/logo_nav_bar.png" alt="LENLU SC Logo" width="260"><br>🟢 LENLU SC // CYBERNETIC FORGE DECK & MOBILE UPLINK 🟢</div>
 
 <div align="center">
-  
-  *A high-fidelity command console and mobile terminal for tactical keyboard payloads, spectrum telemetry scans, and neural scripting.*
 
-  [![System Status](https://img.shields.io/badge/SYSTEM-ONLINE-00FF41?style=for-the-badge&logo=opsgenie&logoColor=00FF41&labelColor=000000)](#)
-  [![Shader Core](https://img.shields.io/badge/SHADER%20CORE-ACTIVE-00FF41?style=for-the-badge&logo=webgl&logoColor=00FF41&labelColor=000000)](#)
-  [![Platform Support](https://img.shields.io/badge/PLATFORMS-WIN%20%7C%20MAC%20%7C%20NIX%20%7C%20ANDROID-00FF41?style=for-the-badge&logo=android&logoColor=00FF41&labelColor=000000)](#)
+*A premium, high-fidelity command console and mobile terminal wrapper for real-world cryptographic audits, network scans, DuckyScript payload compilation, and hardware flashing.*
+
+[![System Status](https://img.shields.io/badge/SYSTEM-ONLINE-00FF41?style=for-the-badge&logo=opsgenie&logoColor=00FF41&labelColor=000000)](#)
+[![Shader Core](https://img.shields.io/badge/SHADER%20CORE-ACTIVE-00FF41?style=for-the-badge&logo=webgl&logoColor=00FF41&labelColor=000000)](#)
+[![Platform Support](https://img.shields.io/badge/PLATFORMS-WIN%20%7C%20MAC%20%7C%20NIX%20%7C%20ANDROID-00FF41?style=for-the-badge&logo=android&logoColor=00FF41&labelColor=000000)](#)
 
 </div>
 
 ---
 
 > [!IMPORTANT]
-> **SECURE ISOLATION NOTICE**
+> **SECURE CLIENT-SIDE ISOLATION NOTICE**
 > LENLU SC runs client-side operations locally. Payloads and diagnostics do not leave your browser or device context unless explicitly requested via user-configured neural API endpoints.
 
 ---
@@ -23,13 +23,12 @@
 LENLU SC is an immersive, hardware-accelerated command console designed to bridge the gap between human-readable keyboard scripts and target host executable packages. 
 
 The console features:
-- A real-time **DuckyScript Linter and Compiler** targeting AutoIt3 scripting.
-- An **AI Neural Synthesis Lab** for speech-dictated or prompt-based payload generation.
-- A **Signal Scanners HUD** featuring **real-world functional diagnostics**: live GeoIP WiFi network surveys, Cloudflare ping latency/jitter tests for deauth monitor spikes, localhost socket port sweeps, and Web Audio API microphone frequency spectrum visualizer.
-- A dynamic visual interface supporting **flexible theme & layout pairings** (Cybernetic Neon vs. Warm Skeuomorphic Analog Wood/Brass) with **tactile interactive elements** (circular VU meter dial gauges, swinging needles, glowing glass vacuum/plasma tubes, mechanical console toggle buttons, and rocker switches).
-- Immersive effects like **3D Three.js particle core**, retro **CRT screen scanlines**, **chromatic aberration**, and **GSAP animations**.
-
-To extend accessibility, the **LENLU SC Android Application** (`appp` module) wraps this high-fidelity WebGL system inside a native container, optimizing rendering speed and automatically calibrating safe display boundaries.
+* 🛠️ **DuckyScript Linter and Compiler**: Translates keystroke injection scripts directly into compiled AutoIt3 executables with real-time error checking.
+* 🧠 **Neural Synthesis Lab**: Multi-model AI payload generation featuring voice dictation controls and stealth timing auto-calibrators.
+* 📡 **Network Surveillance HUD**: Real DNS resolutions, service scanners (SSH, HTTP, HTTPS, DB, Cache services), local WebSocket sweepers, and microphone frequency analyzers via Web Audio API.
+* 🔌 **Hardware WebUSB Flasher**: Directly streams payloads to Flipper Zero (BadUSB), Rubber Ducky, or Arduino controllers using chunked transmissions.
+* 🔓 **Web Crypto Hash Cracker**: Performs real-time dictionary attacks and brute-force hash-cracking utilizing Web Worker multi-threading.
+* 🎨 **Dual Aesthetic Engines**: Switch instantly between **Cybernetic Neon** and a warm, tactile **Skeuomorphic Analog** (brass dials, vacuum tubes, mechanical toggle switches) layout.
 
 ---
 
@@ -62,95 +61,39 @@ To extend accessibility, the **LENLU SC Android Application** (`appp` module) wr
   </tr>
 </table>
 
-<details>
-<summary><b>🔍 View Extended System Constructs</b></summary>
-<br>
-<table align="center" style="border-collapse: collapse; border: none; width: 100%;">
-  <tr style="border: none;">
-    <td align="center" width="33%" style="border: none; padding: 5px; vertical-align: top;">
-      <img src="IMGS/matrix_logs.png" alt="Matrix Logs" width="100%" style="border-radius: 6px; border: 1px solid #1a1c1a;"/><br>
-      <sub>Matrix Log Telemetry</sub>
-    </td>
-    <td align="center" width="33%" style="border: none; padding: 5px; vertical-align: top;">
-      <img src="IMGS/glass_cards.png" alt="Glass Cards" width="100%" style="border-radius: 6px; border: 1px solid #1a1c1a;"/><br>
-      <sub>Glassmorphic Cards</sub>
-    </td>
-    <td align="center" width="33%" style="border: none; padding: 5px; vertical-align: top;">
-      <img src="IMGS/terminal_interfaces.png" alt="Terminal UI" width="100%" style="border-radius: 6px; border: 1px solid #1a1c1a;"/><br>
-      <sub>Terminal Console HUD</sub>
-    </td>
-  </tr>
-</table>
-</details>
-
 ---
 
-## 🛠️ THE CORE CHAMBERS
+## 🛠️ CORE CHAMBERS
 
 ### 1. 💻 Integrated Payload Workbench
-- **DuckyScript Parser & Compiler**: Translates keystroke injection commands (`DELAY`, `STRING`, `GUI`, `ENTER`, etc.) directly into executable AutoIt3 (`.au3`/`.au4`) assembly code structures.
-- **Real-Time Interactive Linter**: Continuously evaluates typed scripts inside the editor. It catches syntax anomalies, invalid keywords, and missing arguments immediately, rendering warning/error decorators in the compiler logs.
-- **Session Cache & Memory**: Seamlessly saves your workspace configuration, editor contents, terminal outputs, and selected tab index into local web storage. Reloading the browser does not lose your current session.
+* **DuckyScript Compiler**: Translates keystroke inject scripts (`DELAY`, `STRING`, `GUI`, `ENTER`, `CTRL`, etc.) into AutoIt3 (`.au3`/`.au4`) assembly.
+* **Interactive Linter**: Continuously evaluates typed scripts inside the editor, flagging warnings and syntax anomalies directly inside the logs.
+* **Persistent Cache**: Keeps your current workspace, active code, compiler logs, and open tab selections safe across browser sessions.
 
 ### 2. 🧠 Neural Synthesis Lab
-- **Multi-Model AI uplink**: Allows connecting to advanced AI language endpoints (e.g., Groq, OpenAI, or Anthropic) by entering your private token in the settings card.
-- **Voice Payload Builder**: Utilizes the browser's speech recognition APIs to translate voice commands into functional script logic.
-- **Stealth Calibration**: Provides a delay calibrator that scales all execution timers inside the compiled scripts, letting you adjust timing constraints to bypass host defenses.
+* **Multi-Model Uplink**: Connects to AI models (Groq, OpenAI, Anthropic) via user-configured local tokens.
+* **Voice dictation**: Integrated Web Speech APIs allow converting voice commands into functional scripts.
+* **Stealth Calibrator**: Automatically scales script delay metrics to bypass target host defenses.
 
 ### 3. 📡 Network Surveillance HUD
-- **Live BLE Node Discovery**: Employs the **Web Bluetooth API** (supported in Chrome/Edge) to perform real-time scans of surrounding Bluetooth Low Energy signals, displaying device identifiers and RSSI values.
-- **GeoIP WiFi Proximity Survey**: Connects to GeoIP lookups to resolve local city/ISP data, rendering proximity WiFi network listings named after local providers.
-- **Deauth Monitor Stability Test**: Executes Cloudflare latency checks, measuring round-trip time (RTT) jitter and packet drop rates to gauge wireless interference.
-- **RF Spectrum Analyzer**: Connects to the Web Audio API microphone analyser node to read local sound frequencies and display live acoustic/RF spectrum waves on the canvas.
-- **DNS Surveillance**: Resolves domains using Cloudflare's **DNS-over-HTTPS (DoH)** API directly inside the client dashboard.
-- **WebRTC IP Leak Checker**: Queries local RTC candidate tables to output the current user's local and public IPv4/IPv6 endpoints.
-- **Local Port Sweeper**: Performs asynchronous WebSocket connection sweeps across common localhost development ports (e.g., `80`, `443`, `3000`, `8080`) to log active network endpoints on the user's host machine.
+* **DNS Resolution**: Resolves IP addresses and fingerprints hosts via Cloudflare's DNS-over-HTTPS (DoH) API.
+* **Service Scan**: Fingerprints standard service layers across 12 common protocol ports.
+* **WebRTC Leak Check**: Safely queries RTC candidate tables to map out public and local network interfaces.
+* **Microphone Spectrograph**: Web Audio API visualizer mapping surrounding ambient signal scans onto a WebGL canvas.
 
-### 4. 🗄️ Secure Vault & Export
-- **Encrypted Database Sandbox**: Saves custom payload drafts inside the local browser storage context, sandbox-isolated from other websites.
-- **Dark-Themed PDF Audits**: Exports detailed documentation containing source code, compiled assembly, compiler flags, and build statistics into a ready-to-share PDF report.
+### 4. 🔌 WebUSB Hardware Flasher
+* **Direct Flashing**: Connects via WebUSB (Chrome/Edge) to stream payloads to external hardware.
+* **Handshake Protocol**: Implements a secure chunked transmission (`DUCK_READY` ➡️ `CHUNKS` ➡️ `DUCK_EXEC`).
+* **Hardware Profile Registry**: Pre-loaded support for Rubber Ducky, Flipper Zero, and Arduino.
 
----
-
-## 📱 LENLU SC ANDROID APPLICATION
-
-The **Android companion application** wraps the WebGL console inside a native Android container (`appp` module), maximizing performance and adapting the interface to phone form factors.
-
-### Core Architecture & Implementations:
-1. **Edge-to-Edge Fluidity**: 
-   The application enables full-screen rendering using:
-   ```kotlin
-   WindowCompat.setDecorFitsSystemWindows(window, false)
-   window.statusBarColor = Color.TRANSPARENT
-   ```
-   It captures display insets dynamically via `WindowInsetsCompat` and exposes the status bar offset (`topInsetDp`) to the WebView DOM as a CSS custom property:
-   ```kotlin
-   webView.evaluateJavascript("document.documentElement.style.setProperty('--safe-top', '${topInsetDp}px')", null)
-   ```
-   This ensures visual panels adapt to devices with status bar offsets, curved corners, or camera notches.
-
-2. **GPU Hardware Acceleration**: 
-   The WebView container is configured with hardware-accelerated drawing layers to ensure smooth rendering of the Three.js 3D hologram grids, gsaps, and retro terminal scanlines.
-
-3. **WebView Configuration**:
-   The web rendering configuration is tuned for asset storage and modern web operations:
-   - Enabling JavaScript execution and DOM Database storage mechanisms.
-   - Enforcing local file and content access (`allowFileAccess = true`, `allowContentAccess = true`).
-   - Mixed content mode is set to always allow HTTPS/HTTP assets inside the local package scope.
-
-4. **Traversal Navigation**:
-   The activity intercepts hardware back key gestures using `onBackPressed()`. Instead of immediately exiting the application, it navigates backward through the WebView page history (`webView.goBack()`) if it's available.
-
-### App Target Specifications:
-- **Package Namespace / Application ID**: `com.lenlu.sc`
-- **Compile SDK Version**: API Level 34 (Android 14)
-- **Target SDK Version**: API Level 34 (Android 14)
-- **Minimum SDK Version**: API Level 24 (Android 7.0)
-- **Primary Source File**: [MainActivity.kt](./appp/src/main/java/com/lenlu/sc/MainActivity.kt)
+### 5. 🔓 Web Crypto Hash Cracker
+* **Multi-Threaded**: Runs in isolated browser Web Workers to ensure 60 FPS UI performance.
+* **Fast-Path Dictionary**: Checks target hashes against a built-in repository of common credentials.
+* **Brute-Force Enumerator**: Brute-forces strings dynamically using customizable charsets.
 
 ---
 
-## 🔄 COMPILATION FLOW
+## 🔄 COMPILATION & ARCHITECTURE FLOW
 
 ```mermaid
 graph TD
@@ -160,86 +103,104 @@ graph TD
     C --> E["Encrypted Vault & PDF Export"]
 ```
 
+```
+┌─────────────────────────────────────────┐
+│     LENLU SC v4.1 CORE SYSTEM          │
+├─────────────────────────────────────────┤
+│  1. IndexedDB Persistence (5 stores)    │
+│  2. Web Worker Manager (Multi-threaded) │
+│  3. WebAssembly Foundation (WASM)       │
+│  4. C2 Hive Command & Control           │
+│  5. Hardware Flasher (WebUSB)           │
+│  6. Module Registry System              │
+├─────────────────────────────────────────┤
+│  Data Flow: UI ➡️ Router ➡️ Modules       │
+│  Persistence: All data ➡️ IndexedDB      │
+│  Async: Full Promise/async-await        │
+└─────────────────────────────────────────┘
+```
+
 ---
 
 ## 📁 DIRECTORY STRUCTURE
 
-- [index.html](./index.html) — Core desktop dashboard hosting WebGL shaders, compiler engine, settings panels, real-world network diagnostics, and dual Cyber/Skeu theme and layout engines.
-- [studio.html](./studio.html) — Dynamic lateral portfolio displaying architectural overlays with GSAP scroll links.
-- [IMGS/](./IMGS/) — High-fidelity branding elements and dashboard mockup assets:
-  - [logo_nav_bar.png](./IMGS/logo_nav_bar.png) — Vector-aligned nav deck logo.
-  - [ide_workspace.png](./IMGS/ide_workspace.png) — Workbench workspace preview.
-  - [ai_generator.png](./IMGS/ai_generator.png) — Neural Synthesis workbench preview.
-  - [scanner_systems.png](./IMGS/scanner_systems.png) — Signal scanners panel preview.
-- [appp/](./appp/) — Android application workspace module:
-  - [appp/src/main/java/com/lenlu/sc/MainActivity.kt](./appp/src/main/java/com/lenlu/sc/MainActivity.kt) — Native WebView coordinator, status bar translucency, safe top inset updater, and back history handler.
-  - [appp/src/main/assets/index.html](./appp/src/main/assets/index.html) — Local web UI rendered inside the mobile application WebView.
-  - [appp/build.gradle](./appp/build.gradle) — Build and compiler targeting configuration.
+* [index.html](./index.html) — Standalone compiled production output.
+* [src/](./src/) — Web Console source codes.
+  * [src/js/main.js](./src/js/main.js) — Core loader, module registry, and router.
+  * [src/js/db.js](./src/js/db.js) — Async IndexedDB connection and schema adapter.
+  * [src/js/compiler.js](./src/js/compiler.js) — DuckyScript parser, linter, and code generation engines.
+  * [src/js/vault.js](./src/js/vault.js) — Encrypted key manager and local database vault.
+  * [src/js/ui.js](./src/js/ui.js) — Visual HUD, layout triggers, particle emitters, and themes.
+* [appp/](./appp/) — Android companion application module.
+  * [appp/src/main/java/com/lenlu/sc/MainActivity.kt](./appp/src/main/java/com/lenlu/sc/MainActivity.kt) — WebView wrapper handling edge-to-edge system insets and safe-top padding.
+  * [appp/src/main/assets/index.html](./appp/src/main/assets/index.html) — Embedded web UI inside the application.
+  * [appp/build.gradle](./appp/build.gradle) — Android build configuration targeting API 34.
 
 ---
 
-## 💻 COMPILATION SAMPLE
+## 🚀 UPLINK & DEPLOYMENT PROCEDURE
 
-### Input DuckyScript (`payload.ds`)
-```duckyscript
-REM Spawn Powershell and run script
-GUI r
-DELAY 300
-STRING powershell.exe -NoP -NonI -W Hidden
-ENTER
+### 🌐 Web Console (Development & Production)
+
+#### 1. Setup Dependencies
+```bash
+npm install
 ```
 
-### Output AutoIt Assembly (`assembly.au3`)
-```autoit
-; LENLU SC - GENERATED ASSEMBLY
-#NoTrayIcon
-#include <Misc.au3>
-
-; REM Spawn Powershell and run script
-Send("{LWIN}")
-Sleep(100)
-Send("r")
-Sleep(100)
-Sleep(300)
-Send("powershell.exe -NoP -NonI -W Hidden")
-Sleep(100)
-Send("{ENTER}")
-Sleep(100)
+#### 2. Run Local Development Server
+```bash
+npm run dev
 ```
 
+#### 3. Build for Production
+```bash
+npm run build
+```
+The build process compiles everything into a single, fully-inlined file at `src/dist/index.html` and propagates it to the project root (`index.html`) and the Android assets folder (`appp/src/main/assets/index.html`).
+
+> [!NOTE]
+> To keep the repository clean, the compiled `index.html` at the root and the Android asset bundle are automatically ignored by git. They are regenerated dynamically on demand during builds.
+
+#### 4. Deployment on Vercel (NPM Method)
+The repository includes a [vercel.json](./vercel.json) file configured to build and host the application using Vite's compile system:
+* **Framework Preset**: Vite
+* **Build Command**: `npm run build`
+* **Output Directory**: `src/dist`
+
+To deploy:
+1. Connect this repository to your Vercel project.
+2. Vercel will automatically detect `vercel.json` and configure the build settings.
+3. Once built, Vercel will host the compiled standalone code directly from `src/dist`.
+
+> [!WARNING]
+> WebUSB, Web Crypto, and Speech recognition services are blocked by modern browsers if hosted over standard HTTP. Make sure your hosting environment forces **HTTPS** (Vercel enables this by default).
+
+
 ---
 
-## 🚀 UPLINK PROCEDURE
+### 📱 Android Application
 
-### Web Console
-1. Run the terminal console by launching [index.html](./index.html) in a WebGL-compatible browser.
-2. Select **ESTABLISH LINK** on the splash screen to boot the matrix grid (reloads bypass this automatically).
-3. Input script content inside the **Payload Workbench** and select **Compile** to generate AutoIt script logs.
-4. Input your AI models key in the **Settings** card to activate the AI synthesis features.
-5. Save draft presets inside the **Encrypted Vault** or download them directly as file structures.
-
-### Android Application
-1. Import the root repository in **Android Studio**.
-2. Allow Gradle sync to complete and resolve target libraries.
-3. Build and execute the application on an emulator or standard hardware device running Android 7.0+ (API 24+).
+1. Open **Android Studio**.
+2. Select **Open Project** and locate the root workspace directory.
+3. Build the assets locally using `npm run build` so they copy to the assets folder.
+4. Execute `gradlew :appp:assembleDebug` to build the testing APK or compile directly onto a connected device.
 
 ---
 
-## ⚙️ TELEMETRY METRICS
+## ⚙️ TELEMETRY SYSTEM STATUS
 
 | Parameter | State | Description |
 | :--- | :--- | :--- |
 | **Compiler Pipeline** | `CALIBRATED` | Full conversion map of DuckyScript modifiers, delays, and strings. |
 | **WebGL Shaders** | `ACTIVE` | Ambient parallax particle matrices rendering at 60 FPS target. |
-| **Session Cache** | `ENABLED` | LocalStorage tracking active tab views, editor code, and compile output logs. |
+| **Session Cache** | `ENABLED` | IndexedDB tracking active tab views, editor code, and compile output logs. |
 | **Encryption Mode** | `SANDBOX` | Client-side client memory only. Data remains inside your local browser. |
 | **Android Inset Bridge** | `OPERATIONAL` | Calculates dynamic device offsets to optimize layout on curved screen mobiles. |
-| **Neural Synthesis Uplink** | `STANDBY` | Remote neural endpoint connection for automated payload generation. |
 
 ---
 
 <div align="center">
-  
-  **// END OF LINE.** // Maintain precision. Assemble with control.
+
+**// END OF LINE.** // Maintain precision. Assemble with control.
 
 </div>

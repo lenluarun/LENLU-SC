@@ -20,6 +20,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -29,6 +30,10 @@ import org.json.JSONObject
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+    private lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
+    private lateinit var bottomNav: com.google.android.material.bottomnavigation.BottomNavigationView
+    private lateinit var navView: com.google.android.material.navigation.NavigationView
+    
     private var topInsetDp = 0f
     private lateinit var wifiManager: WifiManager
 
@@ -57,6 +62,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var isUpdatingNav = false
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +78,9 @@ class MainActivity : AppCompatActivity() {
         val controller = WindowInsetsControllerCompat(window, window.decorView)
         controller.isAppearanceLightStatusBars = false
 
+        drawerLayout = findViewById(R.id.drawer_layout)
+        bottomNav = findViewById(R.id.bottom_navigation)
+        navView = findViewById(R.id.nav_view)
         webView = findViewById(R.id.webView)
         
         val settings = webView.settings
@@ -98,11 +108,56 @@ class MainActivity : AppCompatActivity() {
         }
         webView.webChromeClient = WebChromeClient()
 
-        webView.setOnApplyWindowInsetsListener { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             topInsetDp = systemBars.top / resources.displayMetrics.density
             updateSafeInsets()
+            
+            bottomNav.setPadding(0, 0, 0, systemBars.bottom)
+
             insets
+        }
+
+        bottomNav.setOnItemSelectedListener { item ->
+            if (!isUpdatingNav) {
+                val viewName = when (item.itemId) {
+                    R.id.nav_home -> "home"
+                    R.id.nav_dashboard -> "dashboard"
+                    R.id.nav_compiler -> "compiler"
+                    R.id.nav_neural -> "neural"
+                    R.id.nav_scanner -> "scanner"
+                    else -> "home"
+                }
+                webView.evaluateJavascript("if(window.switchView) switchView('$viewName', document.querySelector('[data-view=$viewName]'))", null)
+            }
+            true
+        }
+
+        navView.setNavigationItemSelectedListener { item ->
+            if (!isUpdatingNav) {
+                val viewName = when (item.itemId) {
+                    R.id.nav_home -> "home"
+                    R.id.nav_dashboard -> "dashboard"
+                    R.id.nav_compiler -> "compiler"
+                    R.id.nav_neural -> "neural"
+                    R.id.nav_scanner -> "scanner"
+                    R.id.nav_network -> "network"
+                    R.id.nav_encoder -> "encoder"
+                    R.id.nav_keymap -> "keymap"
+                    R.id.nav_osint -> "osint"
+                    R.id.nav_vault -> "vault"
+                    R.id.nav_history -> "history"
+                    R.id.nav_terminal -> "terminal"
+                    R.id.nav_speedtest -> "speedtest"
+                    R.id.nav_clipboard -> "clipboard"
+                    R.id.nav_whois -> "whois"
+                    R.id.nav_settings -> "settings"
+                    else -> "home"
+                }
+                webView.evaluateJavascript("if(window.switchView) switchView('$viewName', document.querySelector('[data-view=$viewName]'))", null)
+            }
+            drawerLayout.closeDrawers()
+            true
         }
 
         webView.loadUrl("file:///android_asset/index.html")
@@ -110,6 +165,38 @@ class MainActivity : AppCompatActivity() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         registerReceiver(wifiScanReceiver, intentFilter)
+    }
+
+    fun openDrawer() {
+        drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
+    }
+
+    fun updateNavigationSelection(viewName: String) {
+        val itemId = when (viewName) {
+            "home" -> R.id.nav_home
+            "dashboard" -> R.id.nav_dashboard
+            "compiler" -> R.id.nav_compiler
+            "neural" -> R.id.nav_neural
+            "scanner" -> R.id.nav_scanner
+            "network" -> R.id.nav_network
+            "encoder" -> R.id.nav_encoder
+            "keymap" -> R.id.nav_keymap
+            "osint" -> R.id.nav_osint
+            "vault" -> R.id.nav_vault
+            "history" -> R.id.nav_history
+            "terminal" -> R.id.nav_terminal
+            "speedtest" -> R.id.nav_speedtest
+            "clipboard" -> R.id.nav_clipboard
+            "whois" -> R.id.nav_whois
+            "settings" -> R.id.nav_settings
+            else -> -1
+        }
+        if (itemId != -1) {
+            isUpdatingNav = true
+            bottomNav.selectedItemId = itemId
+            navView.setCheckedItem(itemId)
+            isUpdatingNav = false
+        }
     }
 
     private fun checkAndRequestPermissions() {

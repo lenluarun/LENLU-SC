@@ -1,0 +1,924 @@
+    /* ==========================================================================
+   LAYOUT ENGINE - CYBER VS SKEUOMORPHIC ARRANGEMENT
+   ========================================================================== */
+
+    /* Layout Toggle button styling */
+    .layout-toggle-bar {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .35rem .7rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all .25s;
+      flex-shrink: 0;
+    }
+
+    .layout-toggle-bar:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    [data-theme="cyber"] .layout-toggle-bar {
+      border-color: rgba(0, 255, 65, 0.2);
+    }
+
+    [data-theme="cyber"] .layout-toggle-bar:hover {
+      border-color: rgba(0, 255, 65, 0.4);
+      background: rgba(0, 255, 65, 0.05);
+    }
+
+    /* SKEUOMORPHIC LAYOUT CHANGES */
+
+    /* Skeu Theme + Skeu Layout backing (wood desk) */
+    [data-layout="skeu"][data-theme="skeu"] .main {
+      background: #2a1a0e radial-gradient(ellipse at 50% 20%, #3d2512 0%, #120904 80%) !important;
+      border: 12px solid #3d2810 !important;
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.95), 0 10px 30px rgba(0, 0, 0, 0.85) !important;
+      position: relative;
+    }
+
+    /* Cyber Theme + Skeu Layout backing (gunmetal cockpit console) */
+    [data-layout="skeu"][data-theme="cyber"] .main {
+      background: #121714 radial-gradient(ellipse at 50% 20%, #1c2620 0%, #060a08 80%) !important;
+      border: 12px solid #1a221d !important;
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.95), 0 10px 30px rgba(0, 0, 0, 0.85) !important;
+      position: relative;
+    }
+
+    /* Make sure the main layout frame fits nicely on mobile viewport */
+    @media(max-width:768px) {
+      [data-layout="skeu"] .main {
+        border: 4px solid #3d2810 !important;
+        padding: 0.6rem !important;
+      }
+
+      [data-layout="skeu"][data-theme="cyber"] .main {
+        border: 4px solid #1a221d !important;
+        padding: 0.6rem !important;
+      }
+    }
+
+    /* Grids and responsive auto-fitting rows */
+    [data-layout="skeu"] .g2 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+      gap: 1.5rem !important;
+    }
+
+    [data-layout="skeu"] .g3 {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+      gap: 1.5rem !important;
+    }
+
+    [data-layout="skeu"] .g4 {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+      gap: 1.2rem !important;
+    }
+
+    [data-layout="skeu"] .g-ide {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+      gap: 1.5rem !important;
+    }
+
+    [data-layout="skeu"] .g-ai {
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)) !important;
+      gap: 1.5rem !important;
+    }
+
+    /* Dynamic dashboard rearrangement (only apply when view is active) */
+    @media (min-width: 961px) {
+      [data-layout="skeu"] #view-dashboard.active {
+        display: grid !important;
+        grid-template-columns: repeat(12, 1fr) !important;
+        gap: 1.5rem !important;
+      }
+
+      [data-layout="skeu"] #view-dashboard.active .hero-banner {
+        grid-column: span 12 !important;
+      }
+
+      [data-layout="skeu"] #view-dashboard.active .stat-row {
+        grid-column: span 12 !important;
+      }
+
+      /* Make .g3 and .g2 elements contents so their cards grid directly */
+      [data-layout="skeu"] #view-dashboard.active .g3,
+      [data-layout="skeu"] #view-dashboard.active .g2 {
+        display: contents !important;
+      }
+
+      /* Column 1 (Left): Live Threat Matrix (Top) and Neural Quick Ask (Bottom) */
+      [data-layout="skeu"] #view-dashboard.active .card-holo {
+        grid-column: span 3 !important;
+        grid-row: 3 / 4 !important;
+      }
+
+      [data-layout="skeu"] #view-dashboard.active .g3>.card:nth-child(2) {
+        grid-column: span 3 !important;
+        grid-row: 4 / 5 !important;
+      }
+
+      /* Column 2 (Center): Quick Compile (Top) and Activity Feed (Bottom) */
+      [data-layout="skeu"] #view-dashboard.active .g3>.card:nth-child(1) {
+        grid-column: span 5 !important;
+        grid-row: 3 / 4 !important;
+      }
+
+      [data-layout="skeu"] #view-dashboard.active .g2>.card:nth-child(2) {
+        grid-column: span 5 !important;
+        grid-row: 4 / 5 !important;
+      }
+
+      /* Column 3 (Right): Telemetry spans both Row 3 and Row 4 */
+      [data-layout="skeu"] #view-dashboard.active .g3>.card:nth-child(3) {
+        grid-column: span 4 !important;
+        grid-row: 3 / 5 !important;
+      }
+
+      /* Bottom Row 5: DuckyScript Reference spans full width */
+      [data-layout="skeu"] #view-dashboard.active .g2>.card:nth-child(1) {
+        grid-column: span 12 !important;
+        grid-row: 5 / 6 !important;
+      }
+    }
+
+    /* Card and Panel aesthetics under Skeu Layout */
+    [data-layout="skeu"] .card,
+    [data-layout="skeu"] .exe-builder,
+    [data-layout="skeu"] .editor-wrap,
+    [data-layout="skeu"] .scan-card {
+      border-radius: 6px !important;
+      padding: 1.3rem !important;
+      position: relative;
+      overflow: visible !important;
+    }
+
+    /* Skeu Theme + Skeu Layout Card Styling (Mahogany plate with Gold Screws) */
+    [data-layout="skeu"][data-theme="skeu"] .card,
+    [data-layout="skeu"][data-theme="skeu"] .exe-builder,
+    [data-layout="skeu"][data-theme="skeu"] .editor-wrap,
+    [data-layout="skeu"][data-theme="skeu"] .scan-card {
+      background:
+        radial-gradient(circle at 10px 10px, #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
+        radial-gradient(circle at calc(100% - 10px) 10px, #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
+        radial-gradient(circle at 10px calc(100% - 10px), #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
+        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
+        linear-gradient(135deg, #2e1c0c 0%, #1f1206 50%, #291a0c 100%) !important;
+      border: 3px solid #8b5a0f !important;
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 220, 150, 0.15),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Cyber Theme + Skeu Layout Card Styling (Gunmetal carbon plate with Chrome Screws & Neon Borders) */
+    [data-layout="skeu"][data-theme="cyber"] .card,
+    [data-layout="skeu"][data-theme="cyber"] .exe-builder,
+    [data-layout="skeu"][data-theme="cyber"] .editor-wrap,
+    [data-layout="skeu"][data-theme="cyber"] .scan-card {
+      background:
+        radial-gradient(circle at 10px 10px, #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
+        radial-gradient(circle at calc(100% - 10px) 10px, #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
+        radial-gradient(circle at 10px calc(100% - 10px), #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
+        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
+        linear-gradient(135deg, #161c18 0%, #0d120f 50%, #080c09 100%) !important;
+      border: 3px solid var(--g-dim) !important;
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.8),
+        0 0 12px rgba(0, 255, 65, 0.15),
+        inset 0 1px 0 rgba(0, 255, 65, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Card and editor headers under Skeu layout */
+    [data-layout="skeu"] .card-header,
+    [data-layout="skeu"] .editor-bar {
+      padding: 0.65rem 1.1rem !important;
+      border-radius: 4px 4px 0 0 !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .card-header,
+    [data-layout="skeu"][data-theme="skeu"] .editor-bar {
+      border-bottom: 2px solid #5c3d1e !important;
+      background: linear-gradient(180deg, #c8922a 0%, #a87020 100%) !important;
+      color: #0f0702 !important;
+      font-family: 'Palatino Linotype', serif !important;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .card-header,
+    [data-layout="skeu"][data-theme="cyber"] .editor-bar {
+      border-bottom: 2px solid var(--g-dim) !important;
+      background: linear-gradient(180deg, #222b25 0%, #111813 100%) !important;
+      color: var(--g) !important;
+      font-family: var(--font-display) !important;
+      text-shadow: 0 0 5px rgba(0, 255, 65, 0.5) !important;
+    }
+
+    /* Dial Gauges, Meters and Vacuum Tubes */
+    .gauge-container {
+      width: 95px;
+      height: 52px;
+      margin: 0 auto 5px;
+      position: relative;
+      display: none;
+      overflow: hidden;
+      border-radius: 4px 4px 0 0;
+    }
+
+    [data-layout="skeu"] .gauge-container {
+      display: block;
+    }
+
+    .gauge-dial {
+      width: 100%;
+      height: 90px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    /* Parchment gauge face for Skeu theme */
+    [data-theme="skeu"] .gauge-dial {
+      background: radial-gradient(circle at 50% 50%, #fffdd0 35%, #eedfa2 75%, #c8922a 100%);
+      border: 2px solid #5c3d1e;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="skeu"] .gauge-dial::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      right: 12px;
+      height: 35px;
+      border-top: 1.5px dashed rgba(139, 26, 26, 0.45);
+      border-radius: 50%;
+    }
+
+    [data-theme="skeu"] .gauge-needle {
+      width: 1.5px;
+      height: 40px;
+      background: #8b1a1a;
+      position: absolute;
+      bottom: 50%;
+      left: calc(50% - 0.75px);
+      transform-origin: bottom center;
+      transform: rotate(-60deg);
+      transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1.25);
+      z-index: 3;
+      box-shadow: 0.5px 0 1px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Glowing green holographic radar gauge face for Cyber theme */
+    [data-theme="cyber"] .gauge-dial {
+      background: radial-gradient(circle at 50% 50%, #030c05 40%, #081d0c 80%, #00ff41 100%);
+      border: 2px solid var(--g-dim);
+      box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.4);
+    }
+
+    [data-theme="cyber"] .gauge-dial::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      right: 12px;
+      height: 35px;
+      border-top: 1.5px dashed rgba(0, 255, 65, 0.6);
+      border-radius: 50%;
+    }
+
+    [data-theme="cyber"] .gauge-needle {
+      width: 1.5px;
+      height: 40px;
+      background: var(--hot);
+      position: absolute;
+      bottom: 50%;
+      left: calc(50% - 0.75px);
+      transform-origin: bottom center;
+      transform: rotate(-60deg);
+      transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1.25);
+      z-index: 3;
+      box-shadow: 0 0 6px var(--hot);
+    }
+
+    .gauge-center-cap {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #7f8c8d 30%, #2c3e50 90%);
+      border: 1px solid #1a1008;
+      position: absolute;
+      top: calc(50% - 5px);
+      left: calc(50% - 5px);
+      z-index: 4;
+    }
+
+    .gauge-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.03) 50%, transparent 50.1%);
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    /* Vacuum Tubes */
+    .vacuum-tube {
+      width: 40px;
+      height: 62px;
+      margin: 0 auto 5px;
+      position: relative;
+      display: none;
+      border-radius: 18px 18px 0 0;
+    }
+
+    [data-layout="skeu"] .vacuum-tube {
+      display: block;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .vacuum-tube {
+      background: rgba(255, 220, 150, 0.05);
+      border: 1.5px solid rgba(200, 146, 42, 0.18);
+      box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.06), 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .vacuum-tube {
+      background: rgba(8, 247, 254, 0.04);
+      border: 1.5px solid rgba(8, 247, 254, 0.25);
+      box-shadow: inset 0 1px 3px rgba(8, 247, 254, 0.1), 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .tube-glow {
+      width: 10px;
+      height: 35px;
+      position: absolute;
+      bottom: 8px;
+      left: calc(50% - 5px);
+      animation: tubeFlicker 3s infinite alternate;
+      border-radius: 5px;
+    }
+
+    [data-theme="skeu"] .tube-glow {
+      background: radial-gradient(ellipse at center, rgba(212, 131, 10, 0.9) 0%, rgba(212, 131, 10, 0) 75%);
+      box-shadow: 0 0 10px rgba(212, 131, 10, 0.45);
+    }
+
+    [data-theme="cyber"] .tube-glow {
+      background: radial-gradient(ellipse at center, rgba(8, 247, 254, 0.9) 0%, rgba(8, 247, 254, 0) 75%);
+      box-shadow: 0 0 10px rgba(8, 247, 254, 0.5);
+    }
+
+    @keyframes tubeFlicker {
+
+      0%,
+      100% {
+        opacity: 0.75;
+      }
+
+      50% {
+        opacity: 0.95;
+      }
+
+      25%,
+      75% {
+        opacity: 0.85;
+      }
+    }
+
+    /* Stat row arrangements */
+    [data-layout="skeu"] .stat-row {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+      gap: 1.2rem !important;
+      background: linear-gradient(180deg, #1f140a 0%, #150d06 100%) !important;
+      border: 3px solid #3d2810 !important;
+      padding: 1.2rem !important;
+      border-radius: 6px;
+      box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    [data-layout="skeu"] .stat-cell {
+      background: linear-gradient(180deg, #1c1006 0%, #0f0803 100%) !important;
+      border: 2px solid #5c3d1e !important;
+      border-radius: 4px !important;
+      padding: 0.75rem 0.5rem !important;
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.6),
+        inset 0 1px 2px rgba(255, 220, 150, 0.05) !important;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      min-height: 112px;
+    }
+
+    [data-layout="skeu"] .stat-lbl {
+      font-size: 0.64rem !important;
+      color: var(--s-muted) !important;
+      font-weight: 600 !important;
+      text-transform: none !important;
+      letter-spacing: 0.02em !important;
+      position: absolute !important;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+
+    [data-layout="skeu"] .stat-val {
+      font-size: 0.76rem !important;
+      color: #fffdd0 !important;
+      font-family: 'Courier New', monospace !important;
+      font-weight: bold !important;
+      text-shadow: none !important;
+      position: absolute !important;
+      top: 50px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 5;
+      background: #050302;
+      border: 1px solid #3d2810;
+      padding: 1px 5px;
+      border-radius: 3px;
+      max-width: fit-content;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.955);
+    }
+
+    /* Mechanical Console Switch styling for buttons in layout skeu */
+    [data-layout="skeu"] .nav-btn,
+    [data-layout="skeu"] .btn {
+      border-width: 2px !important;
+      border-style: solid !important;
+      box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+      transition: transform 0.1s, box-shadow 0.1s !important;
+      cursor: pointer;
+    }
+
+    [data-layout="skeu"] .nav-btn:active,
+    [data-layout="skeu"] .btn:active {
+      transform: translateY(1.5px) !important;
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.5),
+        inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Button themes under Skeu layout */
+    [data-layout="skeu"][data-theme="skeu"] .nav-btn {
+      border-color: #5c3d1e !important;
+      background: linear-gradient(180deg, #3d2810 0%, #2a1a0e 100%) !important;
+      color: var(--s-brass2) !important;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .nav-btn.active {
+      background: linear-gradient(180deg, #e8b84e 0%, #c8922a 100%) !important;
+      border-color: #f5d070 !important;
+      color: #0f0702 !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .nav-btn {
+      border-color: var(--g-dim) !important;
+      background: linear-gradient(180deg, #161c18 0%, #0d120f 100%) !important;
+      color: var(--g) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .nav-btn.active {
+      background: linear-gradient(180deg, var(--g) 0%, var(--g-dim) 100%) !important;
+      border-color: var(--white) !important;
+      color: #000 !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 0 10px rgba(0, 255, 65, 0.4) !important;
+    }
+
+    /* Mechanical slide switch settings toggles in layout skeu */
+    [data-layout="skeu"] .toggle {
+      width: 44px !important;
+      height: 22px !important;
+      border-radius: 4px !important;
+      padding: 2px !important;
+      box-shadow:
+        inset 0 3px 6px rgba(0, 0, 0, 0.8),
+        0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    }
+
+    [data-layout="skeu"] .toggle::after {
+      width: 18px !important;
+      height: 14px !important;
+      border-radius: 2px !important;
+      top: 2px !important;
+      left: 2px !important;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1.25) !important;
+    }
+
+    [data-layout="skeu"] .toggle.on::after {
+      left: 20px !important;
+    }
+
+    /* Skeu Theme toggles in Skeu layout */
+    [data-layout="skeu"][data-theme="skeu"] .toggle {
+      background: #120904 !important;
+      border: 2px solid #5c3d1e !important;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .toggle::after {
+      background: linear-gradient(180deg, #c8922a 0%, #8a5c18 100%) !important;
+      border: 1px solid #f5d070 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .toggle.on {
+      background: #231508 !important;
+      border-color: #c8922a !important;
+    }
+
+    /* Cyber Theme toggles in Skeu layout */
+    [data-layout="skeu"][data-theme="cyber"] .toggle {
+      background: #020603 !important;
+      border: 2px solid var(--g-dim) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .toggle::after {
+      background: linear-gradient(180deg, var(--g) 0%, var(--g-dim) 100%) !important;
+      border: 1px solid var(--white) !important;
+      box-shadow: 0 0 6px var(--g) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .toggle.on {
+      background: #0b1a0e !important;
+      border-color: var(--g) !important;
+    }
+
+    /* Tactile Inputs for Skeu Layout */
+    [data-layout="skeu"] .inp,
+    [data-layout="skeu"] select.inp {
+      border-width: 2px !important;
+      border-radius: 4px !important;
+      padding: 0.25rem 0.5rem !important;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7) !important;
+      font-family: 'Courier New', monospace !important;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .inp {
+      border-color: #5c3d1e !important;
+      background: #0f0804 !important;
+      color: var(--s-ivory2) !important;
+    }
+
+    [data-layout="skeu"][data-theme="skeu"] .inp:focus {
+      border-color: #c8922a !important;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 8px rgba(200, 146, 42, 0.3) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .inp {
+      border-color: var(--g-dim) !important;
+      background: #020603 !important;
+      color: var(--white) !important;
+    }
+
+    [data-layout="skeu"][data-theme="cyber"] .inp:focus {
+      border-color: var(--g) !important;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 255, 65, 0.3) !important;
+    }
+
+    /* Inset Monitor Displays (CRT screens) in Skeu Layout */
+    [data-layout="skeu"] .code-area,
+    [data-layout="skeu"] .term-log,
+    [data-layout="skeu"] .scan-output,
+    [data-layout="skeu"] #shellOutput {
+      border-width: 2px !important;
+      border-style: solid !important;
+      border-radius: 4px !important;
+      box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.9) !important;
+      font-family: 'Courier New', monospace !important;
+    }
+
+    /* Skeu Theme Monitor Displays (Warm amber/ivory screen) */
+    [data-layout="skeu"][data-theme="skeu"] .code-area,
+    [data-layout="skeu"][data-theme="skeu"] .term-log,
+    [data-layout="skeu"][data-theme="skeu"] .scan-output,
+    [data-layout="skeu"][data-theme="skeu"] #shellOutput {
+      background: #060403 !important;
+      border-color: #5c3d1e !important;
+      color: var(--s-ivory2) !important;
+    }
+
+    /* Cyber Theme Monitor Displays (Neon green terminal screen) */
+    [data-layout="skeu"][data-theme="cyber"] .code-area,
+    [data-layout="skeu"][data-theme="cyber"] .term-log,
+    [data-layout="skeu"][data-theme="cyber"] .scan-output,
+    [data-layout="skeu"][data-theme="cyber"] #shellOutput {
+      background: #020704 !important;
+      border-color: var(--g-dim) !important;
+      color: var(--g) !important;
+      text-shadow: 0 0 4px rgba(0, 255, 65, 0.4) !important;
+    }
+
+    /* Speed test styling and fonts */
+    .speed-gauge {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .speed-gauge canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .speed-val {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .speed-num {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--g);
+      line-height: 1;
+    }
+
+    [data-theme="skeu"] .speed-num {
+      font-family: 'Palatino Linotype', serif;
+      color: var(--s-brass2);
+    }
+
+    .speed-unit {
+      font-family: var(--font-hud);
+      font-size: .58rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+
+    [data-theme="skeu"] .speed-unit {
+      font-family: 'Courier New', monospace;
+      color: var(--s-muted);
+    }
+
+    /* SKEU HOME HERO section */
+    [data-theme="skeu"] #view-home .hb-title,
+    [data-theme="skeu"] #view-home [style*="font-family:var(--font-display)"] {
+      font-family: 'Palatino Linotype', 'Book Antiqua', serif !important;
+      animation: none !important;
+    }
+
+    /* --- NEW FEATURE STYLES --- */
+    .compiler-tabs {
+      display: flex;
+      gap: 3px;
+    }
+
+    .compiler-tab {
+      font-family: var(--font-hud);
+      font-size: .62rem;
+      padding: .15rem .42rem;
+      border-radius: 2px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all .2s;
+    }
+
+    .compiler-tab:hover {
+      color: var(--g);
+      border-color: var(--gbord);
+    }
+
+    .compiler-tab.active {
+      color: var(--base);
+      background: var(--g);
+      border-color: var(--g);
+      box-shadow: 0 0 8px var(--g);
+    }
+
+    [data-theme="skeu"] .compiler-tab.active {
+      color: #ede5d0;
+      background: #8b1a1a;
+      border-color: #5c3d1e;
+      box-shadow: none;
+    }
+
+    /* Keymap Keyboard Layout Grid */
+    .keyboard-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(0, 5, 1, 0.7);
+      border: 1px solid var(--gbord);
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      margin-top: 10px;
+      font-family: var(--font-mono);
+      overflow-x: auto;
+    }
+
+    .keyboard-row {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+
+    .vkey {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 25px;
+      height: 25px;
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: rgba(10, 20, 12, 0.7);
+      border: 1px solid rgba(0, 255, 65, 0.15);
+      border-radius: 3px;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .vkey.active {
+      background: var(--g);
+      color: var(--base);
+      border-color: var(--g);
+      box-shadow: 0 0 10px var(--g);
+    }
+
+    .vkey.vkey-wide {
+      min-width: 44px;
+    }
+
+    .vkey.vkey-space {
+      min-width: 140px;
+    }
+
+    [data-theme="skeu"] .keyboard-container {
+      background: #ede5d0;
+      border-color: #5c3d1e;
+    }
+
+    [data-theme="skeu"] .vkey {
+      background: #fbf8f0;
+      color: #5c3d1e;
+      border-color: #c8922a;
+    }
+
+    [data-theme="skeu"] .vkey.active {
+      background: #8b1a1a;
+      color: #ede5d0;
+      border-color: #5c3d1e;
+      box-shadow: none;
+    }
+
+    /* Subnet scanner grid */
+    .subnet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 8px;
+      padding: 6px;
+      border: 1px solid var(--gbord);
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: var(--radius);
+    }
+
+    .subnet-chip {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 0.2rem 0.35rem;
+      border-radius: 2px;
+      text-align: center;
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid var(--gbord);
+      color: var(--muted);
+    }
+
+    .subnet-chip.active-ip {
+      color: var(--base);
+      background: var(--g);
+      border-color: var(--g);
+      font-weight: bold;
+      box-shadow: 0 0 6px var(--g);
+    }
+
+    .subnet-chip.scanning-ip {
+      color: var(--base);
+      background: var(--amber);
+      border-color: var(--amber);
+      box-shadow: 0 0 6px var(--amber);
+    }
+
+    /* OSINT map, checklist */
+    .osint-map-wrap {
+      height: 220px;
+      width: 100%;
+      border: 1px solid var(--gbord);
+      border-radius: var(--radius);
+      margin-top: 10px;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .checklist-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.68rem;
+      margin-top: 4px;
+    }
+
+    .check-box {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--gbord);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--g);
+      font-size: 0.55rem;
+    }
+
+    .check-box.checked {
+      background: rgba(0, 255, 65, 0.15);
+    }
+
+    .check-box i {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .check-box.checked i {
+      opacity: 1;
+    }
+
+    /* Speech waves */
+    .speech-wave {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 24px;
+      margin-top: 5px;
+    }
+
+    .speech-bar {
+      width: 2px;
+      height: 4px;
+      background: var(--g);
+      border-radius: 1px;
+      transition: height 0.1s ease;
+    }
+
+    .speech-wave.active .speech-bar {
+      animation: wavePulse 1.2s ease-in-out infinite alternate;
+    }
+
+    .speech-wave.active .speech-bar:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .speech-wave.active .speech-bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .speech-wave.active .speech-bar:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .speech-wave.active .speech-bar:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .speech-wave.active .speech-bar:nth-child(6) {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes wavePulse {
+      0% {
+        height: 4px;
+      }
+
+      100% {
+        height: 22px;
+      }
+    }

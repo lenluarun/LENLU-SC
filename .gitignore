@@ -24,3 +24,11 @@ local.properties
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node.js and build outputs
+node_modules/
+dist/
+src/dist/
+/index.html
+/appp/src/main/assets/index.html
+
