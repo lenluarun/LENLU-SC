@@ -39,8 +39,13 @@ import './forge-extensions.js';
       loadAIConfig(); buildAITags(); renderVault(); renderHistory();
       document.getElementById('sessionId').textContent = S.sessionId;
       document.getElementById('homeSessionId').textContent = S.sessionId;
-      const initialView = (location.hash || '#home').replace('#', '').trim() || 'home';
-      if (document.getElementById('view-' + initialView)) switchView(initialView, document.querySelector('[data-view=' + initialView + ']'));
+      const isAdminRoute = window.location.pathname === '/admin' || window.location.hash === '#admin';
+      if (isAdminRoute) {
+        switchView('admin');
+      } else {
+        const initialView = (location.hash || '#home').replace('#', '').trim() || 'home';
+        if (document.getElementById('view-' + initialView)) switchView(initialView, document.querySelector('[data-view=' + initialView + ']'));
+      }
       const src = localStorage.getItem('lenlu_src4');
       if (src && getSetting('persist')) { document.getElementById('srcEditor').value = src; lintSource(src); }
       document.addEventListener('keydown', e => {

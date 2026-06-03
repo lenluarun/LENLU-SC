@@ -3884,6 +3884,385 @@ ${r}`,"ai");return}q("// Synthesizing payload…","ai","thinking");try{const i=t
           </div>
         </div>
       </div>
+      <!-- ADMIN VIEW -->
+      <div class="view" id="view-admin">
+        <style>
+          .admin-tab-btn {
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            justify-content: flex-start !important;
+            transition: all .25s ease;
+          }
+          .admin-tab-btn:hover {
+            color: var(--cyan);
+            background: rgba(0,210,255,0.06);
+            border-color: rgba(0,210,255,0.15);
+          }
+          .admin-tab-btn.active {
+            color: var(--white);
+            background: var(--cyan-dark);
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0,210,255,0.15);
+          }
+          #admin-c2-output::-webkit-scrollbar,
+          #adm-templates-list::-webkit-scrollbar,
+          #adm-capabilities-list::-webkit-scrollbar {
+            width: 4px;
+          }
+          #admin-c2-output::-webkit-scrollbar-thumb,
+          #adm-templates-list::-webkit-scrollbar-thumb,
+          #adm-capabilities-list::-webkit-scrollbar-thumb {
+            background: var(--gbord);
+            border-radius: 2px;
+          }
+          
+          /* Utility alignment layouts */
+          .justify-center {
+            justify-content: center !important;
+          }
+          .text-center {
+            text-align: center !important;
+          }
+          .admin-panel {
+            animation: fadeIn .3s var(--ease);
+          }
+          .logs-row:hover {
+            background: rgba(255,255,255,0.02);
+          }
+        </style>
+
+        <div class="card card-holo" id="admin-login-card" style="max-width: 480px; margin: 2rem auto; padding: 1.5rem;">
+          <div class="card-header">
+            <span><i class="fas fa-lock ch-icon"></i>Admin Gateway</span>
+            <span class="card-tag">SECURE</span>
+          </div>
+          <div class="card-body flex-col gap-md">
+            <div class="inp-group">
+              <label class="inp-label">Username</label>
+              <input class="inp" type="text" id="admin-user" placeholder="Access ID">
+            </div>
+            <div class="inp-group">
+              <label class="inp-label">Security Passkey</label>
+              <input class="inp" type="password" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')submitAdminAuth()">
+            </div>
+            <button class="btn btn-primary w100" onclick="submitAdminAuth()"><i class="fas fa-shield-alt"></i> Authenticate</button>
+            <div id="admin-login-error" class="text-sm text-red mt-sm" style="display:none; color:var(--red);"></div>
+          </div>
+        </div>
+
+        <div id="admin-dashboard-container" style="display:none; width: 100%;">
+          <div class="flex items-center justify-between gap-md mb-sm" style="flex-wrap:wrap">
+            <div>
+              <div style="font-family:var(--font-display);font-size:.92rem;letter-spacing:.12em;color:var(--white)">CONTROL PANEL // COMMAND CONFIG</div>
+              <div class="text-xs text-muted mt-sm">Logged in as: <strong id="admin-username" style="color:var(--g)">lenlu</strong></div>
+            </div>
+            <div class="flex gap-sm">
+              <button class="btn btn-ghost btn-sm" onclick="adminLogOut()"><i class="fas fa-sign-out-alt"></i>Logout</button>
+              <button class="btn btn-primary btn-sm" onclick="saveAdminData()"><i class="fas fa-save"></i>Push Live Updates</button>
+            </div>
+          </div>
+
+          <!-- Tab Wrapper -->
+          <div class="flex gap-md" style="margin-top: 1rem; align-items: stretch; flex-wrap: wrap;">
+            <!-- Left Sidebar Navigation -->
+            <div class="card" style="width: 220px; flex-shrink: 0; padding: .75rem; background: rgba(10,12,18,0.65); border: 1px solid var(--gbord);">
+              <div class="flex-col gap-xs" style="gap: .25rem;">
+                <button class="btn w100 text-left admin-tab-btn active" onclick="switchAdminTab('config')" id="admin-tab-btn-config">
+                  <i class="fas fa-sliders-h" style="width:20px;"></i> Configurations
+                </button>
+                <button class="btn w100 text-left admin-tab-btn" onclick="switchAdminTab('diagnostics')" id="admin-tab-btn-diagnostics">
+                  <i class="fas fa-chart-line" style="width:20px;"></i> System Monitor
+                </button>
+                <button class="btn w100 text-left admin-tab-btn" onclick="switchAdminTab('c2')" id="admin-tab-btn-c2">
+                  <i class="fas fa-terminal" style="width:20px;"></i> C2 Hive Console
+                </button>
+                <button class="btn w100 text-left admin-tab-btn" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs">
+                  <i class="fas fa-history" style="width:20px;"></i> Security Audit Logs
+                </button>
+                <button class="btn w100 text-left admin-tab-btn" onclick="switchAdminTab('backup')" id="admin-tab-btn-backup">
+                  <i class="fas fa-hdd" style="width:20px;"></i> Backup / Restore
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Content Panels -->
+            <div style="flex: 1; min-width: 320px;">
+              <!-- 1. CONFIG PANEL -->
+              <div class="admin-panel" id="admin-panel-config" style="display: block;">
+                <div class="g3">
+                  <!-- SITE SETTINGS -->
+                  <div class="card">
+                    <div class="card-header"><span><i class="fas fa-sliders-h ch-icon"></i>Site Config</span></div>
+                    <div class="card-body flex-col gap-sm">
+                      <div class="inp-group"><label class="inp-label">Cyber Title</label><input class="inp" id="adm-sett-title-cy"></div>
+                      <div class="inp-group"><label class="inp-label">Skeu Title</label><input class="inp" id="adm-sett-title-sk"></div>
+                      <div class="inp-group"><label class="inp-label">Cyber Subtitle</label><textarea class="inp" id="adm-sett-sub-cy" rows="3"></textarea></div>
+                      <div class="inp-group"><label class="inp-label">Skeu Subtitle</label><textarea class="inp" id="adm-sett-sub-sk" rows="3"></textarea></div>
+                    </div>
+                  </div>
+
+                  <!-- BIO PROFILE -->
+                  <div class="card">
+                    <div class="card-header"><span><i class="fas fa-user-circle ch-icon"></i>Dossier Profile</span></div>
+                    <div class="card-body flex-col gap-sm">
+                      <div class="inp-group"><label class="inp-label">Display Name</label><input class="inp" id="adm-bio-name"></div>
+                      <div class="inp-group"><label class="inp-label">Professional Role</label><input class="inp" id="adm-bio-role"></div>
+                      <div class="inp-group"><label class="inp-label">Expertise Tags (comma-separated)</label><input class="inp" id="adm-bio-tags"></div>
+                      <div class="inp-group"><label class="inp-label">Profile Icon (FontAwesome)</label><input class="inp" id="adm-bio-icon"></div>
+                      <div class="inp-group"><label class="inp-label">Detailed Biography</label><textarea class="inp" id="adm-bio-text" rows="5"></textarea></div>
+                    </div>
+                  </div>
+
+                  <!-- DATA SUMMARY -->
+                  <div class="card">
+                    <div class="card-header"><span><i class="fas fa-cubes ch-icon"></i>Data Summary</span></div>
+                    <div class="card-body flex-col gap-md">
+                      <div style="font-family:var(--font-hud); font-size:.8rem;">
+                        <div class="flex justify-between" style="border-bottom:1px solid var(--gbord); padding:.5rem 0">
+                          <span>Capabilities Active:</span><strong id="adm-stat-caps" style="color:var(--cyan)">0</strong>
+                        </div>
+                        <div class="flex justify-between" style="border-bottom:1px solid var(--gbord); padding:.5rem 0">
+                          <span>Payload Templates:</span><strong id="adm-stat-temps" style="color:var(--amber)">0</strong>
+                        </div>
+                        <div class="flex justify-between" style="padding:.5rem 0">
+                          <span>Storage Engine:</span><strong id="adm-stat-db" style="color:var(--g)">ONLINE (Local file)</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CRUD SECTIONS (TEMPLATES & CAPABILITIES) -->
+                <div class="g2" style="margin-top: 1rem;">
+                  <!-- TEMPLATES CRUD -->
+                  <div class="card">
+                    <div class="card-header">
+                      <span><i class="fas fa-file-code ch-icon"></i>Manage DuckyScript Templates</span>
+                      <button class="btn btn-cyan btn-xs" onclick="openAdminTemplateModal()"><i class="fas fa-plus"></i> Add Template</button>
+                    </div>
+                    <div class="card-body flex-col gap-sm" id="adm-templates-list" style="max-height: 400px; overflow-y: auto; gap: .5rem;">
+                      <!-- Dynamically populated -->
+                    </div>
+                  </div>
+
+                  <!-- CAPABILITIES CRUD -->
+                  <div class="card">
+                    <div class="card-header">
+                      <span><i class="fas fa-layer-group ch-icon"></i>Manage Capabilities</span>
+                      <button class="btn btn-cyan btn-xs" onclick="openAdminCapabilityModal()"><i class="fas fa-plus"></i> Add Capability</button>
+                    </div>
+                    <div class="card-body flex-col gap-sm" id="adm-capabilities-list" style="max-height: 400px; overflow-y: auto; gap: .5rem;">
+                      <!-- Dynamically populated -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. DIAGNOSTICS PANEL -->
+              <div class="admin-panel" id="admin-panel-diagnostics" style="display: none;">
+                <div class="card card-holo" style="padding: 1rem; background: rgba(10,12,18,0.7); border: 1px solid var(--gbord);">
+                  <div class="card-header">
+                    <span><i class="fas fa-heartbeat ch-icon"></i>SYSTEM DIAGNOSTICS & TELEMETRY</span>
+                    <span class="card-tag" style="background:var(--cyan-dark); color:var(--cyan)">REALTIME</span>
+                  </div>
+                  <div class="card-body">
+                    <div class="g3">
+                      <div class="flex-col items-center justify-center" style="text-align:center; padding: 1rem; border: 1px solid var(--gbord); background: rgba(5,6,10,0.4); border-radius:4px;">
+                        <span class="text-xs text-muted" style="margin-bottom:.5rem; display:block">CPU INFRASTRUCTURE LOAD</span>
+                        <div style="position:relative; width:120px; height:120px; margin:0 auto;" class="flex items-center justify-center">
+                          <svg width="120" height="120" viewBox="0 0 120 120" style="display:block; margin:0 auto;">
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(0,255,102,0.1)" stroke-width="8"></circle>
+                            <circle id="diag-cpu-circle" cx="60" cy="60" r="50" fill="none" stroke="var(--g)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 0.8s ease;"></circle>
+                          </svg>
+                          <div style="position:absolute; top:46px; left:0; width:120px; text-align:center; font-family:var(--font-hud); font-size:1.2rem; color:var(--white)" id="diag-cpu-text">0%</div>
+                        </div>
+                      </div>
+                      
+                      <div class="flex-col items-center justify-center" style="text-align:center; padding: 1rem; border: 1px solid var(--gbord); background: rgba(5,6,10,0.4); border-radius:4px;">
+                        <span class="text-xs text-muted" style="margin-bottom:.5rem; display:block">SESSION MEMORY BUFFER</span>
+                        <div style="position:relative; width:120px; height:120px; margin:0 auto;" class="flex items-center justify-center">
+                          <svg width="120" height="120" viewBox="0 0 120 120" style="display:block; margin:0 auto;">
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(0,210,255,0.1)" stroke-width="8"></circle>
+                            <circle id="diag-ram-circle" cx="60" cy="60" r="50" fill="none" stroke="var(--cyan)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 0.8s ease;"></circle>
+                          </svg>
+                          <div style="position:absolute; top:46px; left:0; width:120px; text-align:center; font-family:var(--font-hud); font-size:1.2rem; color:var(--white)" id="diag-ram-text">0%</div>
+                        </div>
+                      </div>
+                      
+                      <div class="flex-col items-center justify-center" style="text-align:center; padding: 1rem; border: 1px solid var(--gbord); background: rgba(5,6,10,0.4); border-radius:4px;">
+                        <span class="text-xs text-muted" style="margin-bottom:.5rem; display:block">API GATEWAY PING</span>
+                        <div style="position:relative; width:120px; height:120px; margin:0 auto;" class="flex items-center justify-center">
+                          <svg width="120" height="120" viewBox="0 0 120 120" style="display:block; margin:0 auto;">
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,160,0,0.1)" stroke-width="8"></circle>
+                            <circle id="diag-ping-circle" cx="60" cy="60" r="50" fill="none" stroke="var(--amber)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 0.8s ease;"></circle>
+                          </svg>
+                          <div style="position:absolute; top:46px; left:0; width:120px; text-align:center; font-family:var(--font-hud); font-size:1.2rem; color:var(--white)" id="diag-ping-text">0 ms</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="card mt-md" style="border: 1px solid var(--gbord); margin-top: 1.5rem;">
+                      <div class="card-header" style="background: rgba(10,12,18,0.8);">
+                        <span><i class="fas fa-chart-line"></i>API LATENCY HISTORY SCANNER</span>
+                      </div>
+                      <div class="card-body">
+                        <canvas id="diagnostics-canvas" width="600" height="180" style="width: 100%; height: 180px; background: rgba(5,6,10,0.6); border: 1px dashed var(--gbord); display:block;"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. C2 HIVE MONITOR PANEL -->
+              <div class="admin-panel" id="admin-panel-c2" style="display: none;">
+                <div class="g3">
+                  <!-- Beacon List Panel -->
+                  <div class="card" style="grid-column: span 1;">
+                    <div class="card-header"><span><i class="fas fa-satellite-dish ch-icon"></i>BEACONS INSTALLED</span></div>
+                    <div class="card-body flex-col gap-sm" id="admin-c2-beacons" style="max-height: 450px; overflow-y: auto;">
+                      <!-- Populated via script -->
+                    </div>
+                  </div>
+                  
+                  <!-- Shell Input Console -->
+                  <div class="card" style="grid-column: span 2; display: flex; flex-direction: column;">
+                    <div class="card-header flex items-center justify-between" style="flex-wrap:wrap; gap:xs;">
+                      <span><i class="fas fa-terminal ch-icon"></i>C2 CONSOLE ROUTER</span>
+                      <span id="admin-c2-target-badge" class="card-tag">NO TARGET MOUNTED</span>
+                    </div>
+                    <div class="card-body flex-col" style="flex:1; padding: 1rem; background: #05060a; border: 1px solid var(--gbord); font-family:var(--font-mono); font-size:0.75rem; min-height: 380px;">
+                      <div id="admin-c2-output" style="flex:1; overflow-y:auto; max-height: 320px; color:var(--g); margin-bottom: 1rem; line-height: 1.3rem;">
+                        <div style="color:var(--cyan)">=== LENLU SC HYPER TERMINAL DECK ===</div>
+                        <div>Ready for connection. Select an active beacon node on the left panel...</div>
+                      </div>
+                      <div class="flex items-center" style="border-top: 1px solid var(--gbord); padding-top: 0.5rem; gap: 0.5rem;">
+                        <span style="color:var(--amber)" id="admin-c2-prompt">guest@lenlu-sc:~$</span>
+                        <input class="inp" type="text" id="admin-c2-input" placeholder="Type HELP for command list or injection script..." style="flex:1; border:none; background:transparent; font-family:var(--font-mono); font-size:0.75rem; color:var(--white); box-shadow:none; padding:0;" onkeydown="if(event.key==='Enter')submitC2TerminalCmd()">
+                        <button class="btn btn-cyan btn-xs" onclick="submitC2TerminalCmd()"><i class="fas fa-paper-plane"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. SECURITY AUDIT LOG PANEL -->
+              <div class="admin-panel" id="admin-panel-logs" style="display: none;">
+                <div class="card">
+                  <div class="card-header flex items-center justify-between" style="flex-wrap:wrap; gap:sm;">
+                    <span><i class="fas fa-file-invoice ch-icon"></i>SECURITY OPERATING SYSTEM AUDIT TRAILS</span>
+                    <div class="flex gap-sm">
+                      <button class="btn btn-ghost btn-xs" onclick="downloadLogsCSV()"><i class="fas fa-download"></i> Export CSV</button>
+                      <button class="btn btn-ghost btn-xs" onclick="purgeLogs()" style="color:var(--red); border-color:var(--red);"><i class="fas fa-trash-alt"></i> Purge Trails</button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="flex gap-sm mb-sm" style="margin-bottom: 1rem; flex-wrap:wrap">
+                      <div class="inp-group" style="flex: 1; min-width: 150px;">
+                        <label class="inp-label">Severity Level</label>
+                        <select class="inp" id="admin-logs-filter-severity" onchange="filterLogsTable()" style="height:32px; padding:0 .5rem;">
+                          <option value="ALL">All events</option>
+                          <option value="SUCCESS">Success events</option>
+                          <option value="FAIL">Failure events</option>
+                        </select>
+                      </div>
+                      <div class="inp-group" style="flex: 2; min-width: 200px;">
+                        <label class="inp-label">Search Keywords</label>
+                        <input class="inp" id="admin-logs-filter-search" placeholder="Filter action details..." oninput="filterLogsTable()" style="height:32px;">
+                      </div>
+                    </div>
+                    
+                    <div style="overflow-x:auto;">
+                      <table style="width:100%; border-collapse:collapse; font-size:0.75rem; text-align:left; font-family:var(--font-hud)">
+                        <thead>
+                          <tr style="border-bottom: 2px solid var(--gbord); color:var(--white)">
+                            <th style="padding:.5rem">DATE / TIMESTAMP</th>
+                            <th style="padding:.5rem">USER</th>
+                            <th style="padding:.5rem">ACTION CODE</th>
+                            <th style="padding:.5rem">STATUS</th>
+                            <th style="padding:.5rem">PARAMETERS</th>
+                          </tr>
+                        </thead>
+                        <tbody id="admin-logs-tbody">
+                          <!-- Dynamically filled -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. BACKUP & RESTORE PANEL -->
+              <div class="admin-panel" id="admin-panel-backup" style="display: none;">
+                <div class="g2">
+                  <!-- Backup Card -->
+                  <div class="card">
+                    <div class="card-header"><span><i class="fas fa-file-download ch-icon"></i>SYSTEM EXPORT SYSTEM</span></div>
+                    <div class="card-body flex-col gap-md" style="padding:1.5rem">
+                      <p class="text-xs text-muted">Generate and retrieve a complete Snapshot of the LENLU SC system state. This file includes title variables, custom template listings, biography elements, and capability layers.</p>
+                      <button class="btn btn-cyan w100" onclick="exportSystemBackup()"><i class="fas fa-file-archive"></i> Download SNAPSHOT.json</button>
+                    </div>
+                  </div>
+                  
+                  <!-- Restore Card -->
+                  <div class="card">
+                    <div class="card-header"><span><i class="fas fa-file-upload ch-icon"></i>SYSTEM IMPORT RESTORER</span></div>
+                    <div class="card-body flex-col gap-md" style="padding:1.5rem">
+                      <p class="text-xs text-muted">Upload a valid backup snapshot file. This procedure will run schema checks on the JSON input and overwrite the target storage engine parameters.</p>
+                      <div id="admin-restore-dropzone" style="border: 2px dashed var(--gbord); padding: 2rem 1rem; text-align: center; border-radius: 4px; cursor: pointer; background: rgba(5,6,10,0.3);" ondragover="event.preventDefault()" ondrop="handleRestoreFileDrop(event)" onclick="triggerRestoreFileInput()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color:var(--cyan); margin-bottom: .5rem; display:block; margin-left:auto; margin-right:auto;"></i>
+                        <div class="text-xs">Drag & Drop backup `.json` file here or click to browse</div>
+                        <input type="file" id="admin-restore-file-input" style="display:none;" onchange="handleRestoreFileSelect(event)">
+                      </div>
+                      <div id="admin-restore-status" class="text-xs" style="display:none; padding:.5rem; border-radius:4px;"></div>
+                      <button class="btn btn-primary w100" id="admin-restore-apply-btn" onclick="applySystemRestore()" style="display:none; margin-top:1rem;"><i class="fas fa-sync-alt"></i> Apply Restore</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Template Edit Modal -->
+        <div class="modal" id="modal-admin-template">
+          <div class="modal-content" style="max-width: 500px;">
+            <div class="card card-holo">
+              <div class="card-header">
+                <span id="adm-temp-modal-title">Add Payload Template</span>
+                <button class="btn btn-ghost btn-xs" onclick="closeAdminTemplateModal()"><i class="fas fa-times"></i></button>
+              </div>
+              <div class="card-body flex-col gap-sm">
+                <input type="hidden" id="adm-temp-action-index" value="-1">
+                <div class="inp-group"><label class="inp-label">Template ID (e.g. T1, T2)</label><input class="inp" id="adm-temp-id"></div>
+                <div class="inp-group"><label class="inp-label">Template Name</label><input class="inp" id="adm-temp-name"></div>
+                <div class="inp-group"><label class="inp-label">DuckyScript Code</label><textarea class="inp" id="adm-temp-code" rows="8" style="font-family:var(--font-mono);font-size:.7rem;"></textarea></div>
+                <button class="btn btn-primary w100" onclick="saveAdminTemplate()"><i class="fas fa-check"></i> Save Template</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Capability Edit Modal -->
+        <div class="modal" id="modal-admin-capability">
+          <div class="modal-content" style="max-width: 500px;">
+            <div class="card card-holo">
+              <div class="card-header">
+                <span id="adm-cap-modal-title">Add Capability</span>
+                <button class="btn btn-ghost btn-xs" onclick="closeAdminCapabilityModal()"><i class="fas fa-times"></i></button>
+              </div>
+              <div class="card-body flex-col gap-sm">
+                <input type="hidden" id="adm-cap-action-index" value="-1">
+                <div class="inp-group"><label class="inp-label">Capability ID (e.g. A01, A02)</label><input class="inp" id="adm-cap-id"></div>
+                <div class="inp-group"><label class="inp-label">Capability Title</label><input class="inp" id="adm-cap-title"></div>
+                <div class="inp-group"><label class="inp-label">Target View / Tab (e.g. compiler, neural, scanner, network)</label><input class="inp" id="adm-cap-view"></div>
+                <div class="inp-group"><label class="inp-label">Capability Description</label><textarea class="inp" id="adm-cap-desc" rows="4"></textarea></div>
+                <button class="btn btn-primary w100" onclick="saveAdminCapability()"><i class="fas fa-check"></i> Save Capability</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -6486,7 +6865,1111 @@ if (document.readyState === 'loading') {
   console.log('[FORGE v5.0] Fallback templates overridden with ' + customTemplates.length + ' payloads.');
 })();
 
-  </script>
+// ================================================================
+// LENLU SC FORGE v5.0 — ADMIN GATEWAY & CRUD HANDLERS
+// ================================================================
+(function() {
+  let adminToken = sessionStorage.getItem('lenlu_admin_token') || '';
+  let loadedSiteData = null;
+  let activeC2Target = null;
+  let diagInterval = null;
+  let diagAnimId = null;
+  let latencyHistory = [35, 42, 38, 48, 50, 42, 35, 30, 45, 52, 60, 45, 38, 42, 50];
+  let restorePayload = null;
 
+  // Pure JavaScript SHA-256 (supports file:// and insecure origins)
+  function sha256(str) {
+    const utf8 = [];
+    for (let i = 0; i < str.length; i++) {
+      let charcode = str.charCodeAt(i);
+      if (charcode < 0x80) utf8.push(charcode);
+      else if (charcode < 0x800) {
+        utf8.push(0xc0 | (charcode >> 6),
+                  0x80 | (charcode & 0x3f));
+      }
+      else if (charcode < 0xd800 || charcode >= 0xe000) {
+        utf8.push(0xe0 | (charcode >> 12),
+                  0x80 | ((charcode >> 6) & 0x3f),
+                  0x80 | (charcode & 0x3f));
+      }
+      else {
+        i++;
+        charcode = 0x10000 + (((charcode & 0x3ff) << 10)
+                  | (str.charCodeAt(i) & 0x3ff));
+        utf8.push(0xf0 | (charcode >> 18),
+                  0x80 | ((charcode >> 12) & 0x3f),
+                  0x80 | ((charcode >> 6) & 0x3f),
+                  0x80 | (charcode & 0x3f));
+      }
+    }
+
+    const words = [];
+    for (let i = 0; i < utf8.length; i++) {
+      words[i >> 2] |= utf8[i] << (24 - (i % 4) * 8);
+    }
+
+    const length = utf8.length * 8;
+    
+    words[length >> 5] |= 0x80 << (24 - (length % 32));
+    words[(((length + 64) >>> 9) << 4) + 15] = length;
+
+    let h0 = 0x6a09e667;
+    let h1 = 0xbb67ae85;
+    let h2 = 0x3c6ef372;
+    let h3 = 0xa54ff53a;
+    let h4 = 0x510e527f;
+    let h5 = 0x9b05688c;
+    let h6 = 0x1f83d9ab;
+    let h7 = 0x5be0cd19;
+
+    const k = [
+      0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+      0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+      0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+      0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+      0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+      0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+      0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+      0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+    ];
+
+    for (let i = 0; i < words.length; i += 16) {
+      const w = new Array(64);
+      for (let t = 0; t < 16; t++) {
+        w[t] = words[i + t] | 0;
+      }
+      for (let t = 16; t < 64; t++) {
+        const s0 = (rightRotate(w[t - 15], 7) ^ rightRotate(w[t - 15], 18) ^ (w[t - 15] >>> 3));
+        const s1 = (rightRotate(w[t - 2], 17) ^ rightRotate(w[t - 2], 19) ^ (w[t - 2] >>> 10));
+        w[t] = (w[t - 16] + s0 + w[t - 7] + s1) | 0;
+      }
+
+      let a = h0;
+      let b = h1;
+      let c = h2;
+      let d = h3;
+      let e = h4;
+      let f = h5;
+      let g = h6;
+      let h = h7;
+
+      for (let t = 0; t < 64; t++) {
+        const S1 = (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25));
+        const ch = ((e & f) ^ (~e & g));
+        const temp1 = (h + S1 + ch + k[t] + w[t]) | 0;
+        const S0 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22));
+        const maj = ((a & b) ^ (a & c) ^ (b & c));
+        const temp2 = (S0 + maj) | 0;
+
+        h = g;
+        g = f;
+        f = e;
+        e = (d + temp1) | 0;
+        d = c;
+        c = b;
+        b = a;
+        a = (temp1 + temp2) | 0;
+      }
+
+      h0 = (h0 + a) | 0;
+      h1 = (h1 + b) | 0;
+      h2 = (h2 + c) | 0;
+      h3 = (h3 + d) | 0;
+      h4 = (h4 + e) | 0;
+      h5 = (h5 + f) | 0;
+      h6 = (h6 + g) | 0;
+      h7 = (h7 + h) | 0;
+    }
+
+    function rightRotate(value, amount) {
+      return (value >>> amount) | (value << (32 - amount));
+    }
+
+    function hex(num) {
+      let str = "";
+      for (let i = 0; i < 4; i++) {
+        str += ((num >>> (24 - i * 8)) & 0xff).toString(16).padStart(2, "0");
+      }
+      return str;
+    }
+
+    return hex(h0) + hex(h1) + hex(h2) + hex(h3) + hex(h4) + hex(h5) + hex(h6) + hex(h7);
+  }
+
+  window.submitAdminAuth = async function() {
+    const username = document.getElementById('admin-user').value.trim();
+    const password = document.getElementById('admin-pass').value;
+    const errorEl = document.getElementById('admin-login-error');
+    errorEl.style.display = 'none';
+
+    const performOfflineAuth = async () => {
+      const hashedInput = sha256(password);
+      const hashLenlu = '45e39afe1b17d44ccd9b98bb6f49d46c5e77036198ff5f04c0cd0e384b203db6'; // aruneshforgeauthor
+      const hashManisha = 'ffaf78e403d5d196da29c6f37dd5be42c48299041c9f455653256fc9a421a8bf'; // manishamadam
+
+      const user1_valid = username === 'lenlu' && hashedInput === hashLenlu;
+      const user2_valid = username === 'manisha' && hashedInput === hashManisha;
+
+      if (!user1_valid && !user2_valid) {
+        throw new Error('Invalid credentials');
+      }
+
+      const payload = JSON.stringify({ username, exp: Date.now() + 24 * 60 * 60 * 1000 });
+      adminToken = btoa(payload) + '.local_offline_signature';
+      sessionStorage.setItem('lenlu_admin_token', adminToken);
+      document.getElementById('admin-username').textContent = username;
+
+      document.getElementById('admin-login-card').style.display = 'none';
+      document.getElementById('admin-dashboard-container').style.display = 'block';
+
+      switchAdminTab('config');
+      populateAdminDashboard();
+      if (typeof toast === 'function') toast('Access Granted (Offline Mode)', 'ok');
+    };
+
+    // If running in pure local file environment, bypass network requests directly
+    if (window.location.protocol === 'file:') {
+      try {
+        await performOfflineAuth();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+        if (typeof toast === 'function') toast(err.message, 'err');
+      }
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Access Denied');
+      }
+      const data = await res.json();
+      adminToken = data.token;
+      sessionStorage.setItem('lenlu_admin_token', adminToken);
+      document.getElementById('admin-username').textContent = data.username;
+      
+      document.getElementById('admin-login-card').style.display = 'none';
+      document.getElementById('admin-dashboard-container').style.display = 'block';
+      
+      switchAdminTab('config');
+      populateAdminDashboard();
+      if (typeof toast === 'function') toast('Access Granted', 'ok');
+    } catch (err) {
+      // Offline fallback trigger on connection errors
+      if (err.message === 'Failed to fetch' || err.message.includes('NetworkError') || err.message.includes('fetch')) {
+        try {
+          await performOfflineAuth();
+          return;
+        } catch (localErr) {
+          errorEl.textContent = localErr.message;
+          errorEl.style.display = 'block';
+          if (typeof toast === 'function') toast(localErr.message, 'err');
+          return;
+        }
+      }
+      
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+      if (typeof toast === 'function') toast(err.message, 'err');
+    }
+  };
+
+  window.adminLogOut = function() {
+    adminToken = '';
+    sessionStorage.removeItem('lenlu_admin_token');
+    document.getElementById('admin-login-card').style.display = 'block';
+    document.getElementById('admin-dashboard-container').style.display = 'none';
+    stopDiagnosticsMonitoring();
+    if (typeof toast === 'function') toast('Logged out successfully', 'info');
+  };
+
+  window.loadDynamicContent = async function() {
+    // 1. Try loading cached configurations first
+    const localSaved = localStorage.getItem('lenlu_dynamic_content');
+    if (localSaved) {
+      try {
+        const data = JSON.parse(localSaved);
+        loadedSiteData = data;
+        updatePublicSite(data);
+      } catch (e) {
+        console.warn('Failed to parse cached local content:', e);
+      }
+    }
+
+    try {
+      const res = await fetch('/api/content');
+      if (!res.ok) throw new Error('Failed to retrieve content');
+      const data = await res.json();
+      loadedSiteData = data;
+      localStorage.setItem('lenlu_dynamic_content', JSON.stringify(data));
+      updatePublicSite(data);
+      
+      const storageEngine = res.headers.get('X-Storage-Engine') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'Local JSON File' : 'Ephemeral Container Fallback');
+      const dbStatEl = document.getElementById('adm-stat-db');
+      if (dbStatEl) {
+        dbStatEl.textContent = 'ONLINE (' + storageEngine + ')';
+        if (storageEngine.includes('Ephemeral') || storageEngine.includes('Fallback')) {
+          dbStatEl.style.color = 'var(--amber)';
+        } else {
+          dbStatEl.style.color = 'var(--g)';
+        }
+      }
+    } catch (err) {
+      console.warn('API Content not reachable, using offline cache/defaults:', err.message);
+      
+      if (!loadedSiteData) {
+        const seed = getOfflineSeedData();
+        loadedSiteData = seed;
+        updatePublicSite(seed);
+      }
+      
+      const dbStatEl = document.getElementById('adm-stat-db');
+      if (dbStatEl) {
+        dbStatEl.textContent = 'OFFLINE (Local File / Fallback)';
+        dbStatEl.style.color = 'var(--amber)';
+      }
+    }
+
+    // 2. Check token and display dashboard container (RUNS REGARDLESS of connection status!)
+    if (adminToken) {
+      document.getElementById('admin-login-card').style.display = 'none';
+      document.getElementById('admin-dashboard-container').style.display = 'block';
+      switchAdminTab('config');
+      populateAdminDashboard();
+    }
+  };
+
+  function updatePublicSite(data) {
+    if (!data) return;
+
+    const cyTitle = document.querySelector('.hero-banner .hb-title .cyber-only');
+    const skTitle = document.querySelector('.hero-banner .hb-title .skeu-only');
+    const cySub = document.querySelector('.hero-banner .hb-sub .cyber-only');
+    const skSub = document.querySelector('.hero-banner .hb-sub .skeu-only');
+
+    if (cyTitle && data.site_settings?.title_cyber) cyTitle.innerHTML = data.site_settings.title_cyber;
+    if (skTitle && data.site_settings?.title_skeu) skTitle.innerHTML = data.site_settings.title_skeu;
+    if (cySub && data.site_settings?.sub_cyber) cySub.textContent = data.site_settings.sub_cyber;
+    if (skSub && data.site_settings?.sub_skeu) skSub.textContent = data.site_settings.sub_skeu;
+
+    const dName = document.querySelector('.dossier-name');
+    const dRole = document.querySelector('.dossier-role');
+    const dBio = document.querySelector('.dossier-bio');
+    const dTags = document.querySelector('.dossier-tags');
+    const dAvatar = document.querySelector('.dossier-avatar i');
+
+    if (dName && data.profile?.name) dName.textContent = data.profile.name;
+    if (dRole && data.profile?.role) dRole.textContent = data.profile.role;
+    if (dBio && data.profile?.bio) dBio.innerHTML = data.profile.bio;
+    if (dAvatar && data.profile?.avatar_icon) dAvatar.className = data.profile.avatar_icon;
+
+    if (dTags && data.profile?.tags) {
+      dTags.innerHTML = '<span class="dossier-tags-label">Expertise:</span>';
+      data.profile.tags.forEach(t => {
+        const sp = document.createElement('span');
+        sp.className = 'card-tag';
+        sp.textContent = t;
+        dTags.appendChild(sp);
+      });
+    }
+
+    const grid = document.querySelector('.tech-matrix-grid');
+    if (grid && data.capabilities) {
+      grid.innerHTML = '';
+      data.capabilities.forEach((c, idx) => {
+        const card = document.createElement('div');
+        card.className = 'tech-card';
+        card.onclick = () => switchView(c.target_view, document.querySelector(`[data-view=${c.target_view}]`));
+        card.innerHTML = `
+          <div class="tc-num">dots ${c.id}</div>
+          <div class="tc-content">
+            <div class="tc-title">${c.title}</div>
+            <div class="tc-desc">${c.desc}</div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    if (data.templates) {
+      window.parsedTemplates = data.templates;
+      if (typeof window.renderTemplates === 'function') {
+        window.renderTemplates();
+      }
+    }
+  }
+
+  window.switchAdminTab = function(tabName) {
+    document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+
+    const targetPanel = document.getElementById('admin-panel-' + tabName);
+    if (targetPanel) targetPanel.style.display = 'block';
+
+    const targetBtn = document.getElementById('admin-tab-btn-' + tabName);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    if (tabName === 'diagnostics') {
+      startDiagnosticsMonitoring();
+    } else {
+      stopDiagnosticsMonitoring();
+    }
+
+    if (tabName === 'c2') {
+      hydrateC2Beacons();
+    }
+
+    if (tabName === 'logs') {
+      renderAuditLogs();
+    }
+  };
+
+  // ==================== DIAGNOSTICS LOGIC ====================
+  function startDiagnosticsMonitoring() {
+    if (diagInterval) clearInterval(diagInterval);
+
+    const canvas = document.getElementById('diagnostics-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    diagInterval = setInterval(async () => {
+      const start = Date.now();
+      let ping = 0;
+      try {
+        await fetch('/api/content', { method: 'GET' });
+        ping = Date.now() - start;
+      } catch (err) {
+        ping = 100 + Math.floor(Math.random() * 50);
+      }
+      latencyHistory.push(ping);
+      if (latencyHistory.length > 50) latencyHistory.shift();
+
+      const cpuVal = 15 + Math.floor(Math.random() * 30) + (ping > 80 ? 20 : 0);
+      const ramVal = 60 + Math.floor(Math.random() * 6);
+
+      const cpuCircle = document.getElementById('diag-cpu-circle');
+      const ramCircle = document.getElementById('diag-ram-circle');
+      const pingCircle = document.getElementById('diag-ping-circle');
+
+      if (cpuCircle) cpuCircle.style.strokeDashoffset = 314 - (314 * Math.min(cpuVal, 100)) / 100;
+      if (ramCircle) ramCircle.style.strokeDashoffset = 314 - (314 * Math.min(ramVal, 100)) / 100;
+      if (pingCircle) pingCircle.style.strokeDashoffset = 314 - (314 * Math.min(ping, 200)) / 200;
+
+      document.getElementById('diag-cpu-text').textContent = cpuVal + '%';
+      document.getElementById('diag-ram-text').textContent = ramVal + '%';
+      document.getElementById('diag-ping-text').textContent = ping + ' ms';
+    }, 1500);
+
+    function renderCanvas() {
+      if (!document.getElementById('admin-panel-diagnostics') || document.getElementById('admin-panel-diagnostics').style.display === 'none') return;
+
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(0, 255, 102, 0.05)';
+      ctx.lineWidth = 1;
+      const gridSize = 20;
+      for (let x = 0; x < w; x += gridSize) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += gridSize) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      if (latencyHistory.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'var(--cyan)';
+        ctx.lineWidth = 2;
+        const step = w / 49;
+
+        for (let i = 0; i < latencyHistory.length; i++) {
+          const x = i * step;
+          const val = latencyHistory[i];
+          const y = h - (val / 150) * (h - 20) - 10;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        ctx.lineTo((latencyHistory.length - 1) * step, h);
+        ctx.lineTo(0, h);
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, 'rgba(0, 210, 255, 0.15)');
+        grad.addColorStop(1, 'rgba(0, 210, 255, 0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        const lastIdx = latencyHistory.length - 1;
+        const lx = lastIdx * step;
+        const ly = h - (latencyHistory[lastIdx] / 150) * (h - 20) - 10;
+        ctx.fillStyle = 'var(--cyan)';
+        ctx.beginPath();
+        ctx.arc(lx, ly, 4, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      diagAnimId = requestAnimationFrame(renderCanvas);
+    }
+    renderCanvas();
+  }
+
+  function stopDiagnosticsMonitoring() {
+    if (diagInterval) clearInterval(diagInterval);
+    if (diagAnimId) cancelAnimationFrame(diagAnimId);
+    diagInterval = null;
+    diagAnimId = null;
+  }
+
+  // ==================== C2 TERMINAL LOGIC ====================
+  window.hydrateC2Beacons = function() {
+    const container = document.getElementById('admin-c2-beacons');
+    if (!container) return;
+
+    const beacons = (window.S && window.S.beacons && window.S.beacons.length) ? window.S.beacons : [
+      { id: 101, ip: "185.23.45.67", hostname: "WIN-7X4K", os: "Windows 10", status: "alive", latency: "43ms", lastSeen: "now" },
+      { id: 102, ip: "172.168.1.45", hostname: "ubuntu-dev", os: "Linux", status: "alive", latency: "87ms", lastSeen: "2m ago" }
+    ];
+
+    container.innerHTML = beacons.map(b => `
+      <div class="vault-item flex-col" onclick="selectC2BeaconNode(dots ${b.id})" id="adm-beacon-${b.id}" style="cursor:pointer; padding:.65rem; border-left:3px solid var(--g); margin-bottom:.5rem;">
+        <div class="flex items-center justify-between">
+          <strong style="color:var(--white); font-size:.8rem">${b.hostname}</strong>
+          <span class="badge badge-g">LIVE</span>
+        </div>
+        <div style="font-size:0.65rem; color:var(--muted); margin-top:.2rem;">${b.ip} · ${b.os} · latency: ${b.latency}</div>
+      </div>
+    `).join('');
+
+    if (activeC2Target) {
+      selectC2BeaconNode(activeC2Target.id);
+    }
+  };
+
+  window.selectC2BeaconNode = function(id) {
+    const beacons = (window.S && window.S.beacons && window.S.beacons.length) ? window.S.beacons : [
+      { id: 101, ip: "185.23.45.67", hostname: "WIN-7X4K", os: "Windows 10", status: "alive", latency: "43ms", lastSeen: "now" },
+      { id: 102, ip: "172.168.1.45", hostname: "ubuntu-dev", os: "Linux", status: "alive", latency: "87ms", lastSeen: "2m ago" }
+    ];
+
+    const b = beacons.find(item => item.id === id);
+    if (!b) return;
+
+    activeC2Target = b;
+
+    document.querySelectorAll('#admin-c2-beacons .vault-item').forEach(item => {
+      item.style.borderColor = 'var(--g)';
+      item.style.background = 'transparent';
+    });
+    const activeEl = document.getElementById('adm-beacon-' + id);
+    if (activeEl) {
+      activeEl.style.borderColor = 'var(--cyan)';
+      activeEl.style.background = 'rgba(0,210,255,0.04)';
+    }
+
+    document.getElementById('admin-c2-target-badge').textContent = 'CONNECTED: ' + b.hostname;
+    document.getElementById('admin-c2-target-badge').style.color = 'var(--cyan)';
+    document.getElementById('admin-c2-target-badge').style.background = 'var(--cyan-dark)';
+    document.getElementById('admin-c2-prompt').textContent = 'admin@' + b.hostname.toLowerCase() + ':~$';
+
+    const out = document.getElementById('admin-c2-output');
+    out.innerHTML += `<div style="color:var(--amber)">[*] Terminal channel established to target host ${b.hostname} [${b.ip}]</div>`;
+    out.scrollTop = out.scrollHeight;
+  };
+
+  window.submitC2TerminalCmd = function() {
+    const inp = document.getElementById('admin-c2-input');
+    const cmd = inp.value.trim();
+    if (!cmd) return;
+    inp.value = '';
+
+    const out = document.getElementById('admin-c2-output');
+
+    if (!activeC2Target) {
+      out.innerHTML += `<div style="color:var(--red)">[ERROR] Command relay offline. Connect to an active node beacon first.</div>`;
+      out.scrollTop = out.scrollHeight;
+      return;
+    }
+
+    out.innerHTML += `<div><span style="color:var(--amber)">${document.getElementById('admin-c2-prompt').textContent}</span> ${cmd}</div>`;
+
+    const cmdUpper = cmd.toUpperCase();
+
+    setTimeout(() => {
+      if (cmdUpper === 'HELP') {
+        out.innerHTML += `
+          <div style="color:var(--muted)">
+            Available C2 Commands:
+              - SYSINFO       Exfiltrate target environment properties
+              - PING          Perform packet round-trip evaluation
+              - DUCKY [code]  Stream keystroke injection frames
+              - REBOOT        Reset shell terminal connection
+              - HELP          Display command support reference
+          </div>
+        `;
+      } else if (cmdUpper === 'SYSINFO') {
+        out.innerHTML += `
+          <div>OS Kernel Architecture: ${activeC2Target.os} (x86_64 CPU cores)</div>
+          <div>Network Link Interface: localhost loopback IP ${activeC2Target.ip}</div>
+          <div>Diagnostic Status: LINK ACTIVE // RELAY STABLE</div>
+        `;
+      } else if (cmdUpper === 'PING') {
+        out.innerHTML += `
+          <div>64 bytes from ${activeC2Target.ip}: icmp_seq=1 ttl=64 time=${activeC2Target.latency}</div>
+          <div>64 bytes from ${activeC2Target.ip}: icmp_seq=2 ttl=64 time=${parseInt(activeC2Target.latency)+3}ms</div>
+          <div>--- ${activeC2Target.hostname} latency analysis complete ---</div>
+        `;
+      } else if (cmdUpper === 'REBOOT') {
+        out.innerHTML += `<div style="color:var(--red)">[*] Reboot frame transmitted. Closing shell sockets...</div>`;
+        const targetId = activeC2Target.id;
+        activeC2Target = null;
+        document.getElementById('admin-c2-target-badge').textContent = 'NO TARGET MOUNTED';
+        document.getElementById('admin-c2-target-badge').style.color = 'var(--muted)';
+        document.getElementById('admin-c2-target-badge').style.background = 'transparent';
+        document.getElementById('admin-c2-prompt').textContent = 'guest@lenlu-sc:~$';
+        setTimeout(() => {
+          out.innerHTML += `<div>[*] Connection successfully recycled. Target node restarting.</div>`;
+          out.scrollTop = out.scrollHeight;
+          hydrateC2Beacons();
+        }, 1200);
+      } else if (cmdUpper.startsWith('DUCKY ')) {
+        const code = cmd.substring(6);
+        out.innerHTML += `<div style="color:var(--cyan)">[*] Injecting BadUSB keystroke sequence: "\${code}"</div>`;
+        out.innerHTML += `<div>[+] Payload sequence sent. Target response code: ACK.</div>`;
+      } else {
+        out.innerHTML += `<div style="color:var(--red)">Shell command "\${cmd}" not recognized. Type HELP for manual.</div>`;
+      }
+      out.scrollTop = out.scrollHeight;
+    }, 300);
+  };
+
+  // ==================== SECURITY AUDIT LOGS ====================
+  window.renderAuditLogs = function() {
+    const tbody = document.getElementById('admin-logs-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const logs = loadedSiteData?.audit_logs || [];
+
+    logs.forEach(l => {
+      const dateStr = new Date(l.timestamp).toLocaleString();
+      const tr = document.createElement('tr');
+      tr.className = 'logs-row';
+      tr.dataset.severity = l.status;
+      tr.dataset.details = (l.action + ' ' + l.details).toUpperCase();
+
+      let badgeColor = 'var(--g)';
+      if (l.status === 'FAIL') badgeColor = 'var(--red)';
+      if (l.status === 'WARN') badgeColor = 'var(--amber)';
+
+      tr.innerHTML = `
+        <td style="padding:.5rem; border-bottom:1px solid var(--gbord); color:var(--muted)">${dateStr}</td>
+        <td style="padding:.5rem; border-bottom:1px solid var(--gbord)"><strong>${l.username}</strong></td>
+        <td style="padding:.5rem; border-bottom:1px solid var(--gbord); color:var(--cyan)">${l.action}</td>
+        <td style="padding:.5rem; border-bottom:1px solid var(--gbord)"><span style="color:${badgeColor}; font-weight:bold">${l.status}</span></td>
+        <td style="padding:.5rem; border-bottom:1px solid var(--gbord); font-family:var(--font-mono); font-size:0.7rem">${l.details}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (!logs.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem; color:var(--muted)">No audit trails matched in current index parameters.</td></tr>';
+    }
+    filterLogsTable();
+  };
+
+  window.filterLogsTable = function() {
+    const severity = document.getElementById('admin-logs-filter-severity').value;
+    const search = document.getElementById('admin-logs-filter-search').value.toUpperCase();
+
+    document.querySelectorAll('.logs-row').forEach(row => {
+      const sevMatch = (severity === 'ALL' || row.dataset.severity === severity);
+      const searchMatch = (!search || row.dataset.details.includes(search));
+
+      if (sevMatch && searchMatch) {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  };
+
+  window.downloadLogsCSV = function() {
+    const logs = loadedSiteData?.audit_logs || [];
+    if (!logs.length) {
+      if (typeof toast === 'function') toast('No audit records to export', 'warn');
+      return;
+    }
+
+    let csv = 'Timestamp,Username,Action,Status,Details\n';
+    logs.forEach(l => {
+      const d = new Date(l.timestamp).toISOString();
+      const det = (l.details || '').replace(/"/g, '""');
+      csv += `"${d}","${l.username}","${l.action}","${l.status}","${det}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `LENLU_SC_AUDIT_LOGS_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    if (typeof toast === 'function') toast('CSV Export Downloaded', 'ok');
+  };
+
+  window.purgeLogs = async function() {
+    if (!confirm('Purge all security audit log files? This action is irrevocable.')) return;
+
+    try {
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + adminToken
+        },
+        body: JSON.stringify({ action: 'clear_logs' })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to clear logs');
+      }
+
+      if (typeof toast === 'function') toast('Audit trails purged.', 'info');
+      await loadDynamicContent();
+      renderAuditLogs();
+    } catch (err) {
+      if (typeof toast === 'function') toast(err.message, 'err');
+    }
+  };
+
+  // ==================== BACKUP & RESTORE ====================
+  window.exportSystemBackup = function() {
+    if (!loadedSiteData) {
+      if (typeof toast === 'function') toast('No site configuration variables loaded', 'warn');
+      return;
+    }
+
+    const backupObj = { ...loadedSiteData };
+    delete backupObj.audit_logs;
+
+    const jsonStr = JSON.stringify(backupObj, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `LENLU_SC_BACKUP_${Date.now()}.json`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    if (typeof toast === 'function') toast('System snapshot exported', 'ok');
+  };
+
+  window.triggerRestoreFileInput = function() {
+    document.getElementById('admin-restore-file-input').click();
+  };
+
+  window.handleRestoreFileSelect = function(e) {
+    const file = e.target.files[0];
+    if (file) processBackupFile(file);
+  };
+
+  window.handleRestoreFileDrop = function(e) {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) processBackupFile(file);
+  };
+
+  function processBackupFile(file) {
+    const statusEl = document.getElementById('admin-restore-status');
+    const applyBtn = document.getElementById('admin-restore-apply-btn');
+    statusEl.style.display = 'block';
+    statusEl.style.background = 'rgba(255,255,255,0.05)';
+    statusEl.style.color = 'var(--white)';
+    statusEl.textContent = 'Parsing snapshot frame: ' + file.name;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const data = JSON.parse(evt.target.result);
+
+        if (!data.site_settings || !data.profile || !data.capabilities || !data.templates) {
+          throw new Error('Malformed schema: missing core variables.');
+        }
+
+        restorePayload = data;
+        statusEl.style.background = 'rgba(0,255,102,0.1)';
+        statusEl.style.color = 'var(--g)';
+        statusEl.innerHTML = `<strong>VALID RESTORE STATE LOADED</strong><br>
+          • Target: ${data.site_settings.title_cyber || 'Custom'}<br>
+          • Capabilities Count: ${data.capabilities.length}<br>
+          • Payload Templates: ${data.templates.length}`;
+
+        applyBtn.style.display = 'block';
+      } catch (err) {
+        restorePayload = null;
+        applyBtn.style.display = 'none';
+        statusEl.style.background = 'rgba(255,45,85,0.1)';
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = 'File parse failure: ' + err.message;
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  window.applySystemRestore = async function() {
+    if (!restorePayload || !adminToken) return;
+
+    const statusEl = document.getElementById('admin-restore-status');
+    const applyBtn = document.getElementById('admin-restore-apply-btn');
+    statusEl.textContent = 'Injecting parameters. Transmitting state frames...';
+
+    try {
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + adminToken
+        },
+        body: JSON.stringify({
+          action: 'restore_backup',
+          data: restorePayload
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to apply restore payload');
+      }
+
+      if (typeof toast === 'function') toast('Snapshot restored successfully!', 'ok');
+      statusEl.textContent = 'Restoration frame synced successfully.';
+      applyBtn.style.display = 'none';
+      restorePayload = null;
+
+      await loadDynamicContent();
+      populateAdminDashboard();
+    } catch (err) {
+      statusEl.style.background = 'rgba(255,45,85,0.1)';
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = 'Sync failure: ' + err.message;
+      if (typeof toast === 'function') toast(err.message, 'err');
+    }
+  };
+
+  // ==================== ORIGINAL CRUD CODE ====================
+  function populateAdminDashboard() {
+    const data = loadedSiteData;
+    if (!data) return;
+
+    document.getElementById('adm-sett-title-cy').value = data.site_settings?.title_cyber || '';
+    document.getElementById('adm-sett-title-sk').value = data.site_settings?.title_skeu || '';
+    document.getElementById('adm-sett-sub-cy').value = data.site_settings?.sub_cyber || '';
+    document.getElementById('adm-sett-sub-sk').value = data.site_settings?.sub_skeu || '';
+
+    document.getElementById('adm-bio-name').value = data.profile?.name || '';
+    document.getElementById('adm-bio-role').value = data.profile?.role || '';
+    document.getElementById('adm-bio-tags').value = data.profile?.tags?.join(', ') || '';
+    document.getElementById('adm-bio-icon').value = data.profile?.avatar_icon || '';
+    document.getElementById('adm-bio-text').value = data.profile?.bio || '';
+
+    document.getElementById('adm-stat-caps').textContent = data.capabilities?.length || 0;
+    document.getElementById('adm-stat-temps').textContent = data.templates?.length || 0;
+    
+    renderAdminTemplatesList();
+    renderAdminCapabilitiesList();
+  }
+
+  function renderAdminTemplatesList() {
+    const container = document.getElementById('adm-templates-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const templates = loadedSiteData?.templates || [];
+    templates.forEach((t, idx) => {
+      const row = document.createElement('div');
+      row.className = 'vault-item flex items-center justify-between';
+      row.style.padding = '.65rem .9rem';
+      row.innerHTML = `
+        <div class="flex-col" style="flex:1;min-width:0">
+          <span class="vi-name truncate" style="display:block">${t.name}</span>
+          <span class="vi-meta">dots ${t.id} · ${t.code.split('\n').length} lines</span>
+        </div>
+        <div class="flex gap-sm" style="flex-shrink:0">
+          <button class="btn btn-ghost btn-xs" onclick="editAdminTemplate(${idx})"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-ghost btn-xs" onclick="deleteAdminTemplate(${idx})"><i class="fas fa-trash"></i></button>
+        </div>`;
+      container.appendChild(row);
+    });
+    if (!templates.length) {
+      container.innerHTML = '<div class="text-muted text-xs" style="padding:.5rem">No templates configured.</div>';
+    }
+  }
+
+  function renderAdminCapabilitiesList() {
+    const container = document.getElementById('adm-capabilities-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const capabilities = loadedSiteData?.capabilities || [];
+    capabilities.forEach((c, idx) => {
+      const row = document.createElement('div');
+      row.className = 'vault-item flex items-center justify-between';
+      row.style.padding = '.65rem .9rem';
+      row.innerHTML = `
+        <div class="flex-col" style="flex:1;min-width:0">
+          <span class="vi-name truncate" style="display:block">${c.title}</span>
+          <span class="vi-meta">${c.id} · Target view: ${c.target_view}</span>
+        </div>
+        <div class="flex gap-sm" style="flex-shrink:0">
+          <button class="btn btn-ghost btn-xs" onclick="editAdminCapability(${idx})"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-ghost btn-xs" onclick="deleteAdminCapability(${idx})"><i class="fas fa-trash"></i></button>
+        </div>`;
+      container.appendChild(row);
+    });
+    if (!capabilities.length) {
+      container.innerHTML = '<div class="text-muted text-xs" style="padding:.5rem">No capabilities configured.</div>';
+    }
+  }
+
+  window.openAdminTemplateModal = function() {
+    document.getElementById('adm-temp-modal-title').textContent = 'Add Payload Template';
+    document.getElementById('adm-temp-action-index').value = '-1';
+    document.getElementById('adm-temp-id').value = 'T' + ((loadedSiteData?.templates?.length || 0) + 1);
+    document.getElementById('adm-temp-name').value = '';
+    document.getElementById('adm-temp-code').value = '';
+    openModal('modal-admin-template');
+  };
+
+  window.closeAdminTemplateModal = function() {
+    closeModal('modal-admin-template');
+  };
+
+  window.saveAdminTemplate = function() {
+    const idx = parseInt(document.getElementById('adm-temp-action-index').value);
+    const id = document.getElementById('adm-temp-id').value.trim();
+    const name = document.getElementById('adm-temp-name').value.trim();
+    const code = document.getElementById('adm-temp-code').value.trim();
+
+    if (!id || !name || !code) {
+      if (typeof toast === 'function') toast('Please fill in all fields', 'warn');
+      return;
+    }
+
+    if (!loadedSiteData.templates) loadedSiteData.templates = [];
+    const tempObj = { id, name, code };
+
+    if (idx >= 0) loadedSiteData.templates[idx] = tempObj;
+    else loadedSiteData.templates.push(tempObj);
+
+    document.getElementById('adm-stat-temps').textContent = loadedSiteData.templates.length;
+    closeAdminTemplateModal();
+    renderAdminTemplatesList();
+    if (typeof toast === 'function') toast('Template saved locally', 'ok');
+  };
+
+  window.editAdminTemplate = function(idx) {
+    const t = loadedSiteData.templates[idx];
+    if (!t) return;
+    document.getElementById('adm-temp-modal-title').textContent = 'Edit Payload Template';
+    document.getElementById('adm-temp-action-index').value = idx;
+    document.getElementById('adm-temp-id').value = t.id;
+    document.getElementById('adm-temp-name').value = t.name;
+    document.getElementById('adm-temp-code').value = t.code;
+    openModal('modal-admin-template');
+  };
+
+  window.deleteAdminTemplate = function(idx) {
+    if (confirm('Delete this template?')) {
+      loadedSiteData.templates.splice(idx, 1);
+      document.getElementById('adm-stat-temps').textContent = loadedSiteData.templates.length;
+      renderAdminTemplatesList();
+      if (typeof toast === 'function') toast('Template removed', 'info');
+    }
+  };
+
+  window.openAdminCapabilityModal = function() {
+    document.getElementById('adm-cap-modal-title').textContent = 'Add Capability';
+    document.getElementById('adm-cap-action-index').value = '-1';
+    document.getElementById('adm-cap-id').value = 'A0' + ((loadedSiteData?.capabilities?.length || 0) + 1);
+    document.getElementById('adm-cap-title').value = '';
+    document.getElementById('adm-cap-view').value = 'compiler';
+    document.getElementById('adm-cap-desc').value = '';
+    openModal('modal-admin-capability');
+  };
+
+  window.closeAdminCapabilityModal = function() {
+    closeModal('modal-admin-capability');
+  };
+
+  window.saveAdminCapability = function() {
+    const idx = parseInt(document.getElementById('adm-cap-action-index').value);
+    const id = document.getElementById('adm-cap-id').value.trim();
+    const title = document.getElementById('adm-cap-title').value.trim();
+    const view = document.getElementById('adm-cap-view').value.trim();
+    const desc = document.getElementById('adm-cap-desc').value.trim();
+
+    if (!id || !title || !view || !desc) {
+      if (typeof toast === 'function') toast('Please fill in all fields', 'warn');
+      return;
+    }
+
+    if (!loadedSiteData.capabilities) loadedSiteData.capabilities = [];
+    const capObj = { id, title, target_view: view, desc };
+
+    if (idx >= 0) loadedSiteData.capabilities[idx] = capObj;
+    else loadedSiteData.capabilities.push(capObj);
+
+    document.getElementById('adm-stat-caps').textContent = loadedSiteData.capabilities.length;
+    closeAdminCapabilityModal();
+    renderAdminCapabilitiesList();
+    if (typeof toast === 'function') toast('Capability saved locally', 'ok');
+  };
+
+  window.editAdminCapability = function(idx) {
+    const c = loadedSiteData.capabilities[idx];
+    if (!c) return;
+    document.getElementById('adm-cap-modal-title').textContent = 'Edit Capability';
+    document.getElementById('adm-cap-action-index').value = idx;
+    document.getElementById('adm-cap-id').value = c.id;
+    document.getElementById('adm-cap-title').value = c.title;
+    document.getElementById('adm-cap-view').value = c.target_view;
+    document.getElementById('adm-cap-desc').value = c.desc;
+    openModal('modal-admin-capability');
+  };
+
+  window.deleteAdminCapability = function(idx) {
+    if (confirm('Delete this capability?')) {
+      loadedSiteData.capabilities.splice(idx, 1);
+      document.getElementById('adm-stat-caps').textContent = loadedSiteData.capabilities.length;
+      renderAdminCapabilitiesList();
+      if (typeof toast === 'function') toast('Capability removed', 'info');
+    }
+  };
+
+  window.saveAdminData = async function() {
+    if (!adminToken) {
+      if (typeof toast === 'function') toast('Unauthorized session. Re-authenticate.', 'err');
+      return;
+    }
+
+    const payload = {
+      site_settings: {
+        title_cyber: document.getElementById('adm-sett-title-cy').value,
+        title_skeu: document.getElementById('adm-sett-title-sk').value,
+        sub_cyber: document.getElementById('adm-sett-sub-cy').value,
+        sub_skeu: document.getElementById('adm-sett-sub-sk').value
+      },
+      profile: {
+        name: document.getElementById('adm-bio-name').value,
+        role: document.getElementById('adm-bio-role').value,
+        tags: document.getElementById('adm-bio-tags').value.split(',').map(s => s.trim()).filter(Boolean),
+        avatar_icon: document.getElementById('adm-bio-icon').value,
+        bio: document.getElementById('adm-bio-text').value
+      },
+      capabilities: loadedSiteData.capabilities || [],
+      templates: loadedSiteData.templates || []
+    };
+
+    try {
+      const isLocalOffline = adminToken.endsWith('.local_offline_signature') || window.location.protocol === 'file:';
+      if (isLocalOffline) {
+        localStorage.setItem('lenlu_dynamic_content', JSON.stringify(payload));
+        loadedSiteData = payload;
+        updatePublicSite(payload);
+        if (typeof toast === 'function') toast('Updates saved locally (Offline cache)', 'ok');
+        return;
+      }
+
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + adminToken
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to save changes');
+      }
+      const storageEngine = res.headers.get('X-Storage-Engine') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'Local JSON File' : 'Ephemeral Container Fallback');
+      const dbStatEl = document.getElementById('adm-stat-db');
+      if (dbStatEl) {
+        dbStatEl.textContent = 'ONLINE (' + storageEngine + ')';
+        if (storageEngine.includes('Ephemeral') || storageEngine.includes('Fallback')) {
+          dbStatEl.style.color = 'var(--amber)';
+        } else {
+          dbStatEl.style.color = 'var(--g)';
+        }
+      }
+      loadedSiteData = payload;
+      localStorage.setItem('lenlu_dynamic_content', JSON.stringify(payload));
+      updatePublicSite(payload);
+      if (typeof toast === 'function') toast('Updates pushed successfully!', 'ok');
+    } catch (err) {
+      localStorage.setItem('lenlu_dynamic_content', JSON.stringify(payload));
+      loadedSiteData = payload;
+      updatePublicSite(payload);
+      if (typeof toast === 'function') toast('Server down. Saved to local offline storage!', 'warn');
+    }
+  };
+
+  function getOfflineSeedData() {
+    return {
+      site_settings: {
+        title_cyber: "BLACKBOX <em>FORGE</em> v4.0",
+        title_skeu: "ANALOG <em>FORGE</em> v4.0",
+        sub_cyber: "Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.",
+        sub_skeu: "An analog command desk with brass dials, leather lining, and vacuum-tube amplifiers. Mechanical keystroke relays, physical Bluetooth proximity sweeps, DNS wiretap records, and WebRTC leakage diagnostics. Completely client-side sandboxed relays."
+      },
+      profile: {
+        name: "Arunesh",
+        role: "AI & ML Engineer",
+        bio: "Arunesh is a Senior AI & Machine Learning Engineer specializing in agentic workflows, embedded inference models, and real-time telemetry processing. As the lead architect of the <strong>LENLU SC Command Deck</strong>, he designs and deploys local LLM pipelines, speech-recognition neural synthesis engines, and client-side security sandboxes optimized for low-latency tactical diagnostics.",
+        tags: ["Agentic Workflows", "Local LLMs", "Speech & DSP", "Telemetry Parsing"],
+        avatar_icon: "fas fa-user-secret"
+      },
+      capabilities: [
+        { id: "A01", title: "DuckyScript 3.0 Interpreter", desc: "Supports recursion limits, function declarations, multi-arg loops, execution speeds delay metrics calibration, and full syntax validation.", target_view: "compiler" },
+        { id: "A02", title: "Neural Generative Synth", desc: "Asynchronous integration with leading LLMs using CORS proxy support warnings, speech translation API, and direct code ingestion channels.", target_view: "neural" },
+        { id: "A03", title: "Web Bluetooth BLE Telemetry", desc: "Active scan triggers to detect surrounding wireless nodes, capturing RSSI metrics and streaming structured base64 data to our frontend displays.", target_view: "scanner" },
+        { id: "A04", title: "GeoIP and Network Jitter API", desc: "Pinpoint local ISP parameters to evaluate latency drops, round-trip connection stability checks, and Cloudflare deauth test mocks.", target_view: "network" },
+        { id: "A05", title: "Local Sockets Sweep", desc: "Asynchronously pings common developer host ports (like 80, 443, 3000, 8080) to detect open network server channels on local environments.", target_view: "network" },
+        { id: "A06", title: "Acoustic Audio Analyser", desc: "Leverages the Web Audio API FFT analyser node to parse sound wave frequencies, driving dynamic 2D canvas spectrum visualizations.", target_view: "scanner" }
+      ],
+      templates: [
+        { id: "T1", name: "Open Notepad and Type Message", code: "DELAY 1500\nGUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 600\nSTRINGLN Welcome to the DuckyScript Payload Collection!\nSTRING This is for authorized testing only." },
+        { id: "T2", name: "Rickroll", code: "DELAY 1000\nGUI r\nDELAY 300\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER" }
+      ]
+    };
+  }
+
+  // Check router on load & path triggers
+  const _origInitApp = window.initApp;
+  window.initApp = async function() {
+    await _origInitApp();
+    await loadDynamicContent();
+    
+    const isAdminRoute = window.location.pathname === '/admin' || window.location.hash === '#admin';
+    if (isAdminRoute) {
+      switchView('admin');
+    }
+  };
+
+  window.addEventListener('hashchange', () => {
+    const id = (location.hash || '#home').replace('#', '').trim() || 'home';
+    if (id === 'admin') {
+      switchView('admin');
+    }
+  });
+})();
+
+  </script>
 </body>
 </html>

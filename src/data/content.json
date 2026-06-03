@@ -1,0 +1,205 @@
+{
+  "site_settings": {
+    "title_cyber": "BLACKBOX <em>FORGE</em> v4.0",
+    "title_skeu": "ANALOG <em>FORGE</em> v4.0",
+    "sub_cyber": "Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.",
+    "sub_skeu": "An analog command desk with brass dials, leather lining, and vacuum-tube amplifiers. Mechanical keystroke relays, physical Bluetooth proximity sweeps, DNS wiretap records, and WebRTC leakage diagnostics. Completely client-side sandboxed relays."
+  },
+  "profile": {
+    "name": "Arunesh",
+    "role": "AI & ML Engineer",
+    "bio": "Arunesh is a Senior AI & Machine Learning Engineer specializing in agentic workflows, embedded inference models, and real-time telemetry processing. As the lead architect of the <strong>LENLU SC Command Deck</strong>, he designs and deploys local LLM pipelines, speech-recognition neural synthesis engines, and client-side security sandboxes optimized for low-latency tactical diagnostics.",
+    "tags": [
+      "Agentic Workflows",
+      "Local LLMs",
+      "Speech & DSP",
+      "Telemetry Parsing"
+    ],
+    "avatar_icon": "fas fa-user-secret"
+  },
+  "capabilities": [
+    {
+      "id": "A01",
+      "title": "DuckyScript 3.0 Interpreter",
+      "desc": "Supports recursion limits, function declarations, multi-arg loops, execution speeds delay metrics calibration, and full syntax validation.",
+      "target_view": "compiler"
+    },
+    {
+      "id": "A02",
+      "title": "Neural Generative Synth",
+      "desc": "Asynchronous integration with leading LLMs using CORS proxy support warnings, speech translation API, and direct code ingestion channels.",
+      "target_view": "neural"
+    },
+    {
+      "id": "A03",
+      "title": "Web Bluetooth BLE Telemetry",
+      "desc": "Active scan triggers to detect surrounding wireless nodes, capturing RSSI metrics and streaming structured base64 data to our frontend displays.",
+      "target_view": "scanner"
+    },
+    {
+      "id": "A04",
+      "title": "GeoIP and Network Jitter API",
+      "desc": "Pinpoint local ISP parameters to evaluate latency drops, round-trip connection stability checks, and Cloudflare deauth test mocks.",
+      "target_view": "network"
+    },
+    {
+      "id": "A05",
+      "title": "Local Sockets Sweep",
+      "desc": "Asynchronously pings common developer host ports (like 80, 443, 3000, 8080) to detect open network server channels on local environments.",
+      "target_view": "network"
+    },
+    {
+      "id": "A06",
+      "title": "Acoustic Audio Analyser",
+      "desc": "Leverages the Web Audio API FFT analyser node to parse sound wave frequencies, driving dynamic 2D canvas spectrum visualizations.",
+      "target_view": "scanner"
+    }
+  ],
+  "templates": [
+    {
+      "id": "T1",
+      "name": "Open Notepad and Type Message",
+      "code": "DELAY 1500\nGUI r\nDELAY 400\nSTRING notepad\nENTER\nDELAY 600\nSTRINGLN Welcome to the DuckyScript Payload Collection!\nSTRING This is for authorized testing only."
+    },
+    {
+      "id": "T2",
+      "name": "Rickroll",
+      "code": "DELAY 1000\nGUI r\nDELAY 300\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER"
+    },
+    {
+      "id": "T3",
+      "name": "Matrix Rain Effect",
+      "code": "GUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING color 02 && echo %random%%random%%random%%random%%random%%random%%random%%random%%random% && goto :a\nENTER"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "log_1780462441982_o4a52",
+      "timestamp": 1780462441982,
+      "username": "lenlu",
+      "action": "Admin Login Success",
+      "status": "SUCCESS",
+      "details": "Authenticated session token issued."
+    },
+    {
+      "id": "log_1780462318035_x76u8",
+      "timestamp": 1780462318035,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780462318029_juqum",
+      "timestamp": 1780462318029,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780462318024_m7plm",
+      "timestamp": 1780462318024,
+      "username": "lenlu",
+      "action": "Admin Login Success",
+      "status": "SUCCESS",
+      "details": "Authenticated session token issued."
+    },
+    {
+      "id": "log_1780462318021_b7qet",
+      "timestamp": 1780462318021,
+      "username": "lenlu",
+      "action": "Admin Login Failed",
+      "status": "FAIL",
+      "details": "Incorrect passkey. Client: Unknown Agent"
+    },
+    {
+      "id": "log_1780462225050_i405j",
+      "timestamp": 1780462225050,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780462225046_kc9fd",
+      "timestamp": 1780462225046,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780462225039_hy1ff",
+      "timestamp": 1780462225039,
+      "username": "lenlu",
+      "action": "Admin Login Success",
+      "status": "SUCCESS",
+      "details": "Authenticated session token issued."
+    },
+    {
+      "id": "log_1780462225036_vvrpm",
+      "timestamp": 1780462225036,
+      "username": "lenlu",
+      "action": "Admin Login Failed",
+      "status": "FAIL",
+      "details": "Incorrect passkey. Client: Unknown Agent"
+    },
+    {
+      "id": "log_1780461804259_ib83h",
+      "timestamp": 1780461804259,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780461804253_idpjx",
+      "timestamp": 1780461804253,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780461804246_g5xk7",
+      "timestamp": 1780461804246,
+      "username": "lenlu",
+      "action": "Admin Login Success",
+      "status": "SUCCESS",
+      "details": "Authenticated session token issued."
+    },
+    {
+      "id": "log_1780461804242_jy4p1",
+      "timestamp": 1780461804243,
+      "username": "lenlu",
+      "action": "Admin Login Failed",
+      "status": "FAIL",
+      "details": "Incorrect passkey. Client: Unknown Agent"
+    },
+    {
+      "id": "log_1780461787790_5ikf7",
+      "timestamp": 1780461787790,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780461787784_73of8",
+      "timestamp": 1780461787784,
+      "username": "lenlu",
+      "action": "Configuration Updated",
+      "status": "SUCCESS",
+      "details": "System variables and payload matrices refreshed."
+    },
+    {
+      "id": "log_1780461787778_nrfk5",
+      "timestamp": 1780461787778,
+      "username": "lenlu",
+      "action": "Admin Login Success",
+      "status": "SUCCESS",
+      "details": "Authenticated session token issued."
+    }
+  ]
+}

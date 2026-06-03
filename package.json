@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build"
   },
+  "dependencies": {
+    "mongodb": "^6.5.0"
+  },
   "devDependencies": {
     "acorn": "^8.16.0",
     "vite": "^5.2.11",
