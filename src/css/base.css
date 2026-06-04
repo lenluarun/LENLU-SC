@@ -1910,3 +1910,163 @@
       padding: .08rem .3rem; border-radius: 3px;
       color: var(--g); border: 1px solid var(--gbord);
     }
+
+    /* ─── HACKING TOOLS LAYOUT ────────────────────────── */
+    .tools-category-header {
+      font-family: var(--font-hud);
+      font-size: 0.58rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.6rem 0.5rem 0.2rem 0.5rem;
+      font-weight: bold;
+      border-top: 1px solid rgba(0, 255, 65, 0.05);
+      margin-top: 0.4rem;
+    }
+    .tools-category-header:first-of-type {
+      border-top: none;
+      margin-top: 0;
+    }
+    .tool-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-family: var(--font-ui);
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.45rem 0.6rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: all var(--dur) var(--ease);
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    .tool-tab-btn i {
+      width: 14px;
+      text-align: center;
+      color: var(--g-dim);
+      font-size: 0.76rem;
+    }
+    .tool-tab-btn:hover {
+      color: var(--g);
+      border-color: var(--gbord);
+      background: rgba(0, 255, 65, 0.03);
+    }
+    .tool-tab-btn.active {
+      color: #000;
+      background: linear-gradient(180deg, rgba(170,255,190,.9), var(--g));
+      border-color: var(--g);
+      box-shadow: 0 0 10px rgba(0,255,65,0.2);
+    }
+    .tool-tab-btn.active i {
+      color: #001a08;
+    }
+
+    [data-theme="skeu"] .tool-tab-btn:hover {
+      color: var(--s-brass);
+      border-color: rgba(200, 146, 42, 0.2);
+      background: rgba(200, 146, 42, 0.05);
+    }
+    [data-theme="skeu"] .tool-tab-btn.active {
+      color: #fff;
+      background: linear-gradient(180deg, #7d5a3c, #5c3d1e);
+      border-color: var(--s-brass);
+    }
+
+    /* ─── MANUAL INFO BUTTONS ─────────────────────────── */
+    .manual-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--gbord);
+      background: rgba(0, 255, 65, 0.05);
+      color: var(--g);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--dur) var(--ease);
+      box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
+      margin-left: 0.8rem;
+    }
+    .manual-btn:hover {
+      border-color: var(--g);
+      background: rgba(0, 255, 65, 0.15);
+      box-shadow: 0 0 12px rgba(0, 255, 65, 0.3);
+      color: var(--white);
+    }
+    .manual-btn i {
+      font-size: 0.72rem;
+    }
+
+    [data-theme="skeu"] .manual-btn {
+      border-color: rgba(200, 146, 42, 0.3);
+      background: rgba(200, 146, 42, 0.08);
+      color: var(--s-brass);
+    }
+    [data-theme="skeu"] .manual-btn:hover {
+      border-color: var(--s-brass);
+      background: rgba(200, 146, 42, 0.2);
+      color: #fff;
+    }
+
+    /* ─── FLOATING CHATBOT ────────────────────────────── */
+    #floating-chatbot-trigger:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+    }
+    #floating-chatbot-window {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 380px;
+      height: 500px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-float);
+      border-color: var(--gbord-hi);
+      transform: scale(0.9);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform-origin: bottom right;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    #floating-chatbot-window.open {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: scale(1) translateY(0) !important;
+    }
+    .msg.ai .msg-bubble {
+      background: rgba(0, 255, 65, 0.04);
+      border: 1px solid var(--gbord);
+      color: var(--white);
+    }
+    .msg.user .msg-bubble {
+      background: rgba(8, 247, 254, 0.04);
+      border: 1px solid rgba(8, 247, 254, 0.25);
+      color: var(--white);
+    }
+    
+    [data-theme="skeu"] #floating-chatbot-trigger {
+      background: linear-gradient(135deg, #a67c52, #7d5a3c);
+      border-color: var(--s-brass);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    [data-theme="skeu"] #floating-chatbot-trigger:hover {
+      box-shadow: 0 0 30px rgba(200, 146, 42, 0.5);
+    }
+    [data-theme="skeu"] .msg.ai .msg-bubble {
+      background: rgba(200, 146, 42, 0.06);
+      border-color: rgba(200, 146, 42, 0.25);
+    }
+    [data-theme="skeu"] .msg.user .msg-bubble {
+      background: rgba(140, 155, 171, 0.08);
+      border-color: rgba(140, 155, 171, 0.3);
+    }

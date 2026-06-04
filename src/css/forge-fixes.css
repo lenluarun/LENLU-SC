@@ -1,0 +1,1421 @@
+/* ============================================================
+   LENLU SC FORGE v4.0 — COMPREHENSIVE LAYOUT & STYLE FIXES
+   ============================================================
+   Fixes:
+   1. Home: 9 feature-cards no longer overlap (proper grid)
+   2. Dashboard: DuckyScript Reference hm-cell buttons sized correctly
+   3. Virtual Keyboard: Real keyboard-shaped layout (rows, proper widths)
+   4. SKEU theme: Completely different arrangement, layouts, style
+   5. Perfect mobile-first responsive design throughout
+   ============================================================ */
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  1. HOME — FIX 9-CARD GRID OVERLAP                      ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* The .g3 grid that holds feature-cards needs to be proper auto-fit */
+#view-home .g3 {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1.2rem !important;
+  align-items: start !important;
+}
+
+/* Feature cards: uniform height, no collapsing */
+.feature-card {
+  min-height: 260px !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Mobile: single column */
+@media (max-width: 640px) {
+  #view-home .g3 {
+    grid-template-columns: 1fr !important;
+  }
+  .feature-card {
+    min-height: 220px !important;
+  }
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 641px) and (max-width: 960px) {
+  #view-home .g3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Desktop: 3 columns */
+@media (min-width: 961px) {
+  #view-home .g3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  2. DASHBOARD — FIX DuckyScript Reference BUTTON SIZE   ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* DuckyScript Reference heatmap: smaller compact cells */
+#duckRef {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)) !important;
+  gap: 4px !important;
+}
+
+#duckRef .hm-cell {
+  min-width: 0 !important;
+  width: auto !important;
+  height: 52px !important;
+  padding: 4px 2px !important;
+  font-size: 0 !important; /* reset */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  cursor: pointer !important;
+  border-radius: 3px !important;
+  overflow: hidden !important;
+}
+
+#duckRef .hm-cell > div:first-child {
+  font-family: var(--font-display), 'Orbitron', monospace !important;
+  font-size: 0.58rem !important;
+  font-weight: 700 !important;
+  color: var(--g) !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+#duckRef .hm-cell-desc {
+  font-size: 0.42rem !important;
+  color: var(--muted) !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+  display: block !important;
+}
+
+/* Mobile duck ref */
+@media (max-width: 640px) {
+  #duckRef {
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)) !important;
+    gap: 3px !important;
+  }
+  #duckRef .hm-cell {
+    height: 46px !important;
+  }
+  #duckRef .hm-cell > div:first-child {
+    font-size: 0.52rem !important;
+  }
+  #duckRef .hm-cell-desc {
+    font-size: 0.38rem !important;
+  }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  3. VIRTUAL KEYBOARD — EXACT REAL KEYBOARD LAYOUT       ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* Keymap view keyboard container */
+#view-keymap .keyboard-container,
+.keyboard-container {
+  background: #0d1a0e !important;
+  border: 2px solid var(--gbord-hi) !important;
+  border-radius: 12px !important;
+  padding: 16px 12px !important;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(0,255,65,0.06) !important;
+  width: 100% !important;
+  max-width: 860px !important;
+  margin: 0 auto !important;
+  overflow-x: auto !important;
+}
+
+/* Keyboard row wrapper - each row is a flex line */
+.kb-row {
+  display: flex !important;
+  gap: 3px !important;
+  margin-bottom: 3px !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+}
+
+.kb-row:last-child { margin-bottom: 0 !important; }
+
+/* Base key style */
+.key, .vkey {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0, 0, 0, 0.75) !important;
+  border: 1px solid rgba(0,255,65,0.18) !important;
+  border-bottom: 3px solid rgba(0,255,65,0.12) !important;
+  border-radius: 4px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.58rem !important;
+  color: rgba(0,255,65,0.55) !important;
+  cursor: default !important;
+  white-space: nowrap !important;
+  height: 38px !important;
+  min-width: 34px !important;
+  padding: 0 6px !important;
+  box-sizing: border-box !important;
+  transition: all 0.1s ease !important;
+  position: relative !important;
+  text-align: center !important;
+  user-select: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Active/lit key */
+.key.active, .vkey.active {
+  background: rgba(0,255,65,0.18) !important;
+  border-color: var(--g) !important;
+  border-bottom-color: rgba(0,255,65,0.5) !important;
+  color: var(--g) !important;
+  box-shadow: 0 0 12px rgba(0,255,65,0.4), inset 0 0 8px rgba(0,255,65,0.1) !important;
+}
+
+/* Key width classes - mimicking real keyboard proportions */
+.key.w1  { min-width: 34px !important; }
+.key.w15 { min-width: 52px !important; }
+.key.w2  { min-width: 62px !important; }
+.key.w25 { min-width: 80px !important; }
+.key.w3  { min-width: 90px !important; }
+.key.w4  { min-width: 110px !important; }
+.key.w5  { min-width: 150px !important; }   /* Spacebar fraction */
+.key.w6  { min-width: 220px !important; }   /* Full spacebar */
+.key.w7  { min-width: 250px !important; }
+
+/* Two-line key labels (e.g. shift+char keys) */
+.key .k-top {
+  display: block !important;
+  font-size: 0.48rem !important;
+  line-height: 1 !important;
+}
+.key .k-bot {
+  display: block !important;
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
+  margin-top: 1px !important;
+}
+
+/* Function key row - slightly shorter */
+.kb-row.fn-row .key {
+  height: 30px !important;
+  font-size: 0.52rem !important;
+  min-width: 36px !important;
+}
+
+/* Number row keys */
+.kb-row.num-row .key {
+  min-width: 36px !important;
+}
+
+/* Spacebar row */
+.kb-row.space-row .key {
+  height: 38px !important;
+}
+
+/* Mobile keyboard: scale down */
+@media (max-width: 860px) {
+  .keyboard-container {
+    padding: 10px 8px !important;
+    max-width: 100% !important;
+  }
+  .key, .vkey {
+    height: 32px !important;
+    min-width: 28px !important;
+    font-size: 0.5rem !important;
+    padding: 0 4px !important;
+  }
+  .kb-row.fn-row .key {
+    height: 26px !important;
+    min-width: 28px !important;
+  }
+  .key.w2  { min-width: 50px !important; }
+  .key.w3  { min-width: 70px !important; }
+  .key.w4  { min-width: 84px !important; }
+  .key.w6  { min-width: 160px !important; }
+  .kb-row { gap: 2px !important; margin-bottom: 2px !important; }
+}
+
+@media (max-width: 540px) {
+  .keyboard-container {
+    padding: 8px 6px !important;
+    border-radius: 8px !important;
+  }
+  .key, .vkey {
+    height: 28px !important;
+    min-width: 24px !important;
+    font-size: 0.44rem !important;
+    padding: 0 3px !important;
+  }
+  .key.w2  { min-width: 44px !important; }
+  .key.w3  { min-width: 60px !important; }
+  .key.w4  { min-width: 72px !important; }
+  .key.w6  { min-width: 120px !important; }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  4. SKEUOMORPHIC THEME — COMPLETELY DIFFERENT LAYOUT     ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* ── Skeu: Body & Background ───────────────────────────────── */
+[data-theme="skeu"] body {
+  background:
+    radial-gradient(ellipse 140% 80% at 20% 10%, rgba(200,146,42,.06) 0%, transparent 45%),
+    radial-gradient(ellipse 100% 60% at 80% 90%, rgba(92,61,30,.08) 0%, transparent 40%),
+    linear-gradient(155deg, #1c1208 0%, #0f0a04 35%, #18100a 65%, #0c0804 100%);
+  color: #ede5d0;
+  font-family: 'Georgia', 'Palatino Linotype', serif;
+}
+
+/* ── Skeu: MAIN CONTENT AREA ─────────────────────────────── */
+[data-theme="skeu"] .main {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 30m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0' fill='rgba(200%2C146%2C42%2C.025)'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(18,10,5,.0) 0%, rgba(0,0,0,.1) 100%) !important;
+  padding: clamp(1rem, 2vw, 1.8rem) !important;
+}
+
+/* ── Skeu: LAYOUT SYSTEM — Asymmetric, Layered ──────────── */
+
+/* Home view — stacked journal-style layout */
+[data-theme="skeu"] #view-home {
+  gap: 2rem !important;
+}
+
+/* Home hero — aged paper parchment style */
+[data-theme="skeu"] #view-home > div:first-child {
+  background:
+    radial-gradient(ellipse 60% 70% at 40% 50%, rgba(200,146,42,.04) 0%, transparent 60%),
+    linear-gradient(160deg, #231508 0%, #190f06 60%, #1f1308 100%) !important;
+  border: 2px solid rgba(200,146,42,.25) !important;
+  border-radius: 16px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Skeu home: decorative corner brackets */
+[data-theme="skeu"] #view-home > div:first-child::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 8px !important;
+  border: 1px solid rgba(200,146,42,.1) !important;
+  border-radius: 10px !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* Skeu: 9-card grid — masonry-like 2-column magazine layout on desktop */
+[data-theme="skeu"] #view-home .g3 {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1.8rem !important;
+  align-items: start !important;
+}
+
+@media (min-width: 961px) {
+  [data-theme="skeu"] #view-home .g3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Skeu feature cards — leather panel look */
+[data-theme="skeu"] .feature-card {
+  background:
+    radial-gradient(circle at 10px 10px, rgba(245,208,112,.7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 10px) 10px, rgba(245,208,112,.7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at 10px calc(100% - 10px), rgba(245,208,112,.7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), rgba(245,208,112,.7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    linear-gradient(145deg, #2e1c0c 0%, #211308 50%, #291a0c 100%) !important;
+  border: 2px solid #8b5a0f !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,220,150,.12),
+    inset 0 -1px 0 rgba(0,0,0,.35) !important;
+  min-height: 240px !important;
+  padding: 1.6rem !important;
+}
+
+[data-theme="skeu"] .feature-card:hover {
+  border-color: var(--s-brass) !important;
+  box-shadow:
+    0 16px 44px rgba(0,0,0,.75),
+    0 0 24px rgba(200,146,42,.12),
+    inset 0 1px 0 rgba(255,220,150,.18) !important;
+  transform: translateY(-3px) !important;
+}
+
+[data-theme="skeu"] .fc-num {
+  font-family: 'Palatino Linotype', serif !important;
+  color: rgba(200,146,42,.08) !important;
+  font-size: 3rem !important;
+}
+
+/* ── Skeu: DASHBOARD — Magazine/Newspaper layout ─────────── */
+[data-theme="skeu"] #view-dashboard {
+  gap: 1.8rem !important;
+}
+
+/* Skeu dashboard hero banner */
+[data-theme="skeu"] #view-dashboard .hero-banner {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 38px,
+      rgba(200,146,42,.04) 38px,
+      rgba(200,146,42,.04) 39px
+    ),
+    linear-gradient(135deg, #2a1a0e 0%, #1f1208 50%, #3d2810 100%) !important;
+  border: 2px solid var(--s-brass) !important;
+  padding: 2rem 2.5rem !important;
+}
+
+/* Skeu: dashboard 3-card column arrangement — sidebar left, main center, telemetry right */
+@media (min-width: 961px) {
+  [data-theme="skeu"] #view-dashboard .g3 {
+    display: grid !important;
+    grid-template-columns: 1fr 1.4fr 1fr !important;
+    gap: 1.6rem !important;
+    align-items: start !important;
+  }
+}
+
+/* Skeu: DuckyScript Reference — compact grid */
+[data-theme="skeu"] #duckRef {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)) !important;
+  gap: 4px !important;
+}
+
+[data-theme="skeu"] #duckRef .hm-cell {
+  background:
+    linear-gradient(145deg, #2b1a0c 0%, #1f1208 100%) !important;
+  border: 1px solid rgba(200,146,42,.22) !important;
+  height: 50px !important;
+  border-radius: 4px !important;
+  box-shadow: inset 0 1px 0 rgba(255,220,150,.06), 0 2px 4px rgba(0,0,0,.4) !important;
+}
+
+[data-theme="skeu"] #duckRef .hm-cell:hover {
+  background: linear-gradient(145deg, #3a2410 0%, #2a1a0c 100%) !important;
+  border-color: var(--s-brass) !important;
+  box-shadow: 0 0 10px rgba(200,146,42,.15), inset 0 1px 0 rgba(255,220,150,.1) !important;
+}
+
+[data-theme="skeu"] #duckRef .hm-cell > div:first-child {
+  color: var(--s-brass2) !important;
+}
+
+[data-theme="skeu"] #duckRef .hm-cell-desc {
+  color: var(--s-muted) !important;
+}
+
+/* ── Skeu: STAT ROW — Brass gauge panel style ────────────── */
+[data-theme="skeu"] .stat-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  background: rgba(200,146,42,.08) !important;
+  border: 2px solid rgba(200,146,42,.3) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,220,150,.1) !important;
+}
+
+[data-theme="skeu"] .stat-cell {
+  background: linear-gradient(180deg, #1e1308 0%, #160e05 100%) !important;
+  border-right: 1px solid rgba(200,146,42,.15) !important;
+  padding: 1.2rem 1rem !important;
+}
+
+[data-theme="skeu"] .stat-cell:last-child {
+  border-right: none !important;
+}
+
+@media (max-width: 700px) {
+  [data-theme="skeu"] .stat-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  [data-theme="skeu"] .stat-cell:nth-child(2) {
+    border-right: none !important;
+  }
+}
+
+/* ── Skeu: CARD SYSTEM — Mahogany plate with brass screws ── */
+[data-theme="skeu"] .card {
+  background:
+    radial-gradient(circle at 10px 10px, rgba(245,208,112,.6) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 10px) 10px, rgba(245,208,112,.6) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at 10px calc(100% - 10px), rgba(245,208,112,.6) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), rgba(245,208,112,.6) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    linear-gradient(155deg, #2e1c0c 0%, #1f1206 50%, #291a0c 100%) !important;
+  border: 2px solid #8b5a0f !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 8px 28px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,220,150,.12),
+    inset 0 -1px 0 rgba(0,0,0,.35) !important;
+  overflow: visible !important;
+}
+
+[data-theme="skeu"] .card:hover {
+  border-color: var(--s-brass) !important;
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.75),
+    0 0 20px rgba(200,146,42,.1),
+    inset 0 1px 0 rgba(255,220,150,.18) !important;
+}
+
+/* Brass shimmer top line */
+[data-theme="skeu"] .card::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(245,208,112,.4) 20%,
+    var(--s-brass2) 50%,
+    rgba(245,208,112,.4) 80%,
+    transparent 100%) !important;
+  opacity: .8 !important;
+}
+
+/* ── Skeu: CARD HEADERS — Engraved plate style ───────────── */
+[data-theme="skeu"] .card-header {
+  background: linear-gradient(180deg, #3a2212 0%, #2a1a0d 100%) !important;
+  border-bottom: 2px solid rgba(200,146,42,.35) !important;
+  font-family: 'Palatino Linotype', 'Book Antiqua', serif !important;
+  color: var(--s-brass2) !important;
+  letter-spacing: .08em !important;
+  padding: .9rem 1.2rem !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.5) !important;
+}
+
+/* ── Skeu: NAVIGATION — Walnut & brass rail ──────────────── */
+[data-theme="skeu"] .top-nav {
+  background: linear-gradient(180deg, #3d2810 0%, #2a1a0e 40%, #1f1208 100%) !important;
+  border-bottom: 3px solid var(--s-brass) !important;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.7),
+    0 1px 0 rgba(200,146,42,.55),
+    inset 0 1px 0 rgba(255,220,150,.15),
+    inset 0 -1px 0 rgba(0,0,0,.3) !important;
+}
+
+/* ── Skeu: HOME STATUS BAR — Diorama style ───────────────── */
+[data-theme="skeu"] #view-home > div:nth-child(2) {
+  background:
+    linear-gradient(90deg, #2a1a0e 0%, #1f1208 50%, #2a1a0e 100%) !important;
+  border: 2px solid rgba(200,146,42,.3) !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.4) !important;
+}
+
+/* ── Skeu: VIRTUAL KEYBOARD — Typewriter style ───────────── */
+[data-theme="skeu"] .keyboard-container {
+  background:
+    linear-gradient(160deg, #ede5d0 0%, #ddd0b8 60%, #d4c9a8 100%) !important;
+  border: 3px solid #5c3d1e !important;
+  border-radius: 14px !important;
+  padding: 18px 14px !important;
+  box-shadow:
+    0 12px 40px rgba(0,0,0,.7),
+    inset 0 2px 0 rgba(255,255,255,.5),
+    inset 0 -2px 0 rgba(0,0,0,.2) !important;
+}
+
+[data-theme="skeu"] .key,
+[data-theme="skeu"] .vkey {
+  background: linear-gradient(180deg, #faf7f0 0%, #f0e8d8 100%) !important;
+  border: 1px solid #b8953a !important;
+  border-bottom: 3px solid #8b6a20 !important;
+  border-radius: 5px !important;
+  color: #3d2810 !important;
+  font-family: 'Georgia', serif !important;
+  font-size: 0.56rem !important;
+  font-weight: 700 !important;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.8) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.7) !important;
+}
+
+[data-theme="skeu"] .key:hover,
+[data-theme="skeu"] .vkey:hover {
+  background: linear-gradient(180deg, #fff8ec 0%, #f5edd8 100%) !important;
+  border-color: #c8922a !important;
+}
+
+[data-theme="skeu"] .key.active,
+[data-theme="skeu"] .vkey.active {
+  background: linear-gradient(180deg, #8b1a1a 0%, #6a1010 100%) !important;
+  border-color: #5c0e0e !important;
+  border-bottom-color: #3a0808 !important;
+  color: #ede5d0 !important;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.5),
+    inset 0 2px 4px rgba(0,0,0,.3) !important;
+  text-shadow: 0 0 8px rgba(200,100,100,.5) !important;
+  transform: translateY(1px) !important;
+}
+
+/* ── Skeu: COMPILER VIEW ─────────────────────────────────── */
+[data-theme="skeu"] #view-compiler {
+  gap: 1.4rem !important;
+}
+
+[data-theme="skeu"] .g-ide {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1.4rem !important;
+}
+
+@media (max-width: 860px) {
+  [data-theme="skeu"] .g-ide {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Skeu: NEURAL VIEW ───────────────────────────────────── */
+[data-theme="skeu"] .g-ai {
+  grid-template-columns: 280px 1fr !important;
+  gap: 1.4rem !important;
+}
+
+@media (max-width: 860px) {
+  [data-theme="skeu"] .g-ai {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Skeu: SCANNER CARDS ─────────────────────────────────── */
+[data-theme="skeu"] .scanner-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  gap: 1rem !important;
+}
+
+[data-theme="skeu"] .scan-card {
+  background:
+    linear-gradient(145deg, #261508 0%, #1a0f05 100%) !important;
+  border: 2px solid rgba(200,146,42,.35) !important;
+  border-radius: 10px !important;
+  padding: 1.2rem !important;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,220,150,.08) !important;
+}
+
+/* ── Skeu: SETTINGS / VAULT / HISTORY VIEW ───────────────── */
+[data-theme="skeu"] .g2 {
+  gap: 1.4rem !important;
+}
+
+[data-theme="skeu"] .g3 {
+  gap: 1.4rem !important;
+}
+
+/* ── Skeu: TOOLS SIDEBAR ─────────────────────────────────── */
+[data-theme="skeu"] .tools-sidebar,
+[data-theme="skeu"] #tools-sidebar {
+  background:
+    linear-gradient(180deg, #2e1c0c 0%, #1f1208 100%) !important;
+  border: 2px solid rgba(200,146,42,.3) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5) !important;
+}
+
+/* ── Skeu: HOME ARCHITECTURE PIPELINE STEPS ──────────────── */
+[data-theme="skeu"] .pipeline-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 1.2rem !important;
+}
+
+[data-theme="skeu"] .pipeline-step {
+  background:
+    linear-gradient(145deg, #2b1a0e 0%, #1e1107 100%) !important;
+  border: 1px solid rgba(200,146,42,.22) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.45) !important;
+}
+
+/* ── Skeu: HERO BANNER ───────────────────────────────────── */
+[data-theme="skeu"] .hero-banner {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 20px,
+      rgba(200,146,42,.015) 20px,
+      rgba(200,146,42,.015) 21px
+    ),
+    linear-gradient(135deg, #2a1a0e 0%, #1f1208 50%, #3d2810 100%) !important;
+  border: 2px solid var(--s-brass) !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 10px 36px rgba(0,0,0,.72),
+    inset 0 1px 0 rgba(255,220,150,.1) !important;
+}
+
+/* Double inner border */
+[data-theme="skeu"] .hero-banner::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 7px !important;
+  border: 1px solid rgba(200,146,42,.15) !important;
+  border-radius: 8px !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* ── Skeu: EXE BUILDER ───────────────────────────────────── */
+[data-theme="skeu"] .exe-builder {
+  background:
+    linear-gradient(145deg, #2e1c0c 0%, #1f1208 100%) !important;
+  border: 2px solid rgba(200,146,42,.35) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 6px 20px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,220,150,.08) !important;
+}
+
+/* ── Skeu: TOGGLE SWITCHES ───────────────────────────────── */
+[data-theme="skeu"] .toggle {
+  background: linear-gradient(180deg, #1a0f05 0%, #120a02 100%) !important;
+  border: 1px solid rgba(200,146,42,.3) !important;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.5) !important;
+}
+
+[data-theme="skeu"] .toggle.on {
+  background: linear-gradient(180deg, #c8922a 0%, #a87020 100%) !important;
+  border-color: var(--s-brass3) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,240,180,.3),
+    0 0 12px rgba(200,146,42,.25) !important;
+}
+
+[data-theme="skeu"] .toggle::after {
+  background: linear-gradient(135deg, #fff8ec, #f0e0b0) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4) !important;
+}
+
+/* ── Skeu: VAULT ITEMS ───────────────────────────────────── */
+[data-theme="skeu"] .vault-item {
+  background:
+    linear-gradient(145deg, #261508 0%, #1c1007 100%) !important;
+  border-left: 3px solid var(--s-brass) !important;
+  border: 1px solid rgba(200,146,42,.2) !important;
+  border-left: 3px solid var(--s-brass) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,.4) !important;
+}
+
+/* ── Skeu: THEME TOGGLE BAR ──────────────────────────────── */
+[data-theme="skeu"] .theme-toggle-bar,
+[data-theme="skeu"] .layout-toggle-bar {
+  background: linear-gradient(180deg, #3a2212 0%, #2a1a0e 100%) !important;
+  border: 1px solid rgba(200,146,42,.35) !important;
+  border-radius: 20px !important;
+  color: var(--s-brass2) !important;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,220,150,.15) !important;
+}
+
+[data-theme="skeu"] .theme-toggle-bar:hover,
+[data-theme="skeu"] .layout-toggle-bar:hover {
+  border-color: var(--s-brass) !important;
+  background: linear-gradient(180deg, #4a2d16 0%, #3a2212 100%) !important;
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.45),
+    0 0 12px rgba(200,146,42,.15) !important;
+}
+
+/* ── Skeu: THREAT MATRIX ─────────────────────────────────── */
+[data-theme="skeu"] .threat-matrix {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: .8rem !important;
+}
+
+[data-theme="skeu"] .threat-item {
+  background:
+    linear-gradient(145deg, #221408 0%, #180e05 100%) !important;
+  border: 1px solid rgba(200,146,42,.2) !important;
+  border-radius: 6px !important;
+  padding: .8rem 1rem !important;
+  box-shadow: inset 0 1px 0 rgba(255,220,150,.05), 0 2px 8px rgba(0,0,0,.3) !important;
+}
+
+/* ── Skeu: Dossier layout ────────────────────────────────── */
+[data-theme="skeu"] .dossier-stat-box {
+  background:
+    linear-gradient(145deg, #2b1a0e 0%, #1f1208 100%) !important;
+  border: 1px solid rgba(200,146,42,.2) !important;
+  border-radius: 6px !important;
+  box-shadow: inset 0 1px 0 rgba(255,220,150,.06), 0 2px 6px rgba(0,0,0,.35) !important;
+}
+
+[data-theme="skeu"] .dossier-avatar {
+  border: 2px solid var(--s-brass) !important;
+  background: linear-gradient(145deg, #2a1a0e, #1a1008) !important;
+  box-shadow: 0 0 20px rgba(200,146,42,.2) !important;
+}
+
+/* ── Skeu: SPEC GRID ─────────────────────────────────────── */
+[data-theme="skeu"] .spec-item {
+  background:
+    linear-gradient(145deg, #221408 0%, #1a0f05 100%) !important;
+  border: 1px solid rgba(200,146,42,.18) !important;
+  border-radius: 5px !important;
+}
+
+/* ── Skeu: TECH CARD ─────────────────────────────────────── */
+[data-theme="skeu"] .tech-card {
+  background:
+    linear-gradient(145deg, #271608 0%, #1c1007 100%) !important;
+  border: 1px solid rgba(200,146,42,.2) !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="skeu"] .tech-card:hover {
+  background:
+    linear-gradient(145deg, #301c0a 0%, #231209 100%) !important;
+  border-color: var(--s-brass) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5) !important;
+}
+
+/* ── Skeu: ADMIN PANEL ───────────────────────────────────── */
+[data-theme="skeu"] #admin-dashboard-container > div:first-child {
+  border-bottom: 1px solid rgba(200,146,42,.2) !important;
+  padding-bottom: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* ── Skeu: FLOATING CHATBOT ──────────────────────────────── */
+[data-theme="skeu"] #floating-chatbot-trigger {
+  background: linear-gradient(135deg, var(--s-brass) 0%, var(--s-copper) 100%) !important;
+  border: 2px solid var(--s-brass3) !important;
+  box-shadow:
+    0 0 20px rgba(200,146,42,.35),
+    0 4px 16px rgba(0,0,0,.5) !important;
+}
+
+[data-theme="skeu"] #floating-chatbot-window {
+  background: linear-gradient(160deg, #2e1c0c 0%, #1a1008 100%) !important;
+  border: 2px solid var(--s-brass) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.8),
+    0 0 30px rgba(200,146,42,.1) !important;
+}
+
+/* ── Skeu: MODAL ─────────────────────────────────────────── */
+[data-theme="skeu"] .modal {
+  background:
+    radial-gradient(circle at 10px 10px, rgba(245,208,112,.6) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), rgba(245,208,112,.6) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
+    linear-gradient(155deg, #2e1c0c 0%, #1a1008 100%) !important;
+  border: 2px solid var(--s-brass) !important;
+}
+
+/* ── Skeu: ENCODER ───────────────────────────────────────── */
+[data-theme="skeu"] .enc-mode-btns {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: .4rem !important;
+}
+
+[data-theme="skeu"] .enc-mode-btn {
+  font-family: 'Palatino Linotype', serif !important;
+  background: linear-gradient(180deg, #2e1c0c 0%, #1f1208 100%) !important;
+  border: 1px solid rgba(200,146,42,.3) !important;
+  color: var(--s-brass) !important;
+  border-radius: 4px !important;
+  padding: .3rem .7rem !important;
+  font-size: .75rem !important;
+  cursor: pointer !important;
+  transition: all .2s !important;
+}
+
+[data-theme="skeu"] .enc-mode-btn.active,
+[data-theme="skeu"] .enc-mode-btn:hover {
+  background: linear-gradient(180deg, var(--s-brass) 0%, var(--s-copper) 100%) !important;
+  color: #0f0702 !important;
+  border-color: var(--s-brass3) !important;
+}
+
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  5. MOBILE-FIRST — PERFECT RESPONSIVE LAYOUT            ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* ── Global responsive: View padding ─── */
+@media (max-width: 640px) {
+  .view {
+    padding: .75rem !important;
+    gap: .85rem !important;
+  }
+
+  .card-body {
+    padding: .8rem !important;
+  }
+
+  .card-header {
+    padding: .65rem .85rem !important;
+    font-size: .7rem !important;
+  }
+
+  .hero-banner {
+    padding: 1.2rem 1rem !important;
+  }
+
+  .hb-title {
+    font-size: 1.4rem !important;
+  }
+
+  /* Nav mobile */
+  .top-nav {
+    height: auto !important;
+    padding: .5rem .75rem !important;
+    flex-wrap: wrap !important;
+    gap: .4rem !important;
+  }
+
+  .brand {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .nav-tabs {
+    order: 3 !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .nav-status {
+    order: 4 !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  /* Home mobile */
+  #view-home .g3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .feature-card {
+    min-height: 200px !important;
+    padding: 1.2rem !important;
+  }
+
+  /* Dashboard mobile */
+  .stat-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .stat-val {
+    font-size: 1.3rem !important;
+  }
+
+  /* Grid 2col → 1col on mobile */
+  .g2, .g3, .g4, .g-ide, .g-ai {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Buttons wrap nicely */
+  .flex.gap-sm {
+    flex-wrap: wrap !important;
+  }
+
+  /* Scanner grid mobile */
+  .scanner-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: .6rem !important;
+  }
+
+  /* DuckyRef mobile */
+  #duckRef {
+    grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)) !important;
+    gap: 3px !important;
+  }
+
+  #duckRef .hm-cell {
+    height: 44px !important;
+  }
+
+  /* Threat matrix mobile */
+  .threat-matrix {
+    grid-template-columns: 1fr 1fr !important;
+    gap: .5rem !important;
+  }
+}
+
+/* ── Tablet breakpoint: 641-960 ── */
+@media (min-width: 641px) and (max-width: 960px) {
+  .view {
+    padding: 1rem !important;
+  }
+
+  .g3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .stat-row {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  .scanner-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* ── Desktop full layout ── */
+@media (min-width: 961px) {
+  .g3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  .scanner-grid {
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)) !important;
+  }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  6. SKEU MOBILE OVERRIDES                               ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+@media (max-width: 640px) {
+  [data-theme="skeu"] .card {
+    border-width: 1px !important;
+    border-radius: 8px !important;
+  }
+
+  [data-theme="skeu"] .stat-row {
+    grid-template-columns: 1fr 1fr !important;
+    border-width: 1px !important;
+    border-radius: 8px !important;
+  }
+
+  [data-theme="skeu"] .stat-cell {
+    padding: .85rem .75rem !important;
+  }
+
+  [data-theme="skeu"] .feature-card {
+    border-width: 1px !important;
+    padding: 1.2rem !important;
+  }
+
+  [data-theme="skeu"] .hero-banner {
+    border-width: 1px !important;
+    padding: 1.2rem 1rem !important;
+  }
+
+  [data-theme="skeu"] .keyboard-container {
+    padding: 10px 8px !important;
+    border-width: 2px !important;
+    border-radius: 10px !important;
+  }
+
+  [data-theme="skeu"] .key,
+  [data-theme="skeu"] .vkey {
+    height: 30px !important;
+    min-width: 26px !important;
+    font-size: 0.5rem !important;
+    border-bottom-width: 2px !important;
+  }
+
+  [data-theme="skeu"] #view-home .g3 {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+  }
+}
+
+/* ── Touch optimization ── */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 40px !important;
+    padding: .5rem 1rem !important;
+  }
+
+  .nav-btn {
+    min-height: 36px !important;
+    padding: .4rem .65rem !important;
+  }
+
+  .key, .vkey {
+    min-height: 36px !important;
+  }
+
+  .hm-cell {
+    min-height: 48px !important;
+  }
+
+  .scan-card {
+    padding: 1rem !important;
+  }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  7. GENERAL QOL FIXES (both themes)                     ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* Prevent card text overflow */
+.card-header span {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 70% !important;
+}
+
+/* Fix exe-builder on mobile */
+@media (max-width: 640px) {
+  .exe-builder {
+    padding: .8rem !important;
+  }
+
+  .arch-btn-group {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .arch-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* Fix compiler tabs overflow */
+.compiler-tabs {
+  display: flex !important;
+  gap: .1rem !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Fix textarea on mobile */
+@media (max-width: 640px) {
+  textarea.code-area,
+  textarea.inp {
+    font-size: .7rem !important;
+    min-height: 120px !important;
+  }
+
+  .term-log {
+    height: 140px !important;
+  }
+}
+
+/* Tools view: sidebar stacks on mobile */
+@media (max-width: 860px) {
+  #view-tools > .flex {
+    flex-direction: column !important;
+  }
+
+  .tools-sidebar,
+  #tools-sidebar {
+    width: 100% !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* Fix the floating chatbot on mobile */
+@media (max-width: 640px) {
+  #floating-chatbot-window {
+    width: calc(100vw - 24px) !important;
+    right: 12px !important;
+    bottom: 80px !important;
+    height: 420px !important;
+  }
+
+  #floating-chatbot-trigger {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+}
+
+/* Fix vault items layout */
+.vault-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: .8rem !important;
+  padding: .75rem .9rem !important;
+  border-radius: 6px !important;
+  margin-bottom: .5rem !important;
+  position: relative !important;
+}
+
+/* Fix modal on mobile */
+@media (max-width: 640px) {
+  .modal {
+    width: calc(100vw - 2rem) !important;
+    max-height: 90vh !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* ── SKEU: Keymap view complete arrangement ──────────────── */
+[data-theme="skeu"] #view-keymap {
+  gap: 1.4rem !important;
+}
+
+[data-theme="skeu"] #view-keymap .g-ide {
+  grid-template-columns: 1fr 1.2fr !important;
+  gap: 1.4rem !important;
+}
+
+@media (max-width: 860px) {
+  [data-theme="skeu"] #view-keymap .g-ide {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── SKEU: Encoder view ──────────────────────────────────── */
+[data-theme="skeu"] #view-encoder .g-ide {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1.4rem !important;
+}
+
+@media (max-width: 860px) {
+  [data-theme="skeu"] #view-encoder .g-ide {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Dashboard g2 fix (DuckyRef + Activity feed) ─────────── */
+#view-dashboard .g2 {
+  align-items: start !important;
+}
+
+/* DuckyScript card in dashboard: fixed max height with scroll */
+#view-dashboard .g2 .card:first-child .card-body {
+  max-height: 340px !important;
+  overflow-y: auto !important;
+}
+
+/* Activity feed */
+#actFeed {
+  height: 210px !important;
+}
+
+/* Quick compile card body */
+#qkLog {
+  height: 80px !important;
+}
+
+/* AI quick ask */
+#qkAskOut {
+  min-height: 70px !important;
+  max-height: 110px !important;
+}
+
+/* Telemetry canvas on mobile */
+@media (max-width: 640px) {
+  #telCanvas {
+    height: 50px !important;
+  }
+}
+
+/* ── Hm-cell (heatmap) fix for DuckyRef ── */
+.heatmap-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)) !important;
+  gap: 4px !important;
+}
+
+/* Use the renamed class if js appends hm-cell to heatmap-grid */
+.heatmap-grid .hm-cell {
+  aspect-ratio: unset !important;
+  height: 52px !important;
+  min-width: 0 !important;
+}
+
+/* ── Skeu: Activity feed / Term log ──────────────────────── */
+[data-theme="skeu"] .term-log {
+  background: #040201 !important;
+  border: 1px solid rgba(200,146,42,.2) !important;
+  border-radius: 6px !important;
+  font-family: 'Courier New', monospace !important;
+}
+
+/* ── SKEU THEME toggle indicator ──────────────────────────── */
+[data-theme="skeu"] .ttb-label,
+[data-theme="skeu"] .ttb-icon {
+  color: var(--s-brass2) !important;
+}
+
+/* ── Skeu: the entire page bg texture ── */
+[data-theme="skeu"] #app::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E") !important;
+  opacity: .4 !important;
+}
+
+/* ── Fix z-index stacking in skeu ── */
+[data-theme="skeu"] .top-nav {
+  z-index: 500 !important;
+  position: sticky !important;
+  top: 0 !important;
+}
+
+/* ── Skeu: Home quick actions ────────────────────────────── */
+[data-theme="skeu"] .btn-primary {
+  letter-spacing: .05em !important;
+  text-transform: none !important;
+}
+
+[data-theme="skeu"] .btn-cyan {
+  background: linear-gradient(180deg, rgba(40,48,58,.8) 0%, rgba(24,30,36,.9) 100%) !important;
+  color: #b0bec5 !important;
+  border-color: rgba(140,155,171,.35) !important;
+}
+
+[data-theme="skeu"] .btn-ghost {
+  text-transform: none !important;
+  letter-spacing: .04em !important;
+}
+
+/* Ensure scan progress bar visible on mobile */
+@media (max-width: 640px) {
+  .scan-progress {
+    font-size: .6rem !important;
+    padding: .4rem .7rem !important;
+  }
+}
+
+/* ── HOME: Status bar row wrap properly ── */
+#view-home > div:nth-child(2) {
+  flex-wrap: wrap !important;
+  gap: .75rem !important;
+}
+
+/* ── OSINT / Fingerprint grid ── */
+.fp-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+}
+
+@media (max-width: 640px) {
+  .fp-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ── Port grid mobile ── */
+.port-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: .35rem !important;
+}
+
+/* ── Subnet grid mobile ── */
+@media (max-width: 640px) {
+  .subnet-grid {
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)) !important;
+  }
+}
+
+/* ── Radar wrap: center on mobile ── */
+@media (max-width: 640px) {
+  .radar-wrap {
+    width: 100px !important;
+    height: 100px !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* ── Fix speedd test canvas ── */
+@media (max-width: 640px) {
+  .speed-gauge {
+    transform: scale(.85) !important;
+    transform-origin: top center !important;
+  }
+}
+
+/* ─── Floating chatbot zindex ─── */
+#floating-chatbot-trigger { z-index: 9999 !important; }
+#floating-chatbot-window  { z-index: 9998 !important; }
+
+/* ─── Tab panel active visibility ─── */
+.tab-panel { display: none !important; }
+.tab-panel.active { display: block !important; }
+
+/* ─── Tools panel visibility ─── */
+.view { display: none !important; }
+.view.active { display: flex !important; }
+
+/* ── Skeu tools sidebar ── */
+[data-theme="skeu"] .tool-tab-btn {
+  font-family: 'Palatino Linotype', serif !important;
+  color: var(--s-muted) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  padding: .45rem .7rem !important;
+  cursor: pointer !important;
+  font-size: .78rem !important;
+  transition: all .2s !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: .5rem !important;
+}
+
+[data-theme="skeu"] .tool-tab-btn:hover {
+  color: var(--s-brass2) !important;
+  background: rgba(200,146,42,.06) !important;
+  border-color: rgba(200,146,42,.2) !important;
+}
+
+[data-theme="skeu"] .tool-tab-btn.active {
+  color: #0f0702 !important;
+  background: linear-gradient(180deg, var(--s-brass) 0%, var(--s-copper) 100%) !important;
+  border-color: var(--s-brass3) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,240,180,.3) !important;
+}
+
+[data-theme="skeu"] .tools-category-header {
+  font-family: 'Palatino Linotype', serif !important;
+  font-size: .65rem !important;
+  color: var(--s-muted) !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+  padding: .5rem .7rem .2rem !important;
+  border-top: 1px solid rgba(200,146,42,.15) !important;
+  margin-top: .3rem !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   END LENLU SC FORGE v4.0 COMPREHENSIVE FIXES
+   ───────────────────────────────────────────────────────── */

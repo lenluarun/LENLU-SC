@@ -468,7 +468,7 @@ let _micStream = null;
       const log = document.getElementById('netLog')?.innerText || '';
       downloadTxt(`LENLU SC Forge v4.0 — Network Report\nGenerated: ${new Date().toISOString()}\n\n=== DETAILS ===\n${details}\n\n=== WEBRTC LEAKS ===\n${leaks}\n\n=== LOG ===\n${log}`, 'network_report.txt');
     }
-    window.onBleDeviceFoundBase64 = function (base64Data) {
+    function onBleDeviceFoundBase64(base64Data) {
       try {
         const jsonStr = atob(base64Data);
         const device = JSON.parse(jsonStr);
@@ -486,9 +486,9 @@ let _micStream = null;
       } catch (e) {
         console.error('onBleDeviceFoundBase64 error:', e);
       }
-    };
+    }
 
-    window.onWifiScanResultBase64 = function (base64Data) {
+    function onWifiScanResultBase64(base64Data) {
       try {
         const jsonStr = atob(base64Data);
         const networks = JSON.parse(jsonStr);
@@ -513,7 +513,7 @@ let _micStream = null;
       } catch (e) {
         console.error('onWifiScanResultBase64 error:', e);
       }
-    };
+    }
 
 export { fetchLocation, runScan, rndMAC, clearScanResults, exportScanResults, runSubnetScan, runRealBLEScan, runRealDNSScan, startSpectrum, refreshNetworkInfo, runWebRTCLeakTest, runLocalPortScan, runNetDNS, exportNetworkReport };
 window.fetchLocation = fetchLocation;

