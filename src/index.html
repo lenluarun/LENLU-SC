@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>LENLU SC ∥ CYBERNETIC FORGE v4.0</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link
@@ -6560,15 +6560,18 @@ ${r}`, "ai"); return
   <!-- APP -->
   <div id="app">
     <nav class="top-nav">
-      <div class="brand">
+      <div class="brand" id="topBrand" onclick="toggleNavTabs()" title="Toggle navigation">
         <div class="brand-logo"><img src="IMGS/logo_nav_bar.png"
             style="max-width:100%;max-height:100%;object-fit:contain"></div>
         <span>LENLU SC</span>
         <div class="brand-dot"></div>
         <span class="brand-ver">v4.0</span>
       </div>
+      <button class="nav-toggle" id="navToggleBtn" onclick="toggleNavTabs()" title="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
       <div class="nav-div"></div>
-      <div class="nav-tabs">
+      <div class="nav-tabs" id="navTabs">
         <button class="nav-btn active" data-view="home" onclick="switchView('home',this)"><i
             class="fas fa-home"></i>Home</button>
         <button class="nav-btn" data-view="dashboard" onclick="switchView('dashboard',this)"><i
@@ -9057,13 +9060,38 @@ ${r}`, "ai"); return
                     <div class="sr-title">HUD Accent Color</div>
                     <div class="sr-desc">Select primary cybernetic glow accent</div>
                   </div>
-                  <select id="cfg-themeColor" class="inp" style="width:140px;font-size:.72rem" onchange="setSetting('themeColor', this.value)">
-                    <option value="cyber-green">Neon Green</option>
-                    <option value="neon-cyan">Cyber Cyan</option>
-                    <option value="electric-amber">Electric Amber</option>
-                    <option value="plasma-red">Plasma Red</option>
-                    <option value="deep-violet">Deep Violet</option>
-                  </select>
+                  <div class="theme-radio-group" id="cfg-themeColor-group">
+                    <label class="theme-radio-item">
+                      <input type="radio" name="themeColor" value="cyber-green" onchange="setSetting('themeColor', this.value)">
+                      <span class="theme-radio-dot"></span>
+                      <span class="theme-radio-swatch" style="background:#00FF41"></span>
+                      <span class="theme-radio-label">Neon Green</span>
+                    </label>
+                    <label class="theme-radio-item">
+                      <input type="radio" name="themeColor" value="neon-cyan" onchange="setSetting('themeColor', this.value)">
+                      <span class="theme-radio-dot"></span>
+                      <span class="theme-radio-swatch" style="background:#08F7FE"></span>
+                      <span class="theme-radio-label">Cyber Cyan</span>
+                    </label>
+                    <label class="theme-radio-item">
+                      <input type="radio" name="themeColor" value="electric-amber" onchange="setSetting('themeColor', this.value)">
+                      <span class="theme-radio-dot"></span>
+                      <span class="theme-radio-swatch" style="background:#FFB300"></span>
+                      <span class="theme-radio-label">Electric Amber</span>
+                    </label>
+                    <label class="theme-radio-item">
+                      <input type="radio" name="themeColor" value="plasma-red" onchange="setSetting('themeColor', this.value)">
+                      <span class="theme-radio-dot"></span>
+                      <span class="theme-radio-swatch" style="background:#FF2D55"></span>
+                      <span class="theme-radio-label">Plasma Red</span>
+                    </label>
+                    <label class="theme-radio-item">
+                      <input type="radio" name="themeColor" value="deep-violet" onchange="setSetting('themeColor', this.value)">
+                      <span class="theme-radio-dot"></span>
+                      <span class="theme-radio-swatch" style="background:#BF5AF2"></span>
+                      <span class="theme-radio-label">Deep Violet</span>
+                    </label>
+                  </div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
@@ -14570,6 +14598,31 @@ WEnd`;
       });
     })();
   </script>
+  <!-- BOTTOM NAVIGATION BAR (mobile) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bn-item active" data-view="home" onclick="switchView('home');updateBottomNav(this)">
+      <i class="fas fa-home"></i><span>Home</span>
+    </button>
+    <button class="bn-item" data-view="dashboard" onclick="switchView('dashboard');updateBottomNav(this)">
+      <i class="fas fa-tachometer-alt"></i><span>Dash</span>
+    </button>
+    <button class="bn-item" data-view="compiler" onclick="switchView('compiler');updateBottomNav(this)">
+      <i class="fas fa-code"></i><span>IDE</span>
+    </button>
+    <button class="bn-item" data-view="neural" onclick="switchView('neural');updateBottomNav(this)">
+      <i class="fas fa-robot"></i><span>Neural</span>
+    </button>
+    <button class="bn-item" data-view="tools" onclick="switchView('tools');updateBottomNav(this)">
+      <i class="fas fa-toolbox"></i><span>Tools</span>
+    </button>
+    <button class="bn-item" data-view="vault" onclick="switchView('vault');updateBottomNav(this)">
+      <i class="fas fa-shield-alt"></i><span>Vault</span>
+    </button>
+    <button class="bn-item" data-view="settings" onclick="switchView('settings');updateBottomNav(this)">
+      <i class="fas fa-cog"></i><span>Config</span>
+    </button>
+  </nav>
+
   <!-- FLOATING AI CHATBOT (Groq / Nvidia Copilot) -->
   <div id="floating-chatbot-trigger" onclick="toggleFloatingChatbot()" title="Open Forge AI Copilot"
     style="position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--g2), var(--g)); border: 2px solid var(--g-bright); box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; transition: all 0.3s cubic-bezier(0.34,1.56,.64,1);">
@@ -14579,7 +14632,7 @@ WEnd`;
   </div>
 
   <div id="floating-chatbot-window" class="card">
-    <div class="card-header"
+    <div class="card-header chatbot-drag-handle"
       style="padding: 0.6rem 1rem; display: flex; align-items: center; justify-content: space-between;">
       <span
         style="display: flex; align-items: center; gap: 0.55rem; font-family: var(--font-display); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;">

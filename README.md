@@ -101,6 +101,11 @@ The console features:
 
 ### 6. 📱 Android Native App (v4.0)
 * **Edge-to-Edge Layout**: WebView draws behind status bar and navigation bar with dynamic safe area CSS variables (`--safe-top`, `--safe-bottom`).
+* **Bottom Navigation Bar**: Fixed 7-tab bottom nav (Home, Dash, IDE, Neural, Tools, Vault, Config) visible on mobile — auto-syncs with top nav active state.
+* **Logo Toggle Navigation**: Tap the LENLU SC logo (or hamburger icon) on mobile to toggle the top nav tabs open/closed.
+* **Themed Radio Button Controls**: HUD Accent Color selector uses themed radio buttons with live color swatches instead of a dropdown.
+* **Draggable AI Chatbot**: The floating Forge AI Copilot button and chat window can be dragged anywhere on screen (touch + mouse support).
+* **Radio-Style Tool Selection**: Tools sidebar category buttons now display as radio-style indicators with active dot indicators.
 * **Notch/Display Cutout Support**: `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` with programmatic status bar overlay.
 * **5 Daily Push Notifications**: WorkManager-scheduled random Intel briefings, payload tips, and system status alerts — fires even when app is closed.
 * **Reboot Persistence**: `BootReceiver` reschedules notifications automatically after device reboot.
@@ -293,6 +298,10 @@ Or open the project in Android Studio → **Build → Run 'appp'**
 | Feature | Implementation | API Level |
 |---|---|---|
 | Edge-to-Edge layout | `WindowCompat.setDecorFitsSystemWindows(false)` | 21+ |
+| Bottom Navigation Bar | HTML/CSS fixed bottom nav with JS sync | 21+ |
+| Logo Toggle Nav | JS click handler on brand/hamburger | 21+ |
+| Themed Radio Buttons | HTML radio inputs with CSS custom properties | 21+ |
+| Draggable Chatbot | Mouse + touch drag with viewport clamping | 21+ |
 | Notch/Cutout support | `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` | 28+ |
 | Splash Screen | `SplashScreen` API (`core-splashscreen:1.0.1`) | 21+ |
 | Daily Notifications | `WorkManager` OneTimeWorkRequest (×5/day) | 21+ |

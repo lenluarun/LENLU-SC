@@ -205,12 +205,15 @@ function resetSettingsToDefault() {
       }
       
       // Update form controls if present in Settings view
-      ['themeColor', 'fontFamily', 'soundVol', 'tonePitch', 'scanlineOpacity', 'glassOpacity', 'rainDensity', 'particleCount', 'tabSize', 'defaultDelay', 'obfuscationLevel'].forEach(key => {
+      ['fontFamily', 'soundVol', 'tonePitch', 'scanlineOpacity', 'glassOpacity', 'rainDensity', 'particleCount', 'tabSize', 'defaultDelay', 'obfuscationLevel'].forEach(key => {
         const inputEl = document.getElementById('cfg-' + key);
         if (inputEl) inputEl.value = S.settings[key];
         const valDisp = document.getElementById('val-' + key);
         if (valDisp) valDisp.textContent = S.settings[key] + (key.includes('Opacity') || key === 'soundVol' ? '%' : '');
       });
+      // Update theme color radio buttons
+      const themeRadios = document.querySelectorAll('input[name="themeColor"]');
+      themeRadios.forEach(r => { r.checked = r.value === S.settings.themeColor; });
     }
     function getSetting(k) { return S.settings[k]; }
     function toggleSetting(k, el) {

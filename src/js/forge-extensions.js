@@ -1557,6 +1557,159 @@ function executeBotCommandsFromText(text) {
   }
 }
 
+// ================================================================
+// 25. NAV TABS TOGGLE (Logo click on mobile)
+// ================================================================
+window.toggleNavTabs = function() {
+  const tabs = document.getElementById('navTabs');
+  if (tabs) tabs.classList.toggle('nav-open');
+};
+
+// ================================================================
+// 26. BOTTOM NAVIGATION BAR SYNC
+// ================================================================
+window.updateBottomNav = function(el) {
+  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+};
+
+// Sync bottom nav when switching views from top nav or anywhere
+(function(){
+  const origSwitchView = window.switchView;
+  if (typeof origSwitchView === 'function') {
+    window.switchView = function(viewId, btnEl) {
+      origSwitchView(viewId, btnEl);
+      // Sync bottom nav
+      document.querySelectorAll('.bn-item').forEach(b => {
+        b.classList.toggle('active', b.dataset.view === viewId);
+      });
+      // Also sync top nav active
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.view === viewId);
+      });
+    };
+  }
+})();
+
+// ================================================================
+// 27. DRAGGABLE CHATBOT
+// ================================================================
+(function() {
+  const trigger = document.getElementById('floating-chatbot-trigger');
+  const win = document.getElementById('floating-chatbot-window');
+  if (!trigger || !win) return;
+
+  let isDragging = false;
+  let dragOffsetX = 0, dragOffsetY = 0;
+  let startX, startY;
+  let hasMoved = false;
+
+  function onDragStart(e) {
+    // Don't drag if clicking buttons/selects inside header
+    if (e.target.closest('select, button, input')) return;
+    isDragging = true;
+    hasMoved = false;
+    const touch = e.touches ? e.touches[0] : e;
+    const rect = win.getBoundingClientRect();
+    dragOffsetX = touch.clientX - rect.left;
+    dragOffsetY = touch.clientY - rect.top;
+    startX = touch.clientX;
+    startY = touch.clientY;
+    win.style.transition = 'none';
+    win.style.transform = 'none';
+    e.preventDefault();
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+    let x = touch.clientX - dragOffsetX;
+    let y = touch.clientY - dragOffsetY;
+    // Clamp to viewport
+    x = Math.max(0, Math.min(x, window.innerWidth - win.offsetWidth));
+    y = Math.max(0, Math.min(y, window.innerHeight - win.offsetHeight));
+    win.style.left = x + 'px';
+    win.style.top = y + 'px';
+    win.style.right = 'auto';
+    win.style.bottom = 'auto';
+  }
+
+  function onDragEnd(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    win.style.transition = '';
+  }
+
+  // Mouse events
+  const handle = win.querySelector('.chatbot-drag-handle');
+  if (handle) {
+    handle.addEventListener('mousedown', onDragStart);
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragEnd);
+  }
+
+  // Touch events
+  if (handle) {
+    handle.addEventListener('touchstart', onDragStart, { passive: false });
+    document.addEventListener('touchmove', onDragMove, { passive: false });
+    document.addEventListener('touchend', onDragEnd);
+  }
+
+  // Prevent click on trigger after drag
+  if (trigger) {
+    trigger.addEventListener('click', function(e) {
+      if (hasMoved) { e.stopPropagation(); e.preventDefault(); hasMoved = false; }
+    }, true);
+  }
+
+  // Also make the trigger button draggable
+  let triggerDragging = false;
+  let triggerStartX, triggerStartY, triggerOrigRect;
+
+  function onTriggerDragStart(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    triggerOrigRect = trigger.getBoundingClientRect();
+    triggerStartX = touch.clientX;
+    triggerStartY = touch.clientY;
+    triggerDragging = false;
+  }
+
+  function onTriggerDragMove(e) {
+    if (!triggerOrigRect) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const dx = touch.clientX - triggerStartX;
+    const dy = touch.clientY - triggerStartY;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      triggerDragging = true;
+      let x = triggerOrigRect.left + dx;
+      let y = triggerOrigRect.top + dy;
+      x = Math.max(0, Math.min(x, window.innerWidth - trigger.offsetWidth));
+      y = Math.max(0, Math.min(y, window.innerHeight - trigger.offsetHeight));
+      trigger.style.position = 'fixed';
+      trigger.style.left = x + 'px';
+      trigger.style.top = y + 'px';
+      trigger.style.right = 'auto';
+      trigger.style.bottom = 'auto';
+      e.preventDefault();
+    }
+  }
+
+  function onTriggerDragEnd() {
+    if (triggerDragging) {
+      // Prevent the click that follows
+      trigger.onclick = function(ev) { ev.stopPropagation(); trigger.onclick = null; };
+    }
+    triggerOrigRect = null;
+  }
+
+  trigger.addEventListener('touchstart', onTriggerDragStart, { passive: false });
+  document.addEventListener('touchmove', onTriggerDragMove, { passive: false });
+  document.addEventListener('touchend', onTriggerDragEnd);
+})();
+
 // Auto-init when DOM loads
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', window.initNewFeatures);
