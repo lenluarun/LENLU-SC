@@ -768,16 +768,7 @@ window.initEditorAutocomplete = function () {
 // 18. RESPONSIVE NAV — Group tabs for mobile
 // ================================================================
 window.initResponsiveNav = function () {
-  const checkWidth = () => {
-    const tabs = document.querySelector('.nav-tabs');
-    if (!tabs) return;
-    if (window.innerWidth < 480) {
-      tabs.style.maxHeight = '38px';
-    } else {
-      tabs.style.maxHeight = '';
-    }
-  };
-  checkWidth();
+  const checkWidth = () => {};
   window.addEventListener('resize', checkWidth);
 };
 
@@ -899,7 +890,7 @@ window.switchTool = function(toolId, btn) {
     const target = document.getElementById('view-tools');
     if (target) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.drawer-nav-item').forEach(b => b.classList.remove('active'));
       target.classList.add('active');
       if (toolsBtn) toolsBtn.classList.add('active');
     }
@@ -1558,12 +1549,38 @@ function executeBotCommandsFromText(text) {
 }
 
 // ================================================================
-// 25. NAV TABS TOGGLE (Logo click on mobile)
+// 25. SLIDE-OUT DRAWER PANEL
 // ================================================================
-window.toggleNavTabs = function() {
-  const tabs = document.getElementById('navTabs');
-  if (tabs) tabs.classList.toggle('nav-open');
+window.openDrawer = function() {
+  const overlay = document.getElementById('drawerOverlay');
+  const panel = document.getElementById('drawerPanel');
+  if (overlay) overlay.classList.add('open');
+  if (panel) panel.classList.add('open');
+  document.body.style.overflow = 'hidden';
 };
+
+window.closeDrawer = function() {
+  const overlay = document.getElementById('drawerOverlay');
+  const panel = document.getElementById('drawerPanel');
+  if (overlay) overlay.classList.remove('open');
+  if (panel) panel.classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+window.toggleDrawerTools = function(e) {
+  if (e) e.stopPropagation();
+  const sub = document.getElementById('drawerToolsSub');
+  if (sub) sub.classList.toggle('open');
+  const icon = document.querySelector('.split-toggle i');
+  if (icon) {
+    icon.className = sub && sub.classList.contains('open')
+      ? 'fas fa-chevron-up'
+      : 'fas fa-chevron-down';
+  }
+};
+
+// Legacy alias
+window.toggleNavTabs = window.openDrawer;
 
 // ================================================================
 // 26. BOTTOM NAVIGATION BAR SYNC
@@ -1573,7 +1590,7 @@ window.updateBottomNav = function(el) {
   if (el) el.classList.add('active');
 };
 
-// Sync bottom nav when switching views from top nav or anywhere
+// Sync bottom nav, drawer nav when switching views from anywhere
 (function(){
   const origSwitchView = window.switchView;
   if (typeof origSwitchView === 'function') {
@@ -1583,8 +1600,8 @@ window.updateBottomNav = function(el) {
       document.querySelectorAll('.bn-item').forEach(b => {
         b.classList.toggle('active', b.dataset.view === viewId);
       });
-      // Also sync top nav active
-      document.querySelectorAll('.nav-btn').forEach(b => {
+      // Sync drawer nav
+      document.querySelectorAll('.drawer-nav-item').forEach(b => {
         b.classList.toggle('active', b.dataset.view === viewId);
       });
     };

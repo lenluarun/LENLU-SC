@@ -69,7 +69,7 @@ import './forge-extensions.js';
       if (!target) return;
       S.currentView = id;
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.drawer-nav-item').forEach(b => b.classList.remove('active'));
       target.classList.add('active');
       const nextBtn = btn || document.querySelector('[data-view="' + id + '"]');
       if (nextBtn) {

@@ -53,7 +53,20 @@ function resetSettingsToDefault() {
 }
     function startNavClock() {
       const el = document.getElementById('navClock');
-      const update = () => el.textContent = new Date().toTimeString().substr(0, 8);
+      const update = () => {
+        const now = new Date();
+        const h24 = now.getHours().toString().padStart(2, '0');
+        const m = now.getMinutes().toString().padStart(2, '0');
+        const s = now.getSeconds().toString().padStart(2, '0');
+        const time24 = h24 + ':' + m + ':' + s;
+        let h12 = now.getHours() % 12 || 12;
+        const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+        const time12 = h12 + ':' + m + ' ' + ampm;
+        const c24 = el ? el.querySelector('.clock-24') : null;
+        const c12 = el ? el.querySelector('.clock-12') : null;
+        if (c24) c24.textContent = time24;
+        if (c12) c12.textContent = time12;
+      };
       update(); setInterval(update, 1000);
       const t0 = Date.now();
       setInterval(() => {

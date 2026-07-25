@@ -1205,146 +1205,57 @@ ${r}`, "ai"); return
       display: flex;
       align-items: center;
       gap: .55rem;
-      font-family: var(--font-display);
-      font-size: .95rem;
-      font-weight: 900;
-      letter-spacing: .15em;
-      color: var(--white);
-      text-shadow: 0 0 18px rgba(0, 255, 65, .45);
       white-space: nowrap;
       flex-shrink: 0;
+      cursor: pointer;
+      user-select: none;
     }
 
     .brand-logo {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border: 1px solid var(--g);
-      border-radius: 4px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: .82rem;
-      color: var(--g);
       box-shadow: 0 0 12px rgba(0, 255, 65, .25), inset 0 0 8px rgba(0, 255, 65, .06);
       animation: borderPulse 3s ease-in-out infinite;
       background: rgba(0, 255, 65, .04);
     }
 
-    .brand-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--g);
-      box-shadow: 0 0 8px var(--g);
-      animation: blink 2s step-end infinite;
-    }
+    .nav-div { display: none; }
 
-    .brand-ver {
-      font-family: var(--font-hud);
-      font-size: .48rem;
+    .header-title {
+      flex: 1; text-align: center;
+      font-family: var(--font-display);
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .25em; text-transform: uppercase;
       color: var(--g-dim);
-      letter-spacing: .25em;
-      border-left: 1px solid var(--gbord);
-      padding-left: .55rem;
-    }
-
-    .nav-div {
-      width: 1px;
-      height: 20px;
-      background: linear-gradient(180deg, transparent, var(--gbord), transparent);
-      flex-shrink: 0;
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: .1rem;
-      flex: 1;
-      min-width: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x proximity;
-    }
-
-    .nav-tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nav-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--muted);
-      font-family: var(--font-ui);
-      font-size: .7rem;
-      font-weight: 600;
-      padding: .38rem .72rem;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      transition: all var(--dur) var(--ease);
       white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: .32rem;
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-      position: relative;
     }
-
-    .nav-btn::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 50%;
-      right: 50%;
-      height: 2px;
-      background: var(--g);
-      transition: all .25s var(--ease);
-    }
-
-    .nav-btn:hover {
-      color: var(--g);
-      border-color: var(--gbord);
-      background: rgba(0, 255, 65, .05);
-    }
-
-    .nav-btn.active {
-      color: #000;
-      background: linear-gradient(180deg, rgba(170, 255, 190, .9), var(--g));
-      border-color: var(--g);
-      box-shadow: 0 0 18px rgba(0, 255, 65, .38), 0 0 36px rgba(0, 255, 65, .12);
-    }
-
-    .nav-btn.active::after {
-      left: 10%;
-      right: 10%;
-    }
-
-    .nav-badge {
-      display: inline-block;
-      background: rgba(0, 255, 65, .18);
-      color: var(--g);
-      font-size: .48rem;
-      padding: .08rem .28rem;
-      border-radius: 8px;
+    .header-online {
+      display: flex; align-items: center; gap: .35rem;
       font-family: var(--font-hud);
+      font-size: .52rem; color: var(--g-dim);
+      letter-spacing: .08em;
     }
-
-    .nav-btn.active .nav-badge {
-      background: rgba(0, 0, 0, .22);
-      color: #001a08;
-    }
-
-    .nav-status {
-      display: flex;
-      align-items: center;
-      gap: .6rem;
+    .header-time {
+      display: flex; align-items: center; gap: .4rem;
       flex-shrink: 0;
-      font-family: var(--font-hud);
-      font-size: .6rem;
-      color: var(--muted);
     }
+    .header-clock {
+      font-family: var(--font-hud);
+      font-size: .58rem; color: var(--g-dim);
+      letter-spacing: .08em;
+      border: 1px solid var(--gbord);
+      padding: .2rem .45rem; border-radius: 3px;
+      background: rgba(0,255,65,.03);
+      white-space: nowrap;
+      display: flex; align-items: center; gap: .35rem;
+    }
+    .header-clock .clock-24 { color: var(--g); }
+    .header-clock .clock-12 { color: var(--muted); font-size: .5rem; }
 
     .s-dot {
       width: 5px;
@@ -1361,17 +1272,6 @@ ${r}`, "ai"); return
     .s-dot.warn {
       background: var(--amber);
       box-shadow: 0 0 7px var(--amber);
-    }
-
-    .nav-clock {
-      font-family: var(--font-hud);
-      font-size: .62rem;
-      color: var(--g-dim);
-      letter-spacing: .1em;
-      border: 1px solid var(--gbord);
-      padding: .2rem .5rem;
-      border-radius: 3px;
-      background: rgba(0, 255, 65, .03);
     }
 
     /* ─── MAIN SCROLL AREA ─────────────────────────────── */
@@ -1783,22 +1683,19 @@ ${r}`, "ai"); return
         display: none;
       }
 
-      .nav-tabs {
+      .header-title {
         order: 3;
         flex: 1 1 100%;
         width: 100%;
         padding-top: .25rem;
         padding-bottom: .25rem;
-        gap: .4rem;
-        mask-image: linear-gradient(to right, black 85%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
       }
 
-      .nav-btn {
+      .header-clock {
         flex-shrink: 0 !important;
       }
 
-      .nav-status {
+      .header-online {
         order: 4;
         width: 100%;
         justify-content: space-between;
@@ -1808,8 +1705,6 @@ ${r}`, "ai"); return
 
     @media(max-width: 720px) {
       .brand {
-        font-size: .84rem;
-        letter-spacing: .1em;
         gap: .4rem;
       }
 
@@ -1818,20 +1713,7 @@ ${r}`, "ai"); return
         height: 24px;
       }
 
-      .nav-btn {
-        padding: .32rem .52rem;
-        font-size: .58rem;
-      }
-
-      .nav-badge {
-        display: none;
-      }
-
-      .nav-status {
-        font-size: .54rem;
-      }
-
-      .nav-clock {
+      .header-clock {
         font-size: .56rem;
       }
 
@@ -3994,44 +3876,7 @@ ${r}`, "ai"); return
       color: #1a0f05;
     }
 
-    [data-theme="skeu"] .brand-dot {
-      background: var(--s-brass2);
-      box-shadow: 0 0 6px var(--s-brass2), 0 0 2px rgba(200, 146, 42, .8);
-      animation: blink 2s step-end infinite;
-    }
-
-    [data-theme="skeu"] .nav-btn {
-      font-family: 'Palatino Linotype', serif;
-      color: var(--s-muted);
-      letter-spacing: .05em;
-      text-transform: none;
-      font-size: .78rem;
-      border-radius: 4px;
-      transition: all .2s;
-    }
-
-    [data-theme="skeu"] .nav-btn::after {
-      display: none;
-    }
-
-    [data-theme="skeu"] .nav-btn:hover {
-      color: var(--s-brass2);
-      background: rgba(200, 146, 42, .08);
-      border-color: rgba(200, 146, 42, .25);
-    }
-
-    [data-theme="skeu"] .nav-btn.active {
-      background: linear-gradient(180deg, #c8922a 0%, #a87020 60%, #8a5c18 100%);
-      color: #0f0702;
-      border-color: var(--s-brass3);
-      box-shadow:
-        0 2px 8px rgba(0, 0, 0, .5),
-        inset 0 1px 0 rgba(255, 240, 180, .35),
-        0 0 14px rgba(200, 146, 42, .2);
-      font-weight: 700;
-    }
-
-    [data-theme="skeu"] .nav-clock {
+    [data-theme="skeu"] .header-clock {
       font-family: 'Courier New', monospace;
       color: var(--s-brass);
       border: 1px solid rgba(200, 146, 42, .3);
@@ -4973,16 +4818,6 @@ ${r}`, "ai"); return
       font-family: 'Courier New', monospace;
     }
 
-    [data-theme="skeu"] .nav-btn.active .nav-badge {
-      background: rgba(0, 0, 0, .2);
-      color: #0f0702;
-    }
-
-    [data-theme="skeu"] .brand-ver {
-      color: rgba(200, 146, 42, .5);
-      border-left-color: rgba(200, 146, 42, .2);
-    }
-
     [data-theme="skeu"] .s-dot.ok {
       background: var(--s-brass2);
       box-shadow: 0 0 6px var(--s-brass2);
@@ -4991,10 +4826,6 @@ ${r}`, "ai"); return
     [data-theme="skeu"] .s-dot.warn {
       background: var(--s-amber-glow);
       box-shadow: 0 0 6px var(--s-amber-glow);
-    }
-
-    [data-theme="skeu"] .nav-status {
-      color: var(--s-muted);
     }
 
     /* ─── CRT / GRAIN — reduced for skeu theme ─────────── */
@@ -5909,15 +5740,12 @@ ${r}`, "ai"); return
         justify-content: space-between !important;
       }
 
-      .nav-tabs {
+      .header-title {
         order: 3 !important;
         width: 100% !important;
-        overflow-x: auto !important;
-        scrollbar-width: none !important;
-        -webkit-overflow-scrolling: touch !important;
       }
 
-      .nav-status {
+      .header-online {
         order: 4 !important;
         width: 100% !important;
         justify-content: space-between !important;
@@ -6068,7 +5896,7 @@ ${r}`, "ai"); return
         padding: .5rem 1rem !important;
       }
 
-      .nav-btn {
+      .drawer-nav-item {
         min-height: 36px !important;
         padding: .4rem .65rem !important;
       }
@@ -6559,42 +6387,77 @@ ${r}`, "ai"); return
 
   <!-- APP -->
   <div id="app">
-    <nav class="top-nav">
-      <div class="brand" id="topBrand" onclick="toggleNavTabs()" title="Toggle navigation">
+    <!-- DRAWER OVERLAY -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+    <!-- SLIDE-OUT DRAWER PANEL -->
+    <div class="drawer-panel" id="drawerPanel">
+      <div class="drawer-header">
         <div class="brand-logo"><img src="IMGS/logo_nav_bar.png"
             style="max-width:100%;max-height:100%;object-fit:contain"></div>
-        <span>LENLU SC</span>
-        <div class="brand-dot"></div>
-        <span class="brand-ver">v4.0</span>
-      </div>
-      <button class="nav-toggle" id="navToggleBtn" onclick="toggleNavTabs()" title="Toggle navigation">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="nav-div"></div>
-      <div class="nav-tabs" id="navTabs">
-        <button class="nav-btn active" data-view="home" onclick="switchView('home',this)"><i
-            class="fas fa-home"></i>Home</button>
-        <button class="nav-btn" data-view="dashboard" onclick="switchView('dashboard',this)"><i
-            class="fas fa-tachometer-alt"></i>Dashboard</button>
-        <button class="nav-btn" data-view="compiler" onclick="switchView('compiler',this)"><i
-            class="fas fa-code"></i>IDE</button>
-        <button class="nav-btn" data-view="neural" onclick="switchView('neural',this)"><i
-            class="fas fa-robot"></i>Neural</button>
-        <button class="nav-btn" data-view="tools" onclick="switchView('tools',this)"><i
-            class="fas fa-toolbox"></i>Tools<span class="nav-badge">NEW</span></button>
-        <button class="nav-btn" data-view="vault" onclick="switchView('vault',this)"><i
-            class="fas fa-shield-alt"></i>Vault</button>
-        <button class="nav-btn" data-view="history" onclick="switchView('history',this)"><i
-            class="fas fa-history"></i>History</button>
-        <button class="nav-btn" data-view="settings" onclick="switchView('settings',this)"><i
-            class="fas fa-cog"></i>Config</button>
-      </div>
-      <div class="nav-status">
-        <div class="flex items-center gap-sm">
-          <div class="s-dot ok"></div><span>ONLINE</span>
+        <div class="drawer-header-info">
+          <div class="title">LENLU SC</div>
+          <div class="subtitle">CYBERNETIC FORGE v4.0</div>
         </div>
-        <div class="nav-div"></div>
-        <div class="nav-clock" id="navClock">--:--:--</div>
+      </div>
+      <div class="drawer-nav">
+        <button class="drawer-nav-item active" data-view="home" onclick="switchView('home');closeDrawer()">
+          <i class="fas fa-home"></i>Home</button>
+        <button class="drawer-nav-item" data-view="dashboard" onclick="switchView('dashboard');closeDrawer()">
+          <i class="fas fa-tachometer-alt"></i>Dashboard</button>
+        <button class="drawer-nav-item" data-view="compiler" onclick="switchView('compiler');closeDrawer()">
+          <i class="fas fa-code"></i>IDE Workbench</button>
+        <button class="drawer-nav-item" data-view="neural" onclick="switchView('neural');closeDrawer()">
+          <i class="fas fa-robot"></i>Neural Lab</button>
+        <div class="drawer-sep"></div>
+        <!-- Tools Split Button -->
+        <div class="drawer-split-btn">
+          <button class="split-main" data-view="tools" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-toolbox"></i>Tools</button>
+          <button class="split-toggle" onclick="toggleDrawerTools(event)" title="Expand tools">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+        <div class="drawer-tools-sub" id="drawerToolsSub">
+          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-magic"></i>Payload Builder</button>
+          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-keyboard"></i>Keymap Replayer</button>
+          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-broadcast-tower"></i>Wireless & Audio</button>
+          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-fingerprint"></i>OSINT Canvas</button>
+          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-terminal"></i>Interactive Shell</button>
+          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+            <i class="fas fa-lock"></i>Encoder & Crypto</button>
+        </div>
+        <div class="drawer-sep"></div>
+        <button class="drawer-nav-item" data-view="vault" onclick="switchView('vault');closeDrawer()">
+          <i class="fas fa-shield-alt"></i>Vault</button>
+        <button class="drawer-nav-item" data-view="history" onclick="switchView('history');closeDrawer()">
+          <i class="fas fa-history"></i>History</button>
+        <div class="drawer-sep"></div>
+        <button class="drawer-nav-item" data-view="settings" onclick="switchView('settings');closeDrawer()">
+          <i class="fas fa-cog"></i>Settings</button>
+      </div>
+      <div class="drawer-footer">LENLU SC // CYBERNETIC FORGE v4.0</div>
+    </div>
+
+    <nav class="top-nav">
+      <div class="brand" id="topBrand" onclick="openDrawer()" title="Open navigation">
+        <div class="brand-logo"><img src="IMGS/logo_nav_bar.png"
+            style="max-width:100%;max-height:100%;object-fit:contain"></div>
+      </div>
+      <div class="header-online">
+        <div class="s-dot ok"></div><span>ONLINE</span>
+      </div>
+      <div class="header-title">LENLU SC</div>
+      <div class="header-time">
+        <div class="header-clock" id="navClock">
+          <span class="clock-24">--:--:--</span>
+          <span class="clock-12">--:-- --</span>
+        </div>
       </div>
     </nav>
     <main class="main">
@@ -13084,20 +12947,7 @@ WEnd`;
     // ================================================================
     // 18. RESPONSIVE NAV — Group tabs for mobile
     // ================================================================
-    window.initResponsiveNav = function () {
-      const checkWidth = () => {
-        const tabs = document.querySelector('.nav-tabs');
-        if (!tabs) return;
-        if (window.innerWidth < 480) {
-          tabs.style.maxHeight = '38px';
-        } else {
-          tabs.style.maxHeight = '';
-        }
-      };
-      checkWidth();
-      window.addEventListener('resize', checkWidth);
-    };
-
+    window.initResponsiveNav = function () {};
     // ================================================================
     // 19. STATISTICS TRACKING — Enhanced
     // ================================================================
