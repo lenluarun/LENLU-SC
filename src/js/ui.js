@@ -1,7 +1,56 @@
-import { S, ACTS } from './state.js';
-const DEFS = { crt: true, rain: true, particles: true, audio: true, lint: true, persist: true, hist: true, grain: true, vignette: true, hexdump: false };
+import { S, ACTS, DUCK_CMDS, DUCK_KEY_MAP } from './state.js';
+import { lintSource } from './compiler.js';
+
+const DEFS = {
+  crt: true, rain: true, particles: true, audio: true, lint: true, persist: true, hist: true, grain: true, vignette: true, hexdump: false,
+  themeColor: 'cyber-green', fontFamily: 'Share Tech Mono', soundVol: 80, tonePitch: 'medium', bootSound: true,
+  scanlineOpacity: 50, glassOpacity: 70, rainDensity: 'normal', particleCount: 2800,
+  autoSave: true, autoLint: true, tabSize: 4, lineNumbers: true, defaultDelay: 100, obfuscationLevel: 'none',
+  autoSweep: false, bleAutoScan: false, anonymizeIP: false, strictSandbox: false
+};
 let _aCtx = null;
 let _speedTestRunning = false;
+
+function setSetting(k, val) {
+  S.settings[k] = val;
+  localStorage.setItem('lenlu_cfg4', JSON.stringify(S.settings));
+  applySettings();
+  toast(k + ': ' + val, 'info');
+}
+
+function updateSettingInput(k, val) {
+  S.settings[k] = val;
+  localStorage.setItem('lenlu_cfg4', JSON.stringify(S.settings));
+  applySettings();
+}
+
+function exportSettingsJSON() {
+  const json = JSON.stringify(S.settings, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'lenlu_config.json';
+  a.click(); URL.revokeObjectURL(url);
+  toast('Settings exported', 'ok');
+}
+
+function importSettingsJSON(jsonStr) {
+  try {
+    const parsed = JSON.parse(jsonStr);
+    S.settings = { ...DEFS, ...parsed };
+    localStorage.setItem('lenlu_cfg4', JSON.stringify(S.settings));
+    applySettings();
+    toast('Settings imported successfully', 'ok');
+  } catch (e) {
+    toast('Invalid config JSON', 'err');
+  }
+}
+
+function resetSettingsToDefault() {
+  S.settings = { ...DEFS };
+  localStorage.setItem('lenlu_cfg4', JSON.stringify(S.settings));
+  applySettings();
+  toast('Settings reset to default', 'info');
+}
     function startNavClock() {
       const el = document.getElementById('navClock');
       const update = () => el.textContent = new Date().toTimeString().substr(0, 8);
@@ -25,16 +74,10 @@ let _speedTestRunning = false;
       setInterval(() => {
         ctx.fillStyle = 'rgba(0,0,0,.04)'; ctx.fillRect(0, 0, c.width, c.height);
         ctx.font = '13px "Share Tech Mono"';
-        const theme = document.documentElement.getAttribute('data-theme') || 'cyber';
-        const isSkeu = theme === 'skeu';
         for (let i = 0; i < drops.length; i++) {
           const t = chars[Math.floor(Math.random() * chars.length)];
           const b = Math.random();
-          if (isSkeu) {
-            ctx.fillStyle = b > .96 ? '#fff' : b > .82 ? '#e8b84e' : '#7d5a3c';
-          } else {
-            ctx.fillStyle = b > .96 ? '#fff' : b > .82 ? '#00ff41' : '#007a20';
-          }
+          ctx.fillStyle = b > .96 ? '#fff' : b > .82 ? '#00ff41' : '#007a20';
           ctx.fillText(t, i * 16, drops[i] * 16);
           if (drops[i] * 16 > c.height && Math.random() > .975) drops[i] = 0;
           drops[i] += .45;
@@ -74,10 +117,8 @@ let _speedTestRunning = false;
       setInterval(() => {
         ctx.clearRect(0, 0, c.width, c.height);
         nodes.forEach(n => { n.x += n.vx; n.y += n.vy; if (n.x < 0 || n.x > c.width) n.vx *= -1; if (n.y < 0 || n.y > c.height) n.vy *= -1; });
-        const theme = document.documentElement.getAttribute('data-theme') || 'cyber';
-        const isSkeu = theme === 'skeu';
-        const connectionColorBase = isSkeu ? '200,146,42' : '0,255,65';
-        const particleColor = isSkeu ? 'rgba(200,146,42,.4)' : 'rgba(0,255,65,.4)';
+        const connectionColorBase = '0,255,65';
+        const particleColor = 'rgba(0,255,65,.4)';
         for (let i = 0; i < nodes.length; i++)for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y, d = Math.sqrt(dx * dx + dy * dy);
           if (d < 100) { ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.strokeStyle = `rgba(${connectionColorBase},${.12 * (1 - d / 100)})`; ctx.lineWidth = .5; ctx.stroke(); }
@@ -93,10 +134,8 @@ let _speedTestRunning = false;
       for (let i = 0; i < 60; i++) { dG.push(Math.random()); dC.push(Math.random()); }
       setInterval(() => {
         ctx.clearRect(0, 0, c.width, 65);
-        const theme = document.documentElement.getAttribute('data-theme') || 'cyber';
-        const isSkeu = theme === 'skeu';
-        const colorG = isSkeu ? 'rgba(200,146,42,.7)' : 'rgba(0,255,65,.7)';
-        const colorC = isSkeu ? 'rgba(140,155,171,.6)' : 'rgba(8,247,254,.5)';
+        const colorG = 'rgba(0,255,65,.7)';
+        const colorC = 'rgba(8,247,254,.5)';
         const drawLine = (d, color, w) => { ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = w; d.forEach((v, i) => { const x = i / (d.length - 1) * c.width, y = 65 - v * 58 - 3; i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }); ctx.stroke(); };
         drawLine(dG, colorG, 1.5); drawLine(dC, colorC, 1);
         dG.shift(); dG.push(Math.random()); dC.shift(); dC.push(Math.random());
@@ -117,9 +156,11 @@ let _speedTestRunning = false;
       if (!getSetting('audio')) return;
       try {
         _aCtx = _aCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const pitchMult = S.settings.tonePitch === 'low' ? 0.7 : S.settings.tonePitch === 'high' ? 1.4 : S.settings.tonePitch === 'ultra' ? 2.0 : 1.0;
+        const volMult = (S.settings.soundVol !== undefined ? S.settings.soundVol : 80) / 100;
         const o = _aCtx.createOscillator(), g = _aCtx.createGain();
-        o.connect(g); g.connect(_aCtx.destination); o.type = type; o.frequency.value = freq;
-        g.gain.setValueAtTime(vol, _aCtx.currentTime); g.gain.exponentialRampToValueAtTime(.001, _aCtx.currentTime + dur);
+        o.connect(g); g.connect(_aCtx.destination); o.type = type; o.frequency.value = freq * pitchMult;
+        g.gain.setValueAtTime(vol * volMult, _aCtx.currentTime); g.gain.exponentialRampToValueAtTime(.001, _aCtx.currentTime + dur);
         o.start(); o.stop(_aCtx.currentTime + dur);
       } catch (e) { }
     }
@@ -128,7 +169,11 @@ let _speedTestRunning = false;
       applySettings();
     }
     function applySettings() {
-      document.getElementById('crtLayer').style.display = S.settings.crt ? '' : 'none';
+      const crt = document.getElementById('crtLayer');
+      if (crt) {
+        crt.style.display = S.settings.crt ? '' : 'none';
+        crt.style.opacity = (S.settings.scanlineOpacity !== undefined ? S.settings.scanlineOpacity : 50) / 100;
+      }
       document.getElementById('matrixRain').style.opacity = S.settings.rain ? '.1' : '0';
       document.getElementById('filmGrain').style.display = S.settings.grain ? '' : 'none';
       document.querySelectorAll('.toggle').forEach(t => { const k = t.id.replace('tog-', ''); if (k in S.settings) t.className = 'toggle' + (S.settings[k] ? ' on' : ''); });
@@ -136,6 +181,36 @@ let _speedTestRunning = false;
       const vig = document.getElementById('vignetteLayer');
       if (bg) bg.style.display = S.settings.particles ? '' : 'none';
       if (vig) vig.style.display = S.settings.vignette ? '' : 'none';
+
+      // Apply dynamic CSS variables for theme accent color & fonts
+      const root = document.documentElement;
+      const themeColors = {
+        'cyber-green': { g: '#00ff41', g2: '#00cc33', gbord: 'rgba(0, 255, 65, 0.35)', glow: 'rgba(0, 255, 65, 0.25)' },
+        'neon-cyan': { g: '#08f7fe', g2: '#00c4cc', gbord: 'rgba(8, 247, 254, 0.35)', glow: 'rgba(8, 247, 254, 0.25)' },
+        'electric-amber': { g: '#ffb300', g2: '#e09d00', gbord: 'rgba(255, 179, 0, 0.35)', glow: 'rgba(255, 179, 0, 0.25)' },
+        'plasma-red': { g: '#ff2d55', g2: '#d91c41', gbord: 'rgba(255, 45, 85, 0.35)', glow: 'rgba(255, 45, 85, 0.25)' },
+        'deep-violet': { g: '#a855f7', g2: '#9333ea', gbord: 'rgba(168, 85, 247, 0.35)', glow: 'rgba(168, 85, 247, 0.25)' }
+      };
+      const curColor = themeColors[S.settings.themeColor] || themeColors['cyber-green'];
+      root.style.setProperty('--g', curColor.g);
+      root.style.setProperty('--g2', curColor.g2);
+      root.style.setProperty('--gbord', curColor.gbord);
+      root.style.setProperty('--glow', curColor.glow);
+
+      if (S.settings.fontFamily) {
+        root.style.setProperty('--font-mono', `"${S.settings.fontFamily}", monospace`);
+      }
+      if (S.settings.glassOpacity !== undefined) {
+        root.style.setProperty('--glass-op', (S.settings.glassOpacity / 100).toFixed(2));
+      }
+      
+      // Update form controls if present in Settings view
+      ['themeColor', 'fontFamily', 'soundVol', 'tonePitch', 'scanlineOpacity', 'glassOpacity', 'rainDensity', 'particleCount', 'tabSize', 'defaultDelay', 'obfuscationLevel'].forEach(key => {
+        const inputEl = document.getElementById('cfg-' + key);
+        if (inputEl) inputEl.value = S.settings[key];
+        const valDisp = document.getElementById('val-' + key);
+        if (valDisp) valDisp.textContent = S.settings[key] + (key.includes('Opacity') || key === 'soundVol' ? '%' : '');
+      });
     }
     function getSetting(k) { return S.settings[k]; }
     function toggleSetting(k, el) {
@@ -170,39 +245,64 @@ let _speedTestRunning = false;
     function parseKeymapScript() {
       const src = document.getElementById('keymapInput')?.value || '';
       const timeline = document.getElementById('keymapTimeline');
-      if (!src) { toast('No script to parse', 'warn'); return; }
+      if (!timeline) return;
+      if (!src.trim()) {
+        timeline.innerHTML = '<div class="tl-line text-muted">// Script empty. Enter commands or click keys above...</div>';
+        document.getElementById('km-total').textContent = '0';
+        document.getElementById('km-delays').textContent = '0';
+        document.getElementById('km-strings').textContent = '0';
+        document.getElementById('keymapBadge').textContent = 'IDLE';
+        return;
+      }
       S.keymapEvents = []; S.keymapStep = 0;
       let totalKeys = 0, delays = 0, strings = 0;
       const lines = src.split('\n');
       const ts = new Date().toTimeString().substr(0, 8);
       timeline.innerHTML = `<div class="tl-line tl-info"><span class="tl-ts">[${ts}]</span>Parsed ${lines.length} lines</div>`;
-      lines.forEach((raw, i) => {
+      lines.forEach((raw) => {
         const t = raw.trim(); if (!t || t.startsWith('REM') || t.startsWith(';')) return;
         const parts = t.split(/\s+/); const cmd = parts[0].toUpperCase(); const arg = parts.slice(1).join(' ');
         if (cmd === 'DELAY') { delays++; S.keymapEvents.push({ type: 'delay', ms: parseInt(arg) || 100 }); addLog(timeline, `DELAY ${arg}ms`, 'tl-sys'); }
-        else if (cmd === 'STRING' || cmd === 'STRINGLN') { strings++; arg.split('').forEach(ch => { S.keymapEvents.push({ type: 'char', char: ch, key: ch.toUpperCase() }); totalKeys++; }); if (cmd === 'STRINGLN') { S.keymapEvents.push({ type: 'key', key: 'ENTER' }); totalKeys++; } }
+        else if (cmd === 'STRING' || cmd === 'STRINGLN') {
+          strings++;
+          arg.split('').forEach(ch => { S.keymapEvents.push({ type: 'char', char: ch, key: ch.toUpperCase() }); totalKeys++; });
+          if (cmd === 'STRINGLN') { S.keymapEvents.push({ type: 'key', key: 'ENTER' }); totalKeys++; }
+          addLog(timeline, `${cmd}: "${arg}"`, 'tl-ok');
+        }
         else if (cmd in DUCK_KEY_MAP) { S.keymapEvents.push({ type: 'key', key: DUCK_KEY_MAP[cmd] }); totalKeys++; addLog(timeline, cmd + ' → key: ' + DUCK_KEY_MAP[cmd], 'tl-ok'); }
-        else if (cmd === 'GUI') { S.keymapEvents.push({ type: 'key', key: 'GUI' }); if (arg) { arg.split(' ').forEach(k => { S.keymapEvents.push({ type: 'key', key: k.toUpperCase() }); totalKeys++; }); } totalKeys++; }
-        else if (cmd === 'CTRL') { S.keymapEvents.push({ type: 'combo', keys: ['CTRL', arg.toUpperCase()] }); totalKeys += 2; }
-        else if (cmd === 'ALT') { S.keymapEvents.push({ type: 'combo', keys: ['ALT', arg.toUpperCase()] }); totalKeys += 2; }
-        else if (cmd === 'SHIFT') { S.keymapEvents.push({ type: 'combo', keys: ['LSHIFT', arg.toUpperCase()] }); totalKeys += 2; }
+        else if (cmd === 'GUI' || cmd === 'WINDOWS' || cmd === 'COMMAND' || cmd === 'SUPER') {
+          S.keymapEvents.push({ type: 'key', key: 'GUI' }); totalKeys++;
+          if (arg) { arg.split(' ').forEach(k => { S.keymapEvents.push({ type: 'key', key: k.toUpperCase() }); totalKeys++; }); }
+          addLog(timeline, `GUI ${arg}`, 'tl-ok');
+        }
+        else if (cmd === 'CTRL' || cmd === 'CONTROL') { S.keymapEvents.push({ type: 'combo', keys: ['CTRL', arg.toUpperCase()] }); totalKeys += 2; addLog(timeline, `CTRL+${arg}`, 'tl-ok'); }
+        else if (cmd === 'ALT') { S.keymapEvents.push({ type: 'combo', keys: ['ALT', arg.toUpperCase()] }); totalKeys += 2; addLog(timeline, `ALT+${arg}`, 'tl-ok'); }
+        else if (cmd === 'SHIFT') { S.keymapEvents.push({ type: 'combo', keys: ['LSHIFT', arg.toUpperCase()] }); totalKeys += 2; addLog(timeline, `SHIFT+${arg}`, 'tl-ok'); }
         else if (/^F([1-9]|1[0-2])$/.test(cmd)) { S.keymapEvents.push({ type: 'key', key: cmd }); totalKeys++; addLog(timeline, cmd, 'tl-ok'); }
+        else if (cmd === 'ENTER' || cmd === 'RETURN') { S.keymapEvents.push({ type: 'key', key: 'ENTER' }); totalKeys++; addLog(timeline, 'ENTER', 'tl-ok'); }
+        else if (cmd === 'SPACE') { S.keymapEvents.push({ type: 'key', key: 'SPACE' }); totalKeys++; addLog(timeline, 'SPACE', 'tl-ok'); }
+        else if (cmd === 'TAB') { S.keymapEvents.push({ type: 'key', key: 'TAB' }); totalKeys++; addLog(timeline, 'TAB', 'tl-ok'); }
       });
       document.getElementById('km-total').textContent = totalKeys;
       document.getElementById('km-delays').textContent = delays;
       document.getElementById('km-strings').textContent = strings;
       document.getElementById('keymapBadge').textContent = totalKeys + ' KEYS';
-      toast('Keymap parsed: ' + totalKeys + ' keystrokes', 'ok');
     }
     function replayKeymap() {
-      if (!S.keymapEvents.length) { parseKeymapScript(); return; }
+      if (!S.keymapEvents.length) { parseKeymapScript(); }
+      if (!S.keymapEvents.length) { toast('No keystrokes to replay', 'warn'); return; }
       S.keymapStep = 0; if (S.keymapTimer) clearTimeout(S.keymapTimer);
       document.getElementById('keymapBadge').textContent = 'PLAYING';
       document.getElementById('keymapBadge').className = 'badge badge-g';
       playKeymapEvents();
     }
     function playKeymapEvents() {
-      if (S.keymapStep >= S.keymapEvents.length) { document.getElementById('keymapBadge').textContent = 'DONE'; return; }
+      if (S.keymapStep >= S.keymapEvents.length) {
+        document.getElementById('keymapBadge').textContent = 'DONE';
+        document.getElementById('keymapBadge').className = 'badge badge-c';
+        toast('Keymap replay complete', 'ok');
+        return;
+      }
       const ev = S.keymapEvents[S.keymapStep++];
       let delay = 80;
       if (ev.type === 'delay') { delay = Math.min(ev.ms, 2000); updateActiveKey('WAIT', 'DELAY ' + ev.ms + 'ms'); deactivateAll(); }
@@ -212,8 +312,9 @@ let _speedTestRunning = false;
       S.keymapTimer = setTimeout(() => { deactivateAll(); playKeymapEvents(); }, delay);
     }
     function stepKeymap() {
-      if (!S.keymapEvents.length) { parseKeymapScript(); return; }
-      if (S.keymapStep >= S.keymapEvents.length) { S.keymapStep = 0; deactivateAll(); return; }
+      if (!S.keymapEvents.length) { parseKeymapScript(); }
+      if (!S.keymapEvents.length) { toast('No keystrokes to step', 'warn'); return; }
+      if (S.keymapStep >= S.keymapEvents.length) { S.keymapStep = 0; deactivateAll(); updateActiveKey('--', 'RESET'); return; }
       const ev = S.keymapEvents[S.keymapStep++];
       deactivateAll();
       if (ev.type === 'delay') { updateActiveKey('WAIT', 'DELAY ' + ev.ms + 'ms'); }
@@ -225,28 +326,10 @@ let _speedTestRunning = false;
       if (!k) return;
       let target = k.toUpperCase();
       const charMap = {
-        ' ': 'SPACE',
-        '/': 'SLASH',
-        '.': 'DOT',
-        ',': 'COMMA',
-        '-': 'MINUS',
-        '=': 'EQUAL',
-        ';': 'SEMICOLON',
-        "'": 'QUOTE',
-        '[': 'LBRACKET',
-        ']': 'RBRACKET',
-        '\\': 'BACKSLASH',
-        '`': 'TILDE',
-        '~': 'TILDE'
+        ' ': 'SPACE', '/': 'SLASH', '.': 'DOT', ',': 'COMMA', '-': 'MINUS', '=': 'EQUAL', ';': 'SEMICOLON', "'": 'QUOTE', '[': 'LBRACKET', ']': 'RBRACKET', '\\': 'BACKSLASH', '`': 'TILDE', '~': 'TILDE', 'WINDOWS': 'GUI', 'COMMAND': 'GUI'
       };
-      if (charMap[target]) {
-        target = charMap[target];
-      }
-
-      // If we are looking for the "F" key, prevent conflict with F1-F12 keys
-      if (target === 'F') {
-        target = 'F_KEY';
-      }
+      if (charMap[target]) target = charMap[target];
+      if (target === 'F') target = 'F_KEY';
 
       const el = document.getElementById('key-' + target);
       if (el) {
@@ -257,97 +340,73 @@ let _speedTestRunning = false;
     function deactivateAll() { document.querySelectorAll('.key.active').forEach(k => k.classList.remove('active')); }
     function updateActiveKey(k, label) {
       const d = document.getElementById('activeKeyDisplay'); const l = document.getElementById('activeKeyLabel');
-      if (d) d.textContent = k.length > 4 ? k.substr(0, 4) : k; if (l) l.textContent = label;
+      if (d) d.textContent = k.length > 5 ? k.substr(0, 5) : k; if (l) l.textContent = label;
     }
     function resetKeymap() { if (S.keymapTimer) clearTimeout(S.keymapTimer); S.keymapStep = 0; deactivateAll(); updateActiveKey('--', 'STANDBY'); document.getElementById('keymapBadge').textContent = 'IDLE'; document.getElementById('keymapBadge').className = 'badge badge-g'; }
-    function loadFromCompiler() { const src = document.getElementById('srcEditor')?.value; if (src) document.getElementById('keymapInput').value = src; parseKeymapScript(); }
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-theme');
-      const next = current === 'cyber' ? 'skeu' : 'cyber';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('lenlu_theme4', next);
-      const label = document.getElementById('themeToggleLabel');
-      if (label) label.textContent = next === 'cyber' ? 'Skeuomorph' : 'Cyber';
-      const icon = document.querySelector('#themeToggleBtn .ttb-icon i');
-      if (icon) {
-        icon.className = next === 'cyber' ? 'fas fa-palette' : 'fas fa-bolt';
-      }
-      // Re-apply matrix rain visibility for theme
-      applySettings();
-      // Redraw speed gauge with current value to match new theme colors
-      const txt = document.getElementById('st-dl')?.textContent;
-      const speed = parseFloat(txt) || 0;
-      drawSpeedGauge(speed);
-      toast('Theme: ' + (next === 'cyber' ? 'CYBER EDITION' : 'ANALOG FORGE'), 'info');
-    }
+    function loadFromCompiler() { const src = document.getElementById('srcEditor')?.value; if (src) document.getElementById('keymapInput').value = src; parseKeymapScript(); toast('Loaded script from IDE compiler', 'info'); }
 
-    function loadTheme() {
-      const saved = localStorage.getItem('lenlu_theme4') || 'cyber';
-      document.documentElement.setAttribute('data-theme', saved);
-      const label = document.getElementById('themeToggleLabel');
-      if (label) label.textContent = saved === 'cyber' ? 'Skeuomorph' : 'Cyber';
-      const icon = document.querySelector('#themeToggleBtn .ttb-icon i');
-      if (icon) icon.className = saved === 'cyber' ? 'fas fa-palette' : 'fas fa-bolt';
-    }
+    function initVirtualKeyboardClicks() {
+      const kbd = document.getElementById('virtualKeyboard');
+      if (!kbd || kbd.dataset.initialized) return;
+      kbd.dataset.initialized = 'true';
 
-    function toggleLayout() {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-layout') || 'cyber';
-      const next = current === 'cyber' ? 'skeu' : 'cyber';
-      changeLayout(next);
-      toast('Layout: ' + (next === 'cyber' ? 'CYBER GRIDS' : 'ANALOG CONSOLE'), 'info');
-    }
+      kbd.addEventListener('click', (e) => {
+        const keyEl = e.target.closest('.key');
+        if (!keyEl) return;
 
-    function changeLayout(val) {
-      document.documentElement.setAttribute('data-layout', val);
-      localStorage.setItem('lenlu_layout4', val);
+        let keyId = keyEl.id.replace('key-', '');
+        let char = keyEl.textContent.trim();
 
-      const select = document.getElementById('layoutSelect');
-      if (select) select.value = val;
+        keyEl.classList.add('active', 'key-fire');
+        setTimeout(() => keyEl.classList.remove('key-fire', 'active'), 350);
+        playTone(880, 'sine', .05, .04);
 
-      const label = document.getElementById('layoutToggleLabel');
-      if (label) label.textContent = val === 'cyber' ? 'Skeu Layout' : 'Cyber Layout';
+        updateActiveKey(char, 'CLICK');
 
-      const icon = document.querySelector('#layoutToggleBtn .ttb-icon i');
-      if (icon) {
-        icon.className = val === 'cyber' ? 'fas fa-th-large' : 'fas fa-sliders-h';
-      }
-
-      updateSkeuNeedles();
-    }
-
-    function loadLayout() {
-      const saved = localStorage.getItem('lenlu_layout4') || 'cyber';
-      changeLayout(saved);
-    }
-
-    function updateSkeuNeedles() {
-      const isSkeuLayout = document.documentElement.getAttribute('data-layout') === 'skeu';
-      if (!isSkeuLayout) return;
-
-      const items = [
-        { valId: 'stat-compiled', needleId: 'needle-compiled', max: 20 },
-        { valId: 'stat-ai', needleId: 'needle-ai', max: 20 },
-        { valId: 'stat-vault', needleId: 'needle-vault', max: 10 },
-        { valId: 'stat-scans', needleId: 'needle-scans', max: 15 },
-        { valId: 'sc-nets', needleId: 'needle-sc-nets', max: 12 },
-        { valId: 'sc-ble', needleId: 'needle-sc-ble', max: 10 },
-        { valId: 'sc-deauth', needleId: 'needle-sc-deauth', max: 5 },
-        { valId: 'sc-threats', needleId: 'needle-sc-threats', max: 6 },
-        { valId: 'net-latency', needleId: 'needle-net-latency', max: 300 }
-      ];
-
-      items.forEach(item => {
-        const valEl = document.getElementById(item.valId);
-        const needleEl = document.getElementById(item.needleId);
-        if (valEl && needleEl) {
-          let text = valEl.textContent || '0';
-          let num = parseInt(text.replace(/[^0-9]/g, '')) || 0;
-          const pct = Math.min(1, num / item.max);
-          const deg = -60 + (pct * 120);
-          needleEl.style.transform = `rotate(${deg}deg)`;
+        const inp = document.getElementById('keymapInput');
+        if (inp) {
+          if (keyId === 'BACKSPACE') {
+            inp.value = inp.value.slice(0, -1);
+          } else if (keyId === 'ENTER') {
+            inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + 'ENTER\n';
+          } else if (keyId === 'SPACE') {
+            inp.value += ' ';
+          } else if (keyId === 'TAB') {
+            inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + 'TAB\n';
+          } else if (['GUI', 'CTRL', 'ALT', 'ESC', 'CAPS', 'LSHIFT', 'RSHIFT', 'RALT'].includes(keyId)) {
+            inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + keyId + ' ';
+          } else {
+            const lines = inp.value.split('\n');
+            const lastLine = lines[lines.length - 1] || '';
+            if (lastLine.startsWith('STRING ')) {
+              lines[lines.length - 1] += char;
+              inp.value = lines.join('\n');
+            } else {
+              inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + 'STRING ' + char;
+            }
+          }
+          parseKeymapScript();
         }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (S.currentView !== 'keymap') return;
+        const activeEl = document.activeElement;
+        if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') && activeEl.id !== 'keymapInput') return;
+
+        let k = e.key.toUpperCase();
+        if (k === ' ') k = 'SPACE';
+        else if (k === 'CONTROL') k = 'CTRL';
+        else if (k === 'ESCAPE') k = 'ESC';
+        else if (k === 'BACKSPACE') k = 'BACKSPACE';
+        else if (k === 'ENTER') k = 'ENTER';
+        else if (k === 'TAB') k = 'TAB';
+        else if (k === 'SHIFT') k = 'LSHIFT';
+        else if (k === 'ALT') k = 'ALT';
+        else if (k === 'META') k = 'GUI';
+
+        activateKey(k);
+        updateActiveKey(k, 'KEYBOARD');
       });
     }
     function drawSpeedGauge(speedVal = 0) {
@@ -359,36 +418,22 @@ let _speedTestRunning = false;
       const r = c.width / 2 - 10;
       ctx.clearRect(0, 0, c.width, c.height);
 
-      const theme = document.documentElement.getAttribute('data-theme') || 'cyber';
-      const isSkeu = theme === 'skeu';
-
-      // Draw dial background
-      if (isSkeu) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = '#ede5d0'; // Ivory2 background
-        ctx.fill();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#5c3d1e'; // Walnut border
-        ctx.stroke();
-      } else {
-        // Cyber: semi-transparent dark circle
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(3, 8, 4, 0.6)';
-        ctx.fill();
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = 'rgba(0, 255, 65, 0.25)';
-        ctx.stroke();
-      }
+      // Cyber: semi-transparent dark circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(3, 8, 4, 0.6)';
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(0, 255, 65, 0.25)';
+      ctx.stroke();
 
       // Draw gauge arc
       const startAngle = 0.75 * Math.PI;
       const endAngle = 2.25 * Math.PI;
       ctx.beginPath();
       ctx.arc(cx, cy, r - 8, startAngle, endAngle);
-      ctx.strokeStyle = isSkeu ? '#8b1a1a' : 'rgba(8, 247, 254, 0.4)';
-      ctx.lineWidth = isSkeu ? 2 : 1;
+      ctx.strokeStyle = 'rgba(8, 247, 254, 0.4)';
+      ctx.lineWidth = 1;
       ctx.stroke();
 
       // Draw tick marks
@@ -404,13 +449,12 @@ let _speedTestRunning = false;
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        ctx.strokeStyle = isSkeu ? '#5c3d1e' : 'rgba(0, 255, 65, 0.6)';
-        ctx.lineWidth = isSkeu ? 1.5 : 1;
+        ctx.strokeStyle = 'rgba(0, 255, 65, 0.6)';
+        ctx.lineWidth = 1;
         ctx.stroke();
       }
 
       // Draw needle
-      // Clamp speedVal between 0 and 100 for gauge angle representation
       const speedPct = Math.min(1, Math.max(0, speedVal / 100));
       const targetAngle = startAngle + speedPct * (endAngle - startAngle);
 
@@ -418,39 +462,21 @@ let _speedTestRunning = false;
       ctx.translate(cx, cy);
       ctx.rotate(targetAngle);
 
-      // Draw needle shape
       ctx.beginPath();
-      if (isSkeu) {
-        ctx.moveTo(0, -3);
-        ctx.lineTo(r - 15, 0);
-        ctx.lineTo(0, 3);
-        ctx.closePath();
-        ctx.fillStyle = '#8b1a1a'; // Deep red needle
-        ctx.fill();
+      ctx.moveTo(0, -1.5);
+      ctx.lineTo(r - 12, 0);
+      ctx.lineTo(0, 1.5);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0, 255, 65, 0.9)'; // Neon green needle
+      ctx.fill();
 
-        // Center cap
-        ctx.beginPath();
-        ctx.arc(0, 0, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#c8922a'; // Brass cap
-        ctx.fill();
-        ctx.strokeStyle = '#5c3d1e';
-        ctx.stroke();
-      } else {
-        ctx.moveTo(0, -1.5);
-        ctx.lineTo(r - 12, 0);
-        ctx.lineTo(0, 1.5);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 255, 65, 0.9)'; // Neon green needle
-        ctx.fill();
-
-        // Center cap
-        ctx.beginPath();
-        ctx.arc(0, 0, 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#000';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0, 255, 65, 0.8)';
-        ctx.stroke();
-      }
+      // Center cap
+      ctx.beginPath();
+      ctx.arc(0, 0, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#000';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0, 255, 65, 0.8)';
+      ctx.stroke();
       ctx.restore();
     }
     function runSpeedTest() {
@@ -501,9 +527,9 @@ let _speedTestRunning = false;
       };
       runLatency();
 
-      // Download test (rough estimate using image fetch)
+      // Download test
       const dlStart = performance.now();
-      const testUrl = 'https://via.assets.so/img.png?w=800&h=600&tc=blue&bg=%23cecece&t=' + Date.now();
+      const testUrl = 'https://speed.cloudflare.com/__down?bytes=15000000';
       fetch(testUrl, { cache: 'no-store' })
         .then(r => r.blob())
         .then(blob => {
@@ -512,11 +538,28 @@ let _speedTestRunning = false;
           const speed = (sizeMb * 8 / elapsed).toFixed(1);
           const speedNum = parseFloat(speed);
           clearInterval(needleTimer);
-          const finalSpeed = (isNaN(speedNum) || speedNum > 1000) ? Math.floor(Math.random() * 50 + 10) : speedNum;
+          const finalSpeed = (isNaN(speedNum) || speedNum > 5000) ? Math.floor(Math.random() * 50 + 10) : speedNum;
           drawSpeedGauge(finalSpeed);
           if (dlEl) dlEl.textContent = finalSpeed + ' Mbps';
           const dlLarge = document.getElementById('st-dl-large');
           if (dlLarge) dlLarge.textContent = finalSpeed + ' Mbps';
+
+          const ulStart = performance.now();
+          const ulData = new Uint8Array(2000000);
+          fetch('https://speed.cloudflare.com/__up', { method: 'POST', body: ulData, cache: 'no-store' })
+            .then(() => {
+              const ulElapsed = (performance.now() - ulStart) / 1000;
+              const ulSpeed = (2 * 8 / ulElapsed).toFixed(1);
+              if (ulEl) ulEl.textContent = ulSpeed + ' Mbps';
+              const stUl = document.getElementById('st-ul');
+              if (stUl) stUl.textContent = ulSpeed + ' Mbps';
+            }).catch(() => { if (ulEl) ulEl.textContent = 'Err'; })
+            .finally(() => {
+              _speedTestRunning = false;
+              if (btnEl) btnEl.disabled = false;
+              toast('Speed test complete', 'ok');
+              S.stats.scans++; document.getElementById('stat-scans').textContent = S.stats.scans;
+            });
         }).catch(() => {
           clearInterval(needleTimer);
           const mockSpeed = Math.floor(Math.random() * 50 + 10);
@@ -524,16 +567,9 @@ let _speedTestRunning = false;
           if (dlEl) dlEl.textContent = mockSpeed + ' Mbps';
           const dlLarge = document.getElementById('st-dl-large');
           if (dlLarge) dlLarge.textContent = mockSpeed + ' Mbps';
-        }).finally(() => {
-          // Simulated upload (browsers can't truly test upload to external)
-          const ulSpeed = Math.floor(Math.random() * 20 + 5);
-          if (ulEl) ulEl.textContent = '~' + ulSpeed + ' Mbps';
-          const stUl = document.getElementById('st-ul');
-          if (stUl) stUl.textContent = '~' + ulSpeed + ' Mbps';
           _speedTestRunning = false;
           if (btnEl) btnEl.disabled = false;
-          toast('Speed test complete', 'ok');
-          S.stats.scans++; document.getElementById('stat-scans').textContent = S.stats.scans;
+          toast('Speed test failed, using fallback', 'warn');
         });
     }
     function startActivityFeed() {
@@ -570,7 +606,7 @@ let _speedTestRunning = false;
         toast('Clipboard write unsupported', 'err');
       }
     }
-export { startNavClock, startMatrixRain, startBGCanvas, initHeroCanvas, initTelemetry, toast, playTone, loadSettings, applySettings, getSetting, toggleSetting, checkBLE, checkWebGL, buildDuckRef, insertAtCursor, parseKeymapScript, replayKeymap, playKeymapEvents, stepKeymap, activateKey, deactivateAll, updateActiveKey, resetKeymap, loadFromCompiler, toggleTheme, toggleLayout, changeLayout, loadLayout, updateSkeuNeedles, drawSpeedGauge, runSpeedTest, startActivityFeed, addLog, logFeed, copyText };
+export { startNavClock, startMatrixRain, startBGCanvas, initHeroCanvas, initTelemetry, toast, playTone, loadSettings, applySettings, getSetting, toggleSetting, setSetting, updateSettingInput, exportSettingsJSON, importSettingsJSON, resetSettingsToDefault, checkBLE, checkWebGL, buildDuckRef, insertAtCursor, parseKeymapScript, replayKeymap, playKeymapEvents, stepKeymap, activateKey, deactivateAll, updateActiveKey, resetKeymap, loadFromCompiler, initVirtualKeyboardClicks, drawSpeedGauge, runSpeedTest, startActivityFeed, addLog, logFeed, copyText };
 window.startNavClock = startNavClock;
 window.startMatrixRain = startMatrixRain;
 window.startBGCanvas = startBGCanvas;
@@ -582,6 +618,11 @@ window.loadSettings = loadSettings;
 window.applySettings = applySettings;
 window.getSetting = getSetting;
 window.toggleSetting = toggleSetting;
+window.setSetting = setSetting;
+window.updateSettingInput = updateSettingInput;
+window.exportSettingsJSON = exportSettingsJSON;
+window.importSettingsJSON = importSettingsJSON;
+window.resetSettingsToDefault = resetSettingsToDefault;
 window.checkBLE = checkBLE;
 window.checkWebGL = checkWebGL;
 window.buildDuckRef = buildDuckRef;
@@ -591,11 +632,7 @@ window.replayKeymap = replayKeymap;
 window.stepKeymap = stepKeymap;
 window.resetKeymap = resetKeymap;
 window.loadFromCompiler = loadFromCompiler;
-window.toggleTheme = toggleTheme;
-window.toggleLayout = toggleLayout;
-window.changeLayout = changeLayout;
-window.loadLayout = loadLayout;
-window.updateSkeuNeedles = updateSkeuNeedles;
+window.initVirtualKeyboardClicks = initVirtualKeyboardClicks;
 window.drawSpeedGauge = drawSpeedGauge;
 window.runSpeedTest = runSpeedTest;
 window.startActivityFeed = startActivityFeed;

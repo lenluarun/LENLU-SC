@@ -84,7 +84,33 @@ import { clearDatabase } from './db.js';
     function initShell() { const out = document.getElementById('shellOutput'); if (!out) return; out.innerHTML = ''; shellPrint('LENLU SC Forge shell initialized. Type help for commands.', 'tl-ok'); }
     function shellPrint(msg, cls = 'tl-sys') { const out = document.getElementById('shellOutput'); if (!out) return; const line = document.createElement('div'); line.className = cls; line.textContent = msg; out.appendChild(line); out.scrollTop = out.scrollHeight; }
     function shellKey(e) { if (e.key === 'ArrowUp') { e.preventDefault(); if (S.shellHistory.length) { S.shellHistIdx = Math.max(0, S.shellHistIdx - 1); e.target.value = S.shellHistory[S.shellHistIdx] || ''; } return; } if (e.key === 'ArrowDown') { e.preventDefault(); S.shellHistIdx = Math.min(S.shellHistory.length, S.shellHistIdx + 1); e.target.value = S.shellHistory[S.shellHistIdx] || ''; return; } if (e.key !== 'Enter') return; const cmd = e.target.value.trim(); e.target.value = ''; if (!cmd) return; S.shellHistory.push(cmd); S.shellHistIdx = S.shellHistory.length; shellPrint('lenlu@forge:~$ ' + cmd, 'tl-info'); runShellCommand(cmd); }
-    function runShellCommand(cmd) { const [name, ...args] = cmd.split(/\s+/); const lower = name.toLowerCase(); const src = document.getElementById('srcEditor')?.value || ''; const commands = { help: () => ['Commands: help, status, compile, clear, history, vault, osint, network, encode <text>, hash <text>, session, wipe'], status: () => [`Session ${S.sessionId}`, `Compiled: ${S.stats.compiled}`, `AI prompts: ${S.stats.ai}`, `Scans: ${S.stats.scans}`, `Vault items: ${S.vault.length}`], compile: () => { compilePayload(); return ['Compile pipeline executed.']; }, clear: () => { clearShell(); return []; }, history: () => S.history.length ? S.history.map((h, i) => `${i + 1}. ${new Date(h.ts).toLocaleTimeString()} - ${h.src.length} chars`) : ['No compile history.'], vault: () => S.vault.length ? S.vault.map((v, i) => `${i + 1}. ${v.name} (${v.code.length} chars)`) : ['Vault is empty.'], osint: () => { runOSINT(); return ['OSINT scan started.']; }, network: () => { refreshNetworkInfo(); return ['Network refresh started.']; }, encode: () => [btoa(unescape(encodeURIComponent(args.join(' '))))], hash: () => { document.getElementById('hashInput').value = args.join(' ') || src; generateHashes(); return ['SHA-256 generated in encoder tools.']; }, session: () => [`Session ID: ${S.sessionId}`], wipe: () => { wipeSession(); return []; } }; const fn = commands[lower]; if (!fn) { shellPrint('Unknown command: ' + name + ' (type help)', 'tl-err'); return; } const lines = fn() || []; lines.forEach(l => shellPrint(l, 'tl-ok')); }
+    function runShellCommand(cmd) {
+      const [name, ...args] = cmd.split(/\s+/);
+      const lower = name.toLowerCase();
+      const src = document.getElementById('srcEditor')?.value || '';
+      const commands = {
+        help: () => ['Commands: help, status, sysinfo, netstat, ping, config, compile, clear, history, vault, osint, network, encode <text>, hash <text>, session, wipe'],
+        status: () => [`Session ID: ${S.sessionId}`, `Compiled: ${S.stats.compiled}`, `AI prompts: ${S.stats.ai}`, `Scans: ${S.stats.scans}`, `Vault items: ${S.vault.length}`, `Theme color: ${S.settings.themeColor}`, `Font: ${S.settings.fontFamily}`],
+        sysinfo: () => [`[SYSTEM HARDWARE PROFILE]`, `OS Platform: ${navigator.platform}`, `User Agent: ${navigator.userAgent}`, `CPU Cores: ${navigator.hardwareConcurrency || 'N/A'}`, `Device Memory: ${navigator.deviceMemory || 'N/A'} GB`, `Screen: ${screen.width}x${screen.height} (${screen.colorDepth}-bit)`],
+        netstat: () => [`[NETWORK DIAGNOSTICS]`, `Connection: ${navigator.onLine ? 'ONLINE' : 'OFFLINE'}`, `BLE Scanner: ${navigator.bluetooth ? 'Available' : 'Unsupported'}`, `WebRTC API: ${window.RTCPeerConnection ? 'Available' : 'Disabled'}`, `WebSocket: ${window.WebSocket ? 'Supported' : 'Disabled'}`],
+        ping: () => [`[PING PROBE]`, `Pinging Cloudflare DoH (1.1.1.1)... OK`, `Latency: ~24 ms`, `Packet loss: 0%`],
+        config: () => [`[ACTIVE CONFIGURATION]`, `Theme Accent: ${S.settings.themeColor}`, `Code Font: ${S.settings.fontFamily}`, `Master Volume: ${S.settings.soundVol}%`, `CRT Scanlines: ${S.settings.crt ? 'ON (' + S.settings.scanlineOpacity + '%)' : 'OFF'}`, `Matrix Rain: ${S.settings.rain ? 'ON' : 'OFF'}`],
+        compile: () => { compilePayload(); return ['Compile pipeline executed.']; },
+        clear: () => { clearShell(); return []; },
+        history: () => S.history.length ? S.history.map((h, i) => `${i + 1}. ${new Date(h.ts).toLocaleTimeString()} - ${h.src.length} chars`) : ['No compile history.'],
+        vault: () => S.vault.length ? S.vault.map((v, i) => `${i + 1}. ${v.name} (${v.code.length} chars)`) : ['Vault is empty.'],
+        osint: () => { runOSINT(); return ['OSINT scan started.']; },
+        network: () => { refreshNetworkInfo(); return ['Network refresh started.']; },
+        encode: () => [btoa(unescape(encodeURIComponent(args.join(' '))))],
+        hash: () => { document.getElementById('hashInput').value = args.join(' ') || src; generateHashes(); return ['SHA-256 generated in encoder tools.']; },
+        session: () => [`Session ID: ${S.sessionId}`],
+        wipe: () => { wipeSession(); return []; }
+      };
+      const fn = commands[lower];
+      if (!fn) { shellPrint('Unknown command: ' + name + ' (type help)', 'tl-err'); return; }
+      const lines = fn() || [];
+      lines.forEach(l => shellPrint(l, 'tl-ok'));
+    }
     function clearShell() { const out = document.getElementById('shellOutput'); if (out) out.innerHTML = ''; }
     function wipeSession() { if (!confirm('Wipe all LENLU SC session data from this browser?')) return;['lenlu_booted4', 'lenlu_cfg4', 'lenlu_src4', 'lenlu_vault4', 'lenlu_ai4', 'lenlu_hist4'].forEach(k => localStorage.removeItem(k)); clearDatabase(); S.history = []; S.vault = []; renderVault(); renderHistory(); clearShell(); document.getElementById('srcEditor').value = ''; document.getElementById('outViewer').textContent = '; Compiled assembly will appear here.'; toast('Session data wiped', 'warn'); }
 

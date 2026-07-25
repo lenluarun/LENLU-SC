@@ -1,9 +1,10 @@
 import { S } from './state.js';
-import { toast, updateSkeuNeedles, drawSpeedGauge } from './ui.js';
+import { toast, addLog, logFeed } from './ui.js';
 let _spectrumAnimId = null;
 let _audioAnalyser = null;
 let _audioSource = null;
 let _micStream = null;
+let _aCtx = null;
     async function fetchLocation() {
       try {
         const res = await fetch('https://ipapi.co/json/');
@@ -67,8 +68,10 @@ let _micStream = null;
       }
     }
     async function runRealScanPort(prog, out) {
-      out.textContent = `[Port Sweep - Localhost]\n${'─'.repeat(50)}\nProbing common developer ports...\n`;
-      const ports = [80, 443, 3000, 5000, 8000, 8080, 9000];
+      const customInput = document.getElementById('customPortsInput')?.value || '';
+      const parsedPorts = customInput.split(',').map(p => parseInt(p.trim())).filter(p => !isNaN(p) && p > 0 && p <= 65535);
+      const ports = parsedPorts.length ? parsedPorts : [80, 443, 3000, 5000, 8000, 8080, 9000];
+      out.textContent = `[Port Sweep - Localhost]\n${'─'.repeat(50)}\nProbing target ports: ${ports.join(', ')}...\n`;
       let openCount = 0;
       let logText = `[Port Sweep - Localhost]\n${'─'.repeat(50)}\n`;
 
@@ -131,7 +134,6 @@ let _micStream = null;
         if (type === 'DEAUTH') {
           warnText = ' <span style="color:var(--red);font-weight:bold">[!] DEAUTH INJECTED</span>';
           document.getElementById('sc-deauth').textContent = parseInt(document.getElementById('sc-deauth').textContent) + 1;
-          updateSkeuNeedles();
         }
         const timeStamp = new Date().toISOString().substring(11, 19);
         logs.push(`[${timeStamp}] CH:${ch} | RSSI:${rssi}dBm | ${mac1} -> ${mac2} | type:${type}${warnText}`);
@@ -173,7 +175,6 @@ let _micStream = null;
         document.getElementById('sc-nets').textContent = networks.length;
         prog.className = 'scan-progress'; S.scanActive = false;
         startSpectrum();
-        updateSkeuNeedles();
         toast('WiFi scan complete', 'ok');
       }, 1200);
     }
@@ -210,14 +211,8 @@ let _micStream = null;
               const h = v * canvas.height * 0.95;
 
               const grad = ctx.createLinearGradient(0, canvas.height - h, 0, canvas.height);
-              const isSkeu = document.documentElement.getAttribute('data-theme') === 'skeu';
-              if (isSkeu) {
-                grad.addColorStop(0, v > 0.7 ? 'var(--s-red-ind)' : 'var(--s-brass2)');
-                grad.addColorStop(1, 'rgba(200,146,42,0.1)');
-              } else {
-                grad.addColorStop(0, v > 0.7 ? 'rgba(255,45,85,.9)' : 'rgba(0,255,65,.9)');
-                grad.addColorStop(1, 'rgba(0,255,65,.1)');
-              }
+              grad.addColorStop(0, v > 0.7 ? 'rgba(255,45,85,.9)' : 'rgba(0,255,65,.9)');
+              grad.addColorStop(1, 'rgba(0,255,65,.1)');
               ctx.fillStyle = grad;
               ctx.fillRect(x, canvas.height - h, w, h);
             }
@@ -292,7 +287,6 @@ let _micStream = null;
           out.textContent += `\n[BLE REAL SCAN]\n[+] Device: ${device.name || 'Unknown'}\n[+] ID: ${device.id}\n[+] Connected: ${device.gatt?.connected || false}`;
           const current = parseInt(document.getElementById('sc-ble').textContent || '0');
           document.getElementById('sc-ble').textContent = current + 1;
-          updateSkeuNeedles();
           S.stats.scans++; document.getElementById('stat-scans').textContent = S.stats.scans;
           toast('BLE device found: ' + (device.name || 'Unknown'), 'ok');
           return;
@@ -325,7 +319,6 @@ let _micStream = null;
         const dist = Math.pow(10, (-69 - dev.rssi) / 20).toFixed(2); // standard RSSI to distance conversion model
         out.textContent += `[+] Beacon: ${dev.name.padEnd(20)} | MAC: ${dev.mac} | RSSI: ${dev.rssi}dBm | Est. Dist: ${dist}m\n`;
         document.getElementById('sc-ble').textContent = parseInt(document.getElementById('sc-ble').textContent || '0') + 1;
-        updateSkeuNeedles();
       }, 500);
     }
     async function runRealDNSScan() {
@@ -359,14 +352,8 @@ let _micStream = null;
         data.forEach((v, i) => {
           const x = i * (c.width / data.length), w = (c.width / data.length) - .5, h = v * c.height * .9;
           const grad = ctx.createLinearGradient(0, c.height - h, 0, c.height);
-          const isSkeu = document.documentElement.getAttribute('data-theme') === 'skeu';
-          if (isSkeu) {
-            grad.addColorStop(0, v > .7 ? 'var(--s-red-ind)' : 'var(--s-brass2)');
-            grad.addColorStop(1, 'rgba(200,146,42,0.1)');
-          } else {
-            grad.addColorStop(0, v > .7 ? 'rgba(255,45,85,.9)' : 'rgba(0,255,65,.9)');
-            grad.addColorStop(1, 'rgba(0,255,65,.1)');
-          }
+          grad.addColorStop(0, v > .7 ? 'rgba(255,45,85,.9)' : 'rgba(0,255,65,.9)');
+          grad.addColorStop(1, 'rgba(0,255,65,.1)');
           ctx.fillStyle = grad; ctx.fillRect(x, c.height - h, w, h);
         });
         data = data.map(v => Math.max(.05, Math.min(.95, v + (Math.random() - .5) * .1)));
@@ -481,7 +468,6 @@ let _micStream = null;
         if (bleEl) {
           let current = parseInt(bleEl.textContent) || 0;
           bleEl.textContent = current + 1;
-          updateSkeuNeedles();
         }
       } catch (e) {
         console.error('onBleDeviceFoundBase64 error:', e);
@@ -505,7 +491,6 @@ let _micStream = null;
         const netsEl = document.getElementById('sc-nets');
         if (netsEl) {
           netsEl.textContent = networks.length;
-          updateSkeuNeedles();
         }
         if (prog) prog.className = 'scan-progress';
         S.scanActive = false;

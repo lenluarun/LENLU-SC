@@ -1,7 +1,13 @@
 import { S } from './state.js';
 import { toast } from './ui.js';
 let encMode = 'base64';
-    function setEncMode(m, el) { encMode = m; document.querySelectorAll('.enc-mode-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+    function setEncMode(m, el) {
+      encMode = m;
+      document.querySelectorAll('.enc-mode-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      const xorGrp = document.getElementById('xorKeyGroup');
+      if (xorGrp) xorGrp.style.display = m === 'xor' ? 'flex' : 'none';
+    }
     function encodePayload() {
       const inp = document.getElementById('encInput')?.value || ''; const out = document.getElementById('encOutput'); if (!inp) return;
       try {
@@ -17,6 +23,11 @@ let encMode = 'base64';
           case 'morse': {
             const M = { A: '.-', B: '-...', C: '-.-.', D: '-.', E: '.', F: '..-.', G: '--.', H: '....', I: '..', J: '.---', K: '-.-', L: '.-..', M: '--', N: '-.', O: '---', P: '.--.', Q: '--.-', R: '.-.', S: '...', T: '-', U: '..-', V: '...-', W: '.--', X: '-..-', Y: '-.--', Z: '--..', 0: '-----', 1: '.----', 2: '..---', 3: '...--', 4: '....-', 5: '.....', 6: '-....', 7: '--...', 8: '---..', 9: '----.', ' ': '/' };
             result = inp.toUpperCase().split('').map(c => M[c] || '?').join(' '); break;
+          }
+          case 'xor': {
+            const key = document.getElementById('encXorKey')?.value || 'LENLU';
+            result = Array.from(inp).map((c, i) => (c.charCodeAt(0) ^ key.charCodeAt(i % key.length)).toString(16).padStart(2, '0')).join('');
+            break;
           }
           default: result = inp;
         }
@@ -39,6 +50,12 @@ let encMode = 'base64';
           case 'charcode': result = inp.split(',').map(c => String.fromCharCode(parseInt(c, 10))).join(''); break;
           case 'binstr': result = inp.split(' ').map(b => String.fromCharCode(parseInt(b, 2))).join(''); break;
           case 'morse': { const MR = { '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E', '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K', '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O', '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S', '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X', '-.--': 'Y', '--..': 'Z', '-----': '0', '.----': '1', '..---': '2', '...--': '3', '....-': '4', '.....': '5', '-....': '6', '--...': '7', '---..': '8', '----.': '9', '/': ' ' }; result = inp.split(' ').map(c => MR[c] || '').join(''); break; }
+          case 'xor': {
+            const key = document.getElementById('encXorKey')?.value || 'LENLU';
+            const matches = inp.match(/.{1,2}/g) || [];
+            result = matches.map((h, i) => String.fromCharCode(parseInt(h, 16) ^ key.charCodeAt(i % key.length))).join('');
+            break;
+          }
           default: result = inp;
         }
         out.value = result; analyzePayload(); toast('Decoded (' + encMode + ')', 'ok');

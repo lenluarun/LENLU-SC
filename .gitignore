@@ -31,4 +31,9 @@ dist/
 src/dist/
 /index.html
 /appp/src/main/assets/index.html
+.env
+.env.local
+.env.*.local
 
+# Temp/generated files
+diff.txt

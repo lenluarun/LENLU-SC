@@ -535,6 +535,12 @@
       min-height: 100%;
       box-sizing: border-box;
     }
+    
+    #view-tools, #view-compiler, #view-terminal, #view-keymap, #view-network, #view-scanner, #view-encoder {
+      height: 100%;
+      overflow: hidden;
+      padding-bottom: 0;
+    }
 
     .view.active {
       display: flex;
@@ -1621,7 +1627,7 @@
       display: flex; align-items: center; justify-content: center;
       font-family: var(--font-mono); font-size: .58rem;
       color: var(--muted);
-      transition: all .15s; cursor: default;
+      transition: all .15s; cursor: pointer; user-select: none;
       position: relative; padding: 0 5px;
       white-space: nowrap;
     }
@@ -1861,19 +1867,6 @@
       width: 100%; border-radius: var(--radius);
       background: transparent; display: block;
     }
-
-    /* ─── THEME VISIBILITY ─────────────────────────────── */
-
-    .skeu-only { display: none !important; }
-
-    [data-theme="skeu"] .cyber-only { display: none !important; }
-
-    [data-theme="skeu"] .skeu-only { display: block !important; }
-
-    [data-theme="skeu"] span.skeu-only,
-    [data-theme="skeu"] p.skeu-only,
-    [data-theme="skeu"] em.skeu-only { display: inline !important; }
-
     /* ─── UTILITIES ────────────────────────────────────── */
 
     .flex          { display: flex; }
@@ -1966,16 +1959,7 @@
       color: #001a08;
     }
 
-    [data-theme="skeu"] .tool-tab-btn:hover {
-      color: var(--s-brass);
-      border-color: rgba(200, 146, 42, 0.2);
-      background: rgba(200, 146, 42, 0.05);
-    }
-    [data-theme="skeu"] .tool-tab-btn.active {
-      color: #fff;
-      background: linear-gradient(180deg, #7d5a3c, #5c3d1e);
-      border-color: var(--s-brass);
-    }
+
 
     /* ─── MANUAL INFO BUTTONS ─────────────────────────── */
     .manual-btn {
@@ -2003,16 +1987,7 @@
       font-size: 0.72rem;
     }
 
-    [data-theme="skeu"] .manual-btn {
-      border-color: rgba(200, 146, 42, 0.3);
-      background: rgba(200, 146, 42, 0.08);
-      color: var(--s-brass);
-    }
-    [data-theme="skeu"] .manual-btn:hover {
-      border-color: var(--s-brass);
-      background: rgba(200, 146, 42, 0.2);
-      color: #fff;
-    }
+
 
     /* ─── FLOATING CHATBOT ────────────────────────────── */
     #floating-chatbot-trigger:hover {
@@ -2053,20 +2028,4 @@
       border: 1px solid rgba(8, 247, 254, 0.25);
       color: var(--white);
     }
-    
-    [data-theme="skeu"] #floating-chatbot-trigger {
-      background: linear-gradient(135deg, #a67c52, #7d5a3c);
-      border-color: var(--s-brass);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    }
-    [data-theme="skeu"] #floating-chatbot-trigger:hover {
-      box-shadow: 0 0 30px rgba(200, 146, 42, 0.5);
-    }
-    [data-theme="skeu"] .msg.ai .msg-bubble {
-      background: rgba(200, 146, 42, 0.06);
-      border-color: rgba(200, 146, 42, 0.25);
-    }
-    [data-theme="skeu"] .msg.user .msg-bubble {
-      background: rgba(140, 155, 171, 0.08);
-      border-color: rgba(140, 155, 171, 0.3);
-    }
+    

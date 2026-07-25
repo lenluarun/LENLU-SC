@@ -1,9 +1,7 @@
 {
   "site_settings": {
     "title_cyber": "BLACKBOX <em>FORGE</em> v4.0",
-    "title_skeu": "ANALOG <em>FORGE</em> v4.0",
-    "sub_cyber": "Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE scanner, DNS recon, localhost port sweep. All operations client-side sandboxed.",
-    "sub_skeu": "An analog command desk with brass dials, leather lining, and vacuum-tube amplifiers. Mechanical keystroke relays, physical Bluetooth proximity sweeps, DNS wiretap records, and WebRTC leakage diagnostics. Completely client-side sandboxed relays."
+    "sub_cyber": "Real-world cybernetic command console. DuckyScript → Aut2Exe EXE compiler, live BLE scanner, DNS recon, localhost port sweep. All operations client-side sandboxed."
   },
   "profile": {
     "name": "Arunesh",

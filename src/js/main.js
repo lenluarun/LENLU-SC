@@ -35,7 +35,7 @@ import './forge-extensions.js';
       await initDatabase();
       startMatrixRain(); startBGCanvas(); startNavClock();
       buildDuckRef(); loadSettings(); checkBLE(); checkWebGL();
-      initTelemetry(); initShell(); initRevealObserver(); initHeroCanvas();
+      initTelemetry(); initShell(); initRevealObserver(); initHeroCanvas(); initVirtualKeyboardClicks();
       loadAIConfig(); buildAITags(); renderVault(); renderHistory();
       document.getElementById('sessionId').textContent = S.sessionId;
       document.getElementById('homeSessionId').textContent = S.sessionId;
@@ -48,6 +48,7 @@ import './forge-extensions.js';
       }
       const src = localStorage.getItem('lenlu_src4');
       if (src && getSetting('persist')) { document.getElementById('srcEditor').value = src; lintSource(src); }
+      updateEditorCounts();
       document.addEventListener('keydown', e => {
         if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); compilePayload(); }
         else if (e.ctrlKey && e.key === 's') { e.preventDefault(); saveToVault(); }
@@ -122,13 +123,16 @@ import './forge-extensions.js';
       S.stats.ai++; document.getElementById('stat-ai').textContent = S.stats.ai;
 
       const cfg = JSON.parse(localStorage.getItem('lenlu_ai4') || '{}');
-      const endpoint = cfg.endpoint || 'anthropic';
+      const endpoint = cfg.endpoint || 'groq';
 
       let key = '';
       if (cfg.keys && cfg.keys[endpoint]) {
         key = cfg.keys[endpoint];
       } else if (cfg.key) {
         key = cfg.key;
+      }
+      if (!key && endpoint === 'groq') {
+        key = ''; // Enter your Groq API key in AI Settings — falls back to offline mode
       }
 
       if (!key) {
@@ -291,10 +295,7 @@ import './forge-extensions.js';
     const _origInitApp = initApp;
     initApp = async function () {
       await _origInitApp();
-      loadTheme();
-      loadLayout();
       drawSpeedGauge(0);
-      setInterval(updateSkeuNeedles, 500);
       initArchitectCanvas();
       runSubnetCalc();
       renderMitreGrid();
