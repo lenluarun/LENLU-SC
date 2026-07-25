@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF010302</color>
-    <color name="base2">#070d08</color>
-    <color name="white">#e8fff0</color>
+    <color name="black">#030804</color>
     <color name="matrix_green">#00FF41</color>
-    <color name="matrix_green_dim">#007a20</color>
-    <color name="matrix_green_alpha">#2200FF41</color>
-    <color name="cyan">#08f7fe</color>
-    <color name="muted">#4a6b54</color>
+    <color name="matrix_green_dim">#007A20</color>
+    <color name="matrix_green_alpha">#4000FF41</color>
+    <color name="cyan">#08F7FE</color>
+    <color name="red">#FF2D55</color>
+    <color name="amber">#FFB300</color>
+    <color name="white">#FFFFFF</color>
+    <color name="muted">#4A5A4A</color>
+    <color name="base2">#0D1A0D</color>
+    <color name="surface">#0A140A</color>
+    <color name="nav_bg">#050F05</color>
+    <color name="notification_accent">#00FF41</color>
 </resources>

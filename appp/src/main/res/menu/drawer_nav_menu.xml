@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_home" android:icon="@drawable/ic_home" android:title="Home" />
+        <item android:id="@+id/nav_dashboard" android:icon="@drawable/ic_dashboard" android:title="Dashboard" />
+        <item android:id="@+id/nav_compiler" android:icon="@drawable/ic_code" android:title="IDE Workbench" />
+        <item android:id="@+id/nav_neural" android:icon="@drawable/ic_ai" android:title="Neural Lab" />
+        <item android:id="@+id/nav_scanner" android:icon="@drawable/ic_scanner" android:title="Scanner" />
+        <item android:id="@+id/nav_network" android:icon="@drawable/ic_network" android:title="Network" />
+        <item android:id="@+id/nav_encoder" android:icon="@drawable/ic_lock" android:title="Encoder" />
+        <item android:id="@+id/nav_keymap" android:icon="@drawable/ic_keyboard" android:title="Keymap" />
+        <item android:id="@+id/nav_osint" android:icon="@drawable/ic_fingerprint" android:title="OSINT" />
+        <item android:id="@+id/nav_vault" android:icon="@drawable/ic_shield" android:title="Vault" />
+        <item android:id="@+id/nav_history" android:icon="@drawable/ic_history" android:title="History" />
+        <item android:id="@+id/nav_terminal" android:icon="@drawable/ic_terminal" android:title="Shell" />
+        <item android:id="@+id/nav_speedtest" android:icon="@drawable/ic_speedtest" android:title="Speedtest" />
+        <item android:id="@+id/nav_clipboard" android:icon="@drawable/ic_clipboard" android:title="Clipboard" />
+        <item android:id="@+id/nav_whois" android:icon="@drawable/ic_whois" android:title="WHOIS" />
+        <item android:id="@+id/nav_settings" android:icon="@drawable/ic_cog" android:title="Settings" />
+    </group>
+</menu>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/base2"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="16dp">
+
+    <!-- Top padding for status bar inset (set programmatically) -->
+    <Space android:id="@+id/header_status_space"
+        android:layout_width="match_parent"
+        android:layout_height="24dp" />
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/app_icon"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LENLU SC"
+        android:textColor="#00FF41"
+        android:textSize="18sp"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.15" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CYBERNETIC FORGE v4.0"
+        android:textColor="#4A5A4A"
+        android:textSize="11sp"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.08" />
+
+    <!-- Separator line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#1A00FF41" />
+
+</LinearLayout>

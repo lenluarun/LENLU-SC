@@ -1340,7 +1340,6 @@ select.inp option {
 /* ─── TOOLS VIEWPORT & ALL SUBTAB LAYOUT SCREEN FIT FIXES ─── */
 #view-tools {
   height: 100% !important;
-  display: flex !important;
   flex-direction: column !important;
   padding: clamp(.5rem, 1.5vw, 1.2rem) !important;
   box-sizing: border-box !important;

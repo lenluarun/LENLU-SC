@@ -11,6 +11,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,8 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import org.json.JSONObject
 import java.io.File
@@ -197,5 +200,46 @@ class WebAppInterface(private val mContext: Context, private val webView: WebVie
         (mContext as? MainActivity)?.runOnUiThread {
             mContext.updateNavigationSelection(viewName)
         }
+    }
+
+    @JavascriptInterface
+    fun sendTestNotification() {
+        NotificationWorker.createNotificationChannel(mContext)
+        val intent = Intent(mContext, MainActivity::class.java)
+        val pendingIntent = android.app.PendingIntent.getActivity(
+            mContext, 9999, intent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(mContext, NotificationWorker.CHANNEL_ID)
+            .setSmallIcon(R.drawable.app_icon)
+            .setContentTitle("⚡ FORGE UPLINK TEST")
+            .setContentText("Notification system online. 5 daily Intel briefings are scheduled.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setColor(Color.parseColor("#00FF41"))
+            .build()
+        try {
+            NotificationManagerCompat.from(mContext).notify(9999, notification)
+        } catch (e: SecurityException) {}
+    }
+
+    @JavascriptInterface
+    fun getNotificationPermissionStatus(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) "granted" else "denied"
+        } else {
+            "granted"
+        }
+    }
+
+    @JavascriptInterface
+    fun openNotificationSettings() {
+        val intent = Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, mContext.packageName)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        mContext.startActivity(intent)
     }
 }

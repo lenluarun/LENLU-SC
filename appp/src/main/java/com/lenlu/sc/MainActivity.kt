@@ -20,6 +20,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -33,9 +34,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
     private lateinit var bottomNav: com.google.android.material.bottomnavigation.BottomNavigationView
     private lateinit var navView: com.google.android.material.navigation.NavigationView
-    
-    private var topInsetDp = 0f
+    private lateinit var statusBarOverlay: View
+
+    private var topInsetPx = 0
+    private var bottomInsetPx = 0
     private lateinit var wifiManager: WifiManager
+    private var isUpdatingNav = false
 
     private val requiredPermissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -53,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             add(Manifest.permission.NEARBY_WIFI_DEVICES)
+            add(Manifest.permission.POST_NOTIFICATIONS)
         }
     }.toTypedArray()
 
@@ -62,27 +67,93 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var isUpdatingNav = false
-
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Install splash screen BEFORE super.onCreate
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        checkAndRequestPermissions()
-
+        // --- EDGE-TO-EDGE SETUP ---
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = Color.TRANSPARENT
-        
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.isAppearanceLightStatusBars = false
+        window.navigationBarColor = Color.BLACK
 
+        // Dark status bar icons = false → white icons on dark background
+        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = false
+        insetsController.isAppearanceLightNavigationBars = false
+
+        // Handle display cutout (notch)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode =
+                android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+
+        // --- VIEWS ---
         drawerLayout = findViewById(R.id.drawer_layout)
         bottomNav = findViewById(R.id.bottom_navigation)
         navView = findViewById(R.id.nav_view)
         webView = findViewById(R.id.webView)
-        
+        statusBarOverlay = findViewById(R.id.status_bar_overlay)
+
+        wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+        // --- WEBVIEW SETTINGS ---
+        setupWebView()
+
+        // --- SYSTEM INSETS ---
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+
+            topInsetPx = maxOf(systemBars.top, cutout.top)
+            bottomInsetPx = systemBars.bottom
+
+            // Status bar overlay height = actual status bar height
+            val params = statusBarOverlay.layoutParams
+            params.height = topInsetPx
+            statusBarOverlay.layoutParams = params
+
+            // Bottom nav padding to avoid nav bar overlap
+            bottomNav.setPadding(0, 0, 0, bottomInsetPx)
+
+            // Push inset values to WebView JS for CSS safe area variables
+            updateSafeInsets()
+            insets
+        }
+
+        // --- BOTTOM NAV ---
+        bottomNav.setOnItemSelectedListener { item ->
+            if (!isUpdatingNav) navigateToView(viewIdFromItemId(item.itemId))
+            true
+        }
+
+        // --- DRAWER NAV ---
+        navView.setNavigationItemSelectedListener { item ->
+            if (!isUpdatingNav) navigateToView(viewIdFromItemId(item.itemId))
+            drawerLayout.closeDrawers()
+            true
+        }
+
+        // --- LOAD WEB APP ---
+        webView.loadUrl("file:///android_asset/index.html")
+
+        // --- WIFI RECEIVER ---
+        val intentFilter = IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+        registerReceiver(wifiScanReceiver, intentFilter)
+
+        // --- PERMISSIONS & NOTIFICATIONS ---
+        checkAndRequestPermissions()
+
+        // --- NOTIFICATIONS ---
+        NotificationWorker.createNotificationChannel(this)
+        NotificationWorker.scheduleDailyNotifications(this)
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setupWebView() {
         val settings = webView.settings
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
@@ -96,6 +167,10 @@ class MainActivity : AppCompatActivity() {
         settings.displayZoomControls = false
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        settings.mediaPlaybackRequiresUserGesture = false
+
+        // Hardware acceleration for WebGL
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
         webView.addJavascriptInterface(WebAppInterface(this, webView), "Android")
 
@@ -104,67 +179,47 @@ class MainActivity : AppCompatActivity() {
                 super.onPageFinished(view, url)
                 updateSafeInsets()
                 webView.evaluateJavascript("if(window.updateAndroidInfo) updateAndroidInfo()", null)
+                // Inject device info for the web app
+                injectDeviceCapabilities()
             }
         }
-        webView.webChromeClient = WebChromeClient()
+        webView.webChromeClient = object : WebChromeClient() {}
+    }
 
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            topInsetDp = systemBars.top / resources.displayMetrics.density
-            updateSafeInsets()
-            
-            bottomNav.setPadding(0, 0, 0, systemBars.bottom)
+    private fun injectDeviceCapabilities() {
+        val js = """
+            window.__ANDROID_NOTCH_HEIGHT_PX__ = $topInsetPx;
+            window.__ANDROID_NAV_HEIGHT_PX__ = $bottomInsetPx;
+            if (window.updateAndroidInfo) updateAndroidInfo();
+        """.trimIndent()
+        webView.evaluateJavascript(js, null)
+    }
 
-            insets
-        }
+    private fun navigateToView(viewName: String) {
+        webView.evaluateJavascript(
+            "if(window.switchView) switchView('$viewName', document.querySelector('[data-view=$viewName]'))",
+            null
+        )
+    }
 
-        bottomNav.setOnItemSelectedListener { item ->
-            if (!isUpdatingNav) {
-                val viewName = when (item.itemId) {
-                    R.id.nav_home -> "home"
-                    R.id.nav_dashboard -> "dashboard"
-                    R.id.nav_compiler -> "compiler"
-                    R.id.nav_neural -> "neural"
-                    R.id.nav_scanner -> "scanner"
-                    else -> "home"
-                }
-                webView.evaluateJavascript("if(window.switchView) switchView('$viewName', document.querySelector('[data-view=$viewName]'))", null)
-            }
-            true
-        }
-
-        navView.setNavigationItemSelectedListener { item ->
-            if (!isUpdatingNav) {
-                val viewName = when (item.itemId) {
-                    R.id.nav_home -> "home"
-                    R.id.nav_dashboard -> "dashboard"
-                    R.id.nav_compiler -> "compiler"
-                    R.id.nav_neural -> "neural"
-                    R.id.nav_scanner -> "scanner"
-                    R.id.nav_network -> "network"
-                    R.id.nav_encoder -> "encoder"
-                    R.id.nav_keymap -> "keymap"
-                    R.id.nav_osint -> "osint"
-                    R.id.nav_vault -> "vault"
-                    R.id.nav_history -> "history"
-                    R.id.nav_terminal -> "terminal"
-                    R.id.nav_speedtest -> "speedtest"
-                    R.id.nav_clipboard -> "clipboard"
-                    R.id.nav_whois -> "whois"
-                    R.id.nav_settings -> "settings"
-                    else -> "home"
-                }
-                webView.evaluateJavascript("if(window.switchView) switchView('$viewName', document.querySelector('[data-view=$viewName]'))", null)
-            }
-            drawerLayout.closeDrawers()
-            true
-        }
-
-        webView.loadUrl("file:///android_asset/index.html")
-        
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
-        registerReceiver(wifiScanReceiver, intentFilter)
+    private fun viewIdFromItemId(itemId: Int): String = when (itemId) {
+        R.id.nav_home -> "home"
+        R.id.nav_dashboard -> "dashboard"
+        R.id.nav_compiler -> "compiler"
+        R.id.nav_neural -> "neural"
+        R.id.nav_scanner -> "scanner"
+        R.id.nav_network -> "network"
+        R.id.nav_encoder -> "encoder"
+        R.id.nav_keymap -> "keymap"
+        R.id.nav_osint -> "osint"
+        R.id.nav_vault -> "vault"
+        R.id.nav_history -> "history"
+        R.id.nav_terminal -> "terminal"
+        R.id.nav_speedtest -> "speedtest"
+        R.id.nav_clipboard -> "clipboard"
+        R.id.nav_whois -> "whois"
+        R.id.nav_settings -> "settings"
+        else -> "home"
     }
 
     fun openDrawer() {
@@ -193,31 +248,23 @@ class MainActivity : AppCompatActivity() {
         }
         if (itemId != -1) {
             isUpdatingNav = true
-            bottomNav.selectedItemId = itemId
-            navView.setCheckedItem(itemId)
+            runOnUiThread {
+                bottomNav.selectedItemId = itemId
+                navView.setCheckedItem(itemId)
+            }
             isUpdatingNav = false
-        }
-    }
-
-    private fun checkAndRequestPermissions() {
-        val missingPermissions = requiredPermissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
-        if (missingPermissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), 1002)
         }
     }
 
     fun triggerWifiScan() {
         @Suppress("DEPRECATION")
         val success = wifiManager.startScan()
-        if (!success) {
-            sendWifiResultsToJs()
-        }
+        if (!success) sendWifiResultsToJs()
     }
 
     private fun sendWifiResultsToJs() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
             val results = wifiManager.scanResults
             val jsonArray = JSONArray()
             for (res in results) {
@@ -230,27 +277,58 @@ class MainActivity : AppCompatActivity() {
             }
             val base64 = Base64.encodeToString(jsonArray.toString().toByteArray(), Base64.NO_WRAP)
             webView.post {
-                webView.evaluateJavascript("if(window.onWifiScanResultBase64) onWifiScanResultBase64('$base64')", null)
+                webView.evaluateJavascript(
+                    "if(window.onWifiScanResultBase64) onWifiScanResultBase64('$base64')",
+                    null
+                )
             }
         }
     }
 
     private fun updateSafeInsets() {
-        webView.evaluateJavascript("document.documentElement.style.setProperty('--safe-top', '${topInsetDp}px')", null)
+        val topDp = topInsetPx / resources.displayMetrics.density
+        val bottomDp = bottomInsetPx / resources.displayMetrics.density
+        val js = """
+            document.documentElement.style.setProperty('--safe-top', '${topDp}px');
+            document.documentElement.style.setProperty('--safe-bottom', '${bottomDp}px');
+        """.trimIndent()
+        webView.evaluateJavascript(js, null)
+    }
+
+    private fun checkAndRequestPermissions() {
+        val missing = requiredPermissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missing.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, missing.toTypedArray(), 1002)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1002) {
+            // Re-schedule notifications if POST_NOTIFICATIONS was just granted
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val idx = permissions.indexOf(Manifest.permission.POST_NOTIFICATIONS)
+                if (idx >= 0 && grantResults[idx] == PackageManager.PERMISSION_GRANTED) {
+                    NotificationWorker.scheduleDailyNotifications(this)
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            unregisterReceiver(wifiScanReceiver)
-        } catch (e: Exception) {}
+        try { unregisterReceiver(wifiScanReceiver) } catch (e: Exception) {}
     }
 
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
+        when {
+            drawerLayout.isDrawerOpen(androidx.core.view.GravityCompat.START) ->
+                drawerLayout.closeDrawers()
+            webView.canGoBack() -> webView.goBack()
+            else -> super.onBackPressed()
         }
     }
 }
