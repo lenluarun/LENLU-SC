@@ -622,6 +622,108 @@ function resetSettingsToDefault() {
         toast('Clipboard write unsupported', 'err');
       }
     }
+// ── DISABLE CONTEXT MENU & TEXT SELECTION ACTIONS ──
+function disableContextMenu() {
+  document.addEventListener('contextmenu', e => {
+    if (!e.target.closest('.inp, textarea, [contenteditable="true"], input, .code-area, #srcEditor, .chat-messages, .msg-bubble, .out-viewer, #outViewer')) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('selectstart', e => {
+    if (!e.target.closest('.inp, textarea, [contenteditable="true"], input, .code-area, #srcEditor, .chat-messages, .msg-bubble, .out-viewer, #outViewer')) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('copy', e => {
+    if (!e.target.closest('.inp, textarea, [contenteditable="true"], input, .code-area, #srcEditor, .chat-messages, .msg-bubble, .out-viewer, #outViewer')) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('cut', e => {
+    if (!e.target.closest('.inp, textarea, [contenteditable="true"], input, .code-area, #srcEditor')) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('paste', e => {
+    if (!e.target.closest('.inp, textarea, [contenteditable="true"], input, .code-area, #srcEditor')) {
+      e.preventDefault();
+    }
+  });
+}
+
+// ── PERIODIC NOTIFICATION SYSTEM ──
+const NOTIFICATION_POOL = [
+  { icon: 'fa-shield-alt', title: 'Security Scan Reminder', body: 'Run a privacy audit to check your digital footprint and WebRTC leak exposure.', actions: [{ label: 'Open OSINT', view: 'osint' }, { label: 'Privacy Audit', view: 'tools' }] },
+  { icon: 'fa-code', title: 'Payload Workshop', body: 'Your DuckyScript templates are ready. Build a new injection payload for testing.', actions: [{ label: 'Open IDE', view: 'compiler' }, { label: 'Payload Builder', view: 'tools' }] },
+  { icon: 'fa-robot', title: 'Neural Lab Online', body: 'AI synthesis models are standing by. Generate tactical scripts with natural language.', actions: [{ label: 'Open Neural Lab', view: 'neural' }] },
+  { icon: 'fa-broadcast-tower', title: 'Signal Scanner Active', body: 'BLE wireless scan and DNS recon tools are available. Discover nearby devices.', actions: [{ label: 'Open Scanner', view: 'scanner' }] },
+  { icon: 'fa-key', title: 'Crypto Toolkit', body: 'Generate secure passwords, UUIDs, and MAC addresses. Encode payloads securely.', actions: [{ label: 'Open Crypto', view: 'tools' }] },
+  { icon: 'fa-tachometer-alt', title: 'Dashboard Metrics', body: 'Check your session stats, compilation count, and AI prompt usage.', actions: [{ label: 'Dashboard', view: 'dashboard' }] },
+  { icon: 'fa-fingerprint', title: 'OSINT Fingerprinting', body: 'Browser fingerprint analysis detects tracking vectors. Scan now for exposure.', actions: [{ label: 'Open OSINT', view: 'osint' }] },
+  { icon: 'fa-network-wired', title: 'Network Recon', body: 'GeoIP lookup, subnet CIDR calculator, and port sweep tools are ready.', actions: [{ label: 'Open Network', view: 'tools' }] },
+  { icon: 'fa-lock', title: 'Payload Encoder', body: 'Encode your scripts with Base64, ROT13, or AutoIt3 obfuscation layers.', actions: [{ label: 'Open Encoder', view: 'encoder' }] },
+  { icon: 'fa-keyboard', title: 'Keymap Visualizer', body: 'Visualize and replay DuckyScript keystrokes on a virtual keyboard layout.', actions: [{ label: 'Open Keymap', view: 'keymap' }] },
+  { icon: 'fa-user-shield', title: 'Security Suite', body: 'Password generator, Base64 image encoder, and IP geolocation tracing tools.', actions: [{ label: 'Open Sec Suite', view: 'tools' }] },
+  { icon: 'fa-tools', title: 'Dev Utilities', body: 'JSON formatter, YAML translator, regex tester, and markdown previewer.', actions: [{ label: 'Open Dev Suite', view: 'tools' }] },
+  { icon: 'fa-project-diagram', title: 'Topology Builder', body: 'Design and visualize network topologies with the architecture tool.', actions: [{ label: 'Open Topology', view: 'tools' }] },
+  { icon: 'fa-shield-alt', title: 'MITRE ATT&CK', body: 'Browse the MITRE ATT&CK matrix and run compliance audits against your configs.', actions: [{ label: 'Open MITRE', view: 'tools' }] },
+  { icon: 'fa-calculator', title: 'Sys Utilities', body: 'Base conversion, Unix timestamp, and cron expression tools at your disposal.', actions: [{ label: 'Open Sys Suite', view: 'tools' }] },
+  { icon: 'fa-clipboard', title: 'Clipboard Dropper', body: 'Monitor clipboard history and manage captured payloads from your sessions.', actions: [{ label: 'Open Clipboard', view: 'tools' }] },
+  { icon: 'fa-globe', title: 'WHOIS Lookup', body: 'Query domain registration data and DNS records for OSINT investigations.', actions: [{ label: 'Open WHOIS', view: 'tools' }] },
+  { icon: 'fa-microphone', title: 'Voice Dictation', body: 'Use speech-to-text to generate DuckyScript payloads from voice commands.', actions: [{ label: 'Open Neural Lab', view: 'neural' }] },
+];
+
+let _notifTimer = null;
+let _notifIdx = 0;
+
+function showPeriodicNotification() {
+  const notif = NOTIFICATION_POOL[_notifIdx % NOTIFICATION_POOL.length];
+  _notifIdx++;
+
+  let existing = document.getElementById('periodicNotif');
+  if (existing) existing.remove();
+
+  const popup = document.createElement('div');
+  popup.className = 'notif-popup';
+  popup.id = 'periodicNotif';
+
+  const actionsHtml = notif.actions.map(a =>
+    `<button class="btn btn-primary btn-xs" onclick="switchView('${a.view}');this.closest('.notif-popup').remove()"><i class="fas fa-arrow-right"></i>${a.label}</button>`
+  ).join('');
+
+  popup.innerHTML = `
+    <div class="notif-header"><i class="fas ${notif.icon}"></i><span>${notif.title}</span></div>
+    <div class="notif-body">${notif.body}</div>
+    <div class="notif-actions">
+      ${actionsHtml}
+      <button class="btn btn-ghost btn-xs" onclick="this.closest('.notif-popup').remove()"><i class="fas fa-times"></i>Dismiss</button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  setTimeout(() => {
+    if (popup.parentElement) {
+      popup.classList.add('fade-out');
+      setTimeout(() => popup.remove(), 400);
+    }
+  }, 12000);
+}
+
+function startPeriodicNotifications() {
+  if (_notifTimer) clearInterval(_notifTimer);
+  const interval = (3.5 + Math.random() * 1.5) * 3600000; // 3.5–5 hours
+  _notifTimer = setInterval(showPeriodicNotification, interval);
+  // First notification after 30 seconds for demo
+  setTimeout(showPeriodicNotification, 30000);
+}
+
+// Initialize context menu block and notifications on load
+document.addEventListener('DOMContentLoaded', () => {
+  disableContextMenu();
+  startPeriodicNotifications();
+});
+
 export { startNavClock, startMatrixRain, startBGCanvas, initHeroCanvas, initTelemetry, toast, playTone, loadSettings, applySettings, getSetting, toggleSetting, setSetting, updateSettingInput, exportSettingsJSON, importSettingsJSON, resetSettingsToDefault, checkBLE, checkWebGL, buildDuckRef, insertAtCursor, parseKeymapScript, replayKeymap, playKeymapEvents, stepKeymap, activateKey, deactivateAll, updateActiveKey, resetKeymap, loadFromCompiler, initVirtualKeyboardClicks, drawSpeedGauge, runSpeedTest, startActivityFeed, addLog, logFeed, copyText };
 window.startNavClock = startNavClock;
 window.startMatrixRain = startMatrixRain;
@@ -655,3 +757,5 @@ window.startActivityFeed = startActivityFeed;
 window.addLog = addLog;
 window.logFeed = logFeed;
 window.copyText = copyText;
+window.showPeriodicNotification = showPeriodicNotification;
+window.startPeriodicNotifications = startPeriodicNotifications;

@@ -778,23 +778,28 @@
 
     @media(max-width: 1100px) {
       .top-nav {
-        flex-wrap: wrap; height: auto;
-        min-height: calc(var(--nav-h) + var(--safe-top));
-        padding-top: calc(0.55rem + var(--safe-top));
-        padding-bottom: .65rem;
-        align-items: flex-start;
+        height: auto;
+        min-height: var(--nav-h);
+        padding: .35rem clamp(.5rem, 1.8vw, 1.2rem);
+        gap: .4rem;
+        align-items: center;
       }
 
-      .brand { width: 100%; justify-content: space-between; }
+      .brand { flex-shrink: 0; }
       .nav-div { display: none; }
 
       .header-title {
-        order: 3; flex: 1 1 100%; width: 100%;
-        padding-top: .25rem; padding-bottom: .25rem;
+        flex: 1;
+        font-size: .6rem;
+        letter-spacing: .15em;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      .brand { font-size: .84rem; letter-spacing: .1em; gap: .4rem; }
-      .brand-logo { width: 24px; height: 24px; }
+      .brand { font-size: .84rem; letter-spacing: .1em; gap: .3rem; }
+      .brand-logo { width: 22px; height: 22px; }
+      .header-clock { flex-shrink: 0; font-size: .5rem; }
+      .header-online { flex-shrink: 0; font-size: .48rem; }
       .view { padding: .7rem .65rem; }
       .threat-matrix { grid-template-columns: 1fr; }
     }

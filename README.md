@@ -7,7 +7,7 @@
 [![System Status](https://img.shields.io/badge/SYSTEM-ONLINE-00FF41?style=for-the-badge&logo=opsgenie&logoColor=00FF41&labelColor=000000)](#)
 [![Shader Core](https://img.shields.io/badge/SHADER%20CORE-ACTIVE-00FF41?style=for-the-badge&logo=webgl&logoColor=00FF41&labelColor=000000)](#)
 [![Platform Support](https://img.shields.io/badge/PLATFORMS-WIN%20%7C%20MAC%20%7C%20NIX%20%7C%20ANDROID-00FF41?style=for-the-badge&logo=android&logoColor=00FF41&labelColor=000000)](#)
-[![Version](https://img.shields.io/badge/VERSION-4.0.0-00FF41?style=for-the-badge&logoColor=00FF41&labelColor=000000)](#)
+[![Version](https://img.shields.io/badge/VERSION-4.1.0-00FF41?style=for-the-badge&logoColor=00FF41&labelColor=000000)](#)
 
 </div>
 
@@ -325,6 +325,37 @@ Or open the project in Android Studio → **Build → Run 'appp'**
 | **Android Inset Bridge** | `OPERATIONAL` | Dynamic CSS `--safe-top` / `--safe-bottom` from native insets. |
 | **Notification Engine** | `SCHEDULED` | 5 WorkManager tasks firing daily across 15+ templates. |
 | **Neural Uplink** | `USER-KEY` | AI features require your own API key. Offline fallback active. |
+
+---
+
+## 📋 WHAT'S NEW (v4.1.0)
+
+### UI/UX Improvements
+* **Compact Header**: Status bar height reduced from `60px` → `44px` for more screen real estate.
+* **Single-Line Header**: All header items (logo, online indicator, "LENLU SC" text, clock) now display on **one horizontal line** — even on mobile. No more wrapping or multi-line headers.
+* **Dual-Format Clock**: Time display shows **12-hour format on top** (e.g., `3:45 PM`) and **24-hour format below** (e.g., `15:45:32`).
+* **Blinking Online Indicator**: Green dot pulses with `blink` animation to indicate live connection status.
+
+### Security & UX Enhancements
+* **Text Selection Disabled**: Global `user-select: none` blocks accidental text selection, copy, and paste on non-editable areas. Inputs, code editors, and chat messages remain selectable.
+* **Context Menu Blocked**: Right-click context menu disabled across the app (except in editable fields).
+
+### Neural Synthesis Chat
+* **Complete Chat Layout**: Full CSS for `.ai-chat`, `.chat-messages`, `.msg`, `.msg-bubble`, `.msg-meta`, `.chat-input-row` with scrollable messages, proper alignment (AI left, user right), and fade-in animations.
+* **Chat Scrollbar**: Custom thin scrollbar (4px) styled to match cyberpunk theme.
+
+### Tools & HUD
+* **Category Split-Button Theme**: Tools sidebar category headers now have a green left border accent with an icon prefix, matching the split-button visual language.
+* **Modal Consistent Theme**: All modals (`.modal`) now share a unified HUD look — green top border accent, consistent background/border styling across save, import, template, snippet, and admin modals.
+
+### Mobile Responsiveness
+* **IDE Layout Fixed**: `.g-ide` now forces single-column on `≤860px` for proper mobile IDE display.
+* **Tools Sidebar Stacks**: Tools sidebar collapses to full-width scrollable panel on mobile.
+
+### Periodic Notification System
+* **18 Notification Templates**: System alerts, payload tips, neural lab reminders, scanner prompts, crypto tools, dashboard metrics, OSINT alerts, network recon, encoder, keymap, security suite, dev utilities, topology, MITRE, sys utilities, clipboard, WHOIS, voice dictation.
+* **Random Interval**: Notifications fire every **3.5–5 hours** (randomized). First notification appears 30 seconds after load for demo.
+* **Action Buttons**: Each notification popup includes action buttons that navigate directly to the relevant view, plus a dismiss button.
 
 ---
 
