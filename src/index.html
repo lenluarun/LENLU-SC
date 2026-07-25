@@ -617,7 +617,9 @@ ${r}`, "ai"); return
       --dur: .22s;
       --dur-md: .32s;
       --nav-h: 44px;
-      --safe-top: 0px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --bottom-nav-h: 56px;
       /* Spacing scale */
       --sp-xs: 0.35rem;
       --sp-sm: 0.55rem;
@@ -6685,6 +6687,8 @@ ${r}`, "ai"); return
         <div class="drawer-sep"></div>
         <button class="drawer-nav-item" data-view="settings" onclick="switchView('settings');closeDrawer()">
           <i class="fas fa-cog"></i>Settings</button>
+        <button class="drawer-nav-item" data-view="developer" onclick="switchView('developer');closeDrawer()">
+          <i class="fas fa-user-astronaut"></i>Developer</button>
       </div>
       <div class="drawer-footer">LENLU SC // CYBERNETIC FORGE v4.0</div>
     </div>
@@ -9150,6 +9154,75 @@ ${r}`, "ai"); return
                 style="flex:1;background:transparent;border:none;border-bottom:1px solid var(--gbord);border-radius:0;padding:.32rem .42rem;font-size:.78rem"
                 id="shellInput" placeholder="Enter command… (type 'help')" onkeydown="shellKey(event)"
                 autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEVELOPER DETAILS -->
+      <div class="view" id="view-developer">
+        <div class="dev-hero">
+          <div class="dev-logo">
+            <img src="./IMGS/app_icon.png" alt="LENLU SC" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\\'fas fa-terminal\\' style=\\'font-size:2rem;color:var(--g)\\'></i>'">
+          </div>
+          <h2>LENLU SC</h2>
+          <div class="dev-version">CYBERNETIC FORGE v4.0 PRO</div>
+          <div class="dev-tagline">
+            DuckyScript compiler, AI payload generator, BLE/WiFi scanner,<br>
+            OSINT fingerprinting, encrypted vault, and network recon suite.
+          </div>
+        </div>
+
+        <div class="g2" style="max-width:680px;margin:0 auto;width:100%;">
+          <div class="flex-col gap-md" style="width:100%;">
+            <!-- Social Links -->
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-user-astronaut ch-icon"></i>Developer</span></div>
+              <div class="card-body flex-col gap-sm">
+                <div class="flex justify-between"><span class="text-muted">Author</span><span class="text-g" style="font-family:var(--font-ui)">Arunesh</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">Role</span><span class="text-cyan" style="font-family:var(--font-ui)">Full-Stack & Security Engineer</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">Build</span><span class="text-g" style="font-family:var(--font-hud)">v4.1.0 (5)</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">SDK</span><span class="text-cyan" style="font-family:var(--font-hud)">compileSdk 34 / minSdk 24</span></div>
+              </div>
+            </div>
+
+            <!-- Instagram Link -->
+            <a class="dev-link-card" href="https://instagram.com/lenlu_arun" target="_blank" rel="noopener noreferrer" onclick="if(typeof Android!=='undefined'){Android.openUrl('https://instagram.com/lenlu_arun');event.preventDefault();}">
+              <div class="dev-link-icon ig"><i class="fab fa-instagram"></i></div>
+              <div class="dev-link-info">
+                <div class="dev-link-name">Instagram</div>
+                <div class="dev-link-handle">@lenlu_arun</div>
+              </div>
+              <div class="dev-link-arrow"><i class="fas fa-external-link-alt"></i></div>
+            </a>
+
+            <!-- GitHub Link -->
+            <a class="dev-link-card" href="https://github.com/lenluarun" target="_blank" rel="noopener noreferrer" onclick="if(typeof Android!=='undefined'){Android.openUrl('https://github.com/lenluarun');event.preventDefault();}">
+              <div class="dev-link-icon gh"><i class="fab fa-github"></i></div>
+              <div class="dev-link-info">
+                <div class="dev-link-name">GitHub</div>
+                <div class="dev-link-handle">@lenluarun</div>
+              </div>
+              <div class="dev-link-arrow"><i class="fas fa-external-link-alt"></i></div>
+            </a>
+
+            <!-- Credits -->
+            <div class="card">
+              <div class="card-header"><span><i class="fas fa-heart ch-icon" style="color:var(--red)"></i>Credits & Stack</span></div>
+              <div class="card-body flex-col gap-sm text-xs" style="font-family:var(--font-hud)">
+                <div class="flex justify-between"><span class="text-muted">Frontend</span><span class="text-g">Vanilla JS + Three.js + GSAP</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">Android</span><span class="text-cyan">Kotlin + WebView + WorkManager</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">Compiler</span><span class="text-g">DuckyScript 3.0 &rarr; AutoIt3 / PS1 / Py / Sh</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">Encryption</span><span class="text-amber">AES-256-GCM Vault</span></div>
+                <hr>
+                <div class="flex justify-between"><span class="text-muted">License</span><span class="text-muted">Educational Use Only</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -14715,6 +14788,9 @@ WEnd`;
     </button>
     <button class="bn-item" data-view="settings" onclick="switchView('settings');updateBottomNav(this)">
       <i class="fas fa-cog"></i><span>Config</span>
+    </button>
+    <button class="bn-item" data-view="developer" onclick="switchView('developer');updateBottomNav(this)">
+      <i class="fas fa-user-astronaut"></i><span>Dev</span>
     </button>
   </nav>
 

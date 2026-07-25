@@ -470,6 +470,8 @@
       min-height: 0;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 8px);
     }
 
     .view {
@@ -477,19 +479,21 @@
       padding: clamp(.8rem, 2vw, 1.5rem);
       gap: clamp(.8rem, 1.5vw, 1.2rem);
       flex-direction: column;
-      min-height: 100%;
+      min-height: fit-content;
       box-sizing: border-box;
     }
     
-    #view-tools, #view-compiler, #view-terminal, #view-keymap, #view-network, #view-scanner, #view-encoder {
-      height: 100%;
-      overflow: hidden;
-      padding-bottom: 0;
-    }
-
     .view.active {
       display: flex;
       animation: viewIn .3s var(--ease);
+    }
+
+    #view-tools, #view-compiler, #view-terminal, #view-keymap, #view-network, #view-scanner, #view-encoder,
+    #view-dev-suite, #view-sec-suite, #view-sys-suite {
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      padding-bottom: 0;
     }
 
     /* ─── CARDS — Enhanced ─────────────────────────────── */
@@ -2318,5 +2322,214 @@
       font-size: .45rem; color: var(--g-dim);
       letter-spacing: .15em;
       text-align: center;
+    }
+
+    /* ─── SPLIT BUTTON DROPDOWN (MATRIX THEME) ──────────── */
+    .split-btn-group {
+      position: relative;
+      display: flex;
+      width: 100%;
+      margin-bottom: 2px;
+    }
+    .split-btn-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .5rem .7rem;
+      background: rgba(0,0,0,.3);
+      border: 1px solid var(--gbord);
+      border-right: none;
+      border-radius: var(--radius) 0 0 var(--radius);
+      color: var(--muted);
+      font-family: var(--font-hud);
+      font-size: .68rem;
+      cursor: pointer;
+      transition: all .2s var(--ease);
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .split-btn-main:hover, .split-btn-main.active {
+      background: rgba(0,255,65,.06);
+      border-color: var(--g-dim);
+      color: var(--g);
+    }
+    .split-btn-main i { font-size: .6rem; flex-shrink: 0; }
+    .split-btn-toggle {
+      width: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.3);
+      border: 1px solid var(--gbord);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: var(--muted);
+      font-size: .5rem;
+      cursor: pointer;
+      transition: all .2s var(--ease);
+    }
+    .split-btn-toggle:hover {
+      background: rgba(0,255,65,.06);
+      border-color: var(--g-dim);
+      color: var(--g);
+    }
+    .split-btn-toggle.open { transform: rotate(180deg); }
+    .split-btn-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: var(--base2);
+      border: 1px solid var(--gbord);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 40px rgba(0,0,0,.8), 0 0 20px rgba(0,255,65,.08);
+      margin-top: 2px;
+      overflow: hidden;
+      animation: slideDown .15s var(--ease);
+    }
+    .split-btn-dropdown.open { display: block; }
+    .split-btn-dropdown .split-opt {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .5rem .7rem;
+      color: var(--muted);
+      font-family: var(--font-hud);
+      font-size: .65rem;
+      cursor: pointer;
+      transition: all .15s var(--ease);
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .split-btn-dropdown .split-opt:hover {
+      background: rgba(0,255,65,.08);
+      color: var(--g);
+    }
+    .split-btn-dropdown .split-opt.active-opt {
+      color: var(--g);
+      background: rgba(0,255,65,.06);
+      border-left: 2px solid var(--g);
+    }
+    .split-btn-dropdown .split-opt i { font-size: .55rem; width: 14px; text-align: center; }
+    .split-btn-dropdown .split-sep {
+      height: 1px;
+      background: var(--gbord);
+      margin: 2px 0;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── DEVELOPER PAGE STYLES ─────────────────────────── */
+    #view-developer .dev-hero {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid var(--gbord);
+      margin-bottom: 1rem;
+    }
+    #view-developer .dev-hero .dev-logo {
+      width: 72px; height: 72px;
+      border: 2px solid var(--g);
+      border-radius: 12px;
+      margin: 0 auto .8rem;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,255,65,.04);
+      box-shadow: 0 0 30px rgba(0,255,65,.2), inset 0 0 15px rgba(0,255,65,.05);
+    }
+    #view-developer .dev-hero .dev-logo img {
+      width: 48px; height: 48px;
+    }
+    #view-developer .dev-hero h2 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--g);
+      margin: 0 0 .3rem;
+      letter-spacing: .12em;
+    }
+    #view-developer .dev-hero .dev-version {
+      font-family: var(--font-hud);
+      font-size: .65rem;
+      color: var(--cyan);
+      letter-spacing: .08em;
+    }
+    #view-developer .dev-hero .dev-tagline {
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .6rem;
+      line-height: 1.5;
+    }
+    #view-developer .dev-link-card {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      padding: .9rem 1.1rem;
+      background: var(--glass);
+      border: 1px solid var(--gbord);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all .2s var(--ease);
+      text-decoration: none;
+      color: inherit;
+    }
+    #view-developer .dev-link-card:hover {
+      border-color: var(--g-dim);
+      box-shadow: 0 0 20px rgba(0,255,65,.1);
+      transform: translateY(-1px);
+    }
+    #view-developer .dev-link-card .dev-link-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    #view-developer .dev-link-card .dev-link-icon.ig {
+      background: linear-gradient(135deg, #833AB4, #FD1D1D, #FCAF45);
+      color: #fff;
+    }
+    #view-developer .dev-link-card .dev-link-icon.gh {
+      background: rgba(255,255,255,.08);
+      color: var(--white);
+      border: 1px solid var(--gbord);
+    }
+    #view-developer .dev-link-card .dev-link-info {
+      flex: 1;
+    }
+    #view-developer .dev-link-card .dev-link-info .dev-link-name {
+      font-family: var(--font-ui);
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    #view-developer .dev-link-card .dev-link-info .dev-link-handle {
+      font-family: var(--font-hud);
+      font-size: .65rem;
+      color: var(--g);
+    }
+    #view-developer .dev-link-card .dev-link-arrow {
+      color: var(--muted);
+      font-size: .7rem;
+      transition: color .2s;
+    }
+    #view-developer .dev-link-card:hover .dev-link-arrow { color: var(--g); }
+
+    /* ─── NOTIFICATION POPUP RESPONSIVE ─────────────────── */
+    @media (max-width: 480px) {
+      .notif-popup {
+        left: .8rem !important;
+        right: .8rem !important;
+        bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 8px) !important;
+        min-width: auto !important;
+        max-width: none !important;
+      }
     }
     

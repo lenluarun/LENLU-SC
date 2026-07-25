@@ -219,6 +219,7 @@ class MainActivity : AppCompatActivity() {
         R.id.nav_clipboard -> "clipboard"
         R.id.nav_whois -> "whois"
         R.id.nav_settings -> "settings"
+        R.id.nav_developer -> "developer"
         else -> "home"
     }
 
@@ -244,6 +245,7 @@ class MainActivity : AppCompatActivity() {
             "clipboard" -> R.id.nav_clipboard
             "whois" -> R.id.nav_whois
             "settings" -> R.id.nav_settings
+            "developer" -> R.id.nav_developer
             else -> -1
         }
         if (itemId != -1) {
@@ -319,7 +321,40 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        cancelActiveNotifications()
         try { unregisterReceiver(wifiScanReceiver) } catch (e: Exception) {}
+    }
+
+    // ── Active-mode notification scheduling ──────────────────────────────
+    private var activeNotifTimer: java.util.Timer? = null
+
+    fun scheduleActiveNotifications() {
+        cancelActiveNotifications()
+        val randomDelay = (5 + (Math.random() * 5).toLong()) * 60_000L // 5–10 minutes
+        activeNotifTimer = java.util.Timer().apply {
+            schedule(object : java.util.TimerTask() {
+                override fun run() {
+                    runOnUiThread {
+                        webView.evaluateJavascript("if(typeof showPeriodicNotification==='function')showPeriodicNotification();", null)
+                    }
+                }
+            }, randomDelay, randomDelay)
+        }
+    }
+
+    fun cancelActiveNotifications() {
+        activeNotifTimer?.cancel()
+        activeNotifTimer = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.evaluateJavascript("if(typeof setActiveMode==='function')setActiveMode(true);", null)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        webView.evaluateJavascript("if(typeof setActiveMode==='function')setActiveMode(false);", null)
     }
 
     @Suppress("DEPRECATION")

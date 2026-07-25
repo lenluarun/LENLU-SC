@@ -667,6 +667,7 @@ window.globalSearch = function (query) {
     { suite: 'sec-suite', tab: 'imgb64', name: '🆕 Image ↔ Base64', desc: 'Convert images to/from base64 strings' },
     { view: 'terminal', name: 'Shell', desc: 'Interactive shell, history, commands' },
     { view: 'settings', name: 'Settings', desc: 'CRT, particles, interface config' },
+    { view: 'developer', name: 'Developer', desc: 'Social links, credits, build info' },
     { view: 'dashboard', name: 'Dashboard', desc: 'Stats, activity feed, telemetry' },
     { view: 'c2_hive', name: 'C2 Hive', desc: 'Live beacon management, C2 console' },
   ];
@@ -1722,10 +1723,36 @@ window.updateBottomNav = function(el) {
     triggerOrigRect = null;
   }
 
-  trigger.addEventListener('touchstart', onTriggerDragStart, { passive: false });
-  document.addEventListener('touchmove', onTriggerDragMove, { passive: false });
-  document.addEventListener('touchend', onTriggerDragEnd);
+    trigger.addEventListener('touchstart', onTriggerDragStart, { passive: false });
+    document.addEventListener('touchmove', onTriggerDragMove, { passive: false });
+    document.addEventListener('touchend', onTriggerDragEnd);
 })();
+
+// ================================================================
+// SPLIT BUTTON DROPDOWN TOGGLE
+// ================================================================
+document.addEventListener('click', function (e) {
+  const toggle = e.target.closest('.split-btn-toggle');
+  if (toggle) {
+    e.stopPropagation();
+    const group = toggle.closest('.split-btn-group');
+    if (!group) return;
+    const isOpen = group.classList.contains('open');
+    // close all others first
+    document.querySelectorAll('.split-btn-group.open').forEach(g => g.classList.remove('open'));
+    if (!isOpen) group.classList.add('open');
+    return;
+  }
+  // click on a dropdown option
+  const opt = e.target.closest('.split-opt');
+  if (opt) {
+    const group = opt.closest('.split-btn-group');
+    if (group) group.classList.remove('open');
+    return;
+  }
+  // click outside — close all open dropdowns
+  document.querySelectorAll('.split-btn-group.open').forEach(g => g.classList.remove('open'));
+});
 
 // Auto-init when DOM loads
 if (document.readyState === 'loading') {

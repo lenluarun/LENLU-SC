@@ -7,7 +7,7 @@
 [![System Status](https://img.shields.io/badge/SYSTEM-ONLINE-00FF41?style=for-the-badge&logo=opsgenie&logoColor=00FF41&labelColor=000000)](#)
 [![Shader Core](https://img.shields.io/badge/SHADER%20CORE-ACTIVE-00FF41?style=for-the-badge&logo=webgl&logoColor=00FF41&labelColor=000000)](#)
 [![Platform Support](https://img.shields.io/badge/PLATFORMS-WIN%20%7C%20MAC%20%7C%20NIX%20%7C%20ANDROID-00FF41?style=for-the-badge&logo=android&logoColor=00FF41&labelColor=000000)](#)
-[![Version](https://img.shields.io/badge/VERSION-4.1.0-00FF41?style=for-the-badge&logoColor=00FF41&labelColor=000000)](#)
+[![Version](https://img.shields.io/badge/VERSION-4.2.0-00FF41?style=for-the-badge&logoColor=00FF41&labelColor=000000)](#)
 
 </div>
 
@@ -99,14 +99,15 @@ The console features:
 * **Fast-Path Dictionary**: Checks target hashes against a built-in repository of common credentials.
 * **Brute-Force Enumerator**: Brute-forces strings dynamically using customizable charsets (upper, lower, nums, symbols).
 
-### 6. 📱 Android Native App (v4.0)
+### 6. 📱 Android Native App (v4.2)
 * **Edge-to-Edge Layout**: WebView draws behind status bar and navigation bar with dynamic safe area CSS variables (`--safe-top`, `--safe-bottom`).
-* **Bottom Navigation Bar**: Fixed 7-tab bottom nav (Home, Dash, IDE, Neural, Tools, Vault, Config) visible on mobile — auto-syncs with top nav active state.
+* **Bottom Navigation Bar**: Fixed 8-tab bottom nav (Home, Dash, IDE, Neural, Tools, Vault, Config, Dev) visible on mobile — auto-syncs with top nav active state.
 * **Logo Toggle Navigation**: Tap the LENLU SC logo (or hamburger icon) on mobile to toggle the top nav tabs open/closed.
 * **Themed Radio Button Controls**: HUD Accent Color selector uses themed radio buttons with live color swatches instead of a dropdown.
 * **Draggable AI Chatbot**: The floating Forge AI Copilot button and chat window can be dragged anywhere on screen (touch + mouse support).
 * **Radio-Style Tool Selection**: Tools sidebar category buttons now display as radio-style indicators with active dot indicators.
 * **Notch/Display Cutout Support**: `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` with programmatic status bar overlay.
+* **Adaptive Notification Engine**: JS-side notifications switch between 5–10min (app active/foreground) and 3.5–5h (idle/background) intervals via `visibilitychange` API; Android bridge (`setActiveMode`) triggers WorkManager active-mode worker.
 * **5 Daily Push Notifications**: WorkManager-scheduled random Intel briefings, payload tips, and system status alerts — fires even when app is closed.
 * **Reboot Persistence**: `BootReceiver` reschedules notifications automatically after device reboot.
 * **Native BLE Scan**: Hardware-level Bluetooth LE scanner with RSSI data bridged to WebView via base64 JSON.
@@ -122,14 +123,14 @@ The Android app sends **5 randomized daily notifications** across 15+ notificati
 
 | Category | Example |
 |---|---|
-| ⚡ System Status | "Neural uplink stable. All modules nominal." |
-| 📡 Signal Intel | "BLE beacon activity detected nearby. Open scanner." |
-| 🔍 OSINT Alerts | "Browser fingerprint entropy spike detected." |
-| 💡 Payload Tips | "Use FUNCTION blocks in DuckyScript 3.0 for reusable sequences." |
-| 🧠 AI Updates | "Neural payload generator ready. Describe your objective." |
-| ⚙️ Activity Reminders | "Your last session payload is saved in the vault." |
+| System Status | "Neural uplink stable. All modules nominal." |
+| Signal Intel | "BLE beacon activity detected nearby. Open scanner." |
+| OSINT Alerts | "Browser fingerprint entropy spike detected." |
+| Payload Tips | "Use FUNCTION blocks in DuckyScript 3.0 for reusable sequences." |
+| AI Updates | "Neural payload generator ready. Describe your objective." |
+| Activity Reminders | "Your last session payload is saved in the vault." |
 
-Notifications are scheduled at approximately 8AM, 11AM, 2PM, 5PM, and 8PM with ±30 minute random jitter. They use the **Matrix Green (#00FF41)** LED light color and a `[80ms, pause, 80ms]` vibration pattern.
+Notifications are scheduled at approximately 8AM, 11AM, 2PM, 5PM, and 8PM with random jitter. They use the Matrix Green (#00FF41) LED light color and a vibration pattern. In-app popups appear every 5–10 min when the app is active, or every 3.5–5h when idle.
 
 ---
 
@@ -147,21 +148,23 @@ graph TD
 
 ```
 ┌─────────────────────────────────────────────┐
-│      LENLU SC v4.0 CORE SYSTEM              │
+│      LENLU SC v4.2 CORE SYSTEM              │
 ├─────────────────────────────────────────────┤
 │  Web Layer                                   │
 │  ├── 1. IndexedDB Persistence (Vault+Hist)  │
 │  ├── 2. Web Worker Threads (Hash Cracker)   │
 │  ├── 3. WebGL Particle Engine (Three.js)    │
 │  ├── 4. Web Audio API (FFT Spectrum)        │
-│  └── 5. WebUSB Hardware Bridge              │
+│  ├── 5. WebUSB Hardware Bridge              │
+│  └── 6. VisibilityChange Adaptive Notifs    │
 │                                              │
 │  Android Native Layer                        │
-│  ├── 6. WorkManager (5 Daily Notifications) │
-│  ├── 7. BluetoothLeScanner (BLE Scan)       │
-│  ├── 8. WifiManager (WiFi Scan)             │
-│  ├── 9. FileProvider (File Export/Share)    │
-│  └── 10. BootReceiver (Notif Persistence)   │
+│  ├── 7. WorkManager (5 Daily + Active Mode) │
+│  ├── 8. BluetoothLeScanner (BLE Scan)       │
+│  ├── 9. WifiManager (WiFi Scan)             │
+│  ├── 10. FileProvider (File Export/Share)   │
+│  ├── 11. BootReceiver (Notif Persistence)   │
+│  └── 12. setActiveMode() Bridge             │
 ├─────────────────────────────────────────────┤
 │  Data Flow: WebView ↔ JavascriptInterface   │
 │  Persistence: IndexedDB + SharedPreferences │
@@ -202,16 +205,16 @@ LENLU-SC/
 │   └── src/main/
 │       ├── java/com/lenlu/sc/
 │       │   ├── MainActivity.kt          Edge-to-edge WebView host
-│       │   ├── WebAppInterface.kt       JS bridge (BLE, WiFi, clipboard...)
-│       │   ├── NotificationWorker.kt    WorkManager daily notifications
+│       │   ├── WebAppInterface.kt       JS bridge (BLE, WiFi, clipboard, openUrl...)
+│       │   ├── NotificationWorker.kt    WorkManager daily + active-mode notifs
 │       │   └── BootReceiver.kt         Reschedule on device reboot
 │       ├── res/
 │       │   ├── layout/activity_main.xml  DrawerLayout + WebView + BottomNav
 │       │   ├── layout/nav_header.xml     Drawer header with LENLU SC branding
 │       │   ├── values/themes.xml         Cyberpunk theme + Splash screen
 │       │   ├── values/colors.xml         Matrix green + Cyan palette
-│       │   ├── menu/bottom_nav_menu.xml  5-tab bottom navigation
-│       │   └── menu/drawer_nav_menu.xml  Full 16-view drawer navigation
+│       │   ├── menu/bottom_nav_menu.xml  5-tab bottom navigation (Android)
+│       │   ├── menu/drawer_nav_menu.xml  Full 17-view drawer navigation
 │       └── AndroidManifest.xml           Permissions + components
 │
 ├── .env.example                  Environment variable template
@@ -304,13 +307,16 @@ Or open the project in Android Studio → **Build → Run 'appp'**
 | Draggable Chatbot | Mouse + touch drag with viewport clamping | 21+ |
 | Notch/Cutout support | `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` | 28+ |
 | Splash Screen | `SplashScreen` API (`core-splashscreen:1.0.1`) | 21+ |
-| Daily Notifications | `WorkManager` OneTimeWorkRequest (×5/day) | 21+ |
+| Daily Notifications | `WorkManager` OneTimeWorkRequest (x5/day) | 21+ |
+| Active Mode Notifs | `WorkManager` periodic worker + JS `visibilitychange` | 21+ |
 | Notification Permission | `POST_NOTIFICATIONS` runtime request | 33+ |
 | Boot Persistence | `RECEIVE_BOOT_COMPLETED` BroadcastReceiver | 21+ |
 | Native BLE Scan | `BluetoothLeScanner` → base64 bridge | 21+ |
 | Native WiFi Scan | `WifiManager.startScan()` → base64 bridge | 21+ |
 | File Export/Share | `FileProvider` + `ACTION_SEND` | 21+ |
 | Clipboard Bridge | `ClipboardManager` JS interface | 21+ |
+| External URL Bridge | `Intent.ACTION_VIEW` JS interface | 21+ |
+| Developer Page | `#view-developer` with social links + credits | 21+ |
 
 ---
 
@@ -323,8 +329,26 @@ Or open the project in Android Studio → **Build → Run 'appp'**
 | **Session Cache** | `ENABLED` | IndexedDB tracking vault, history, and editor state. |
 | **Encryption Mode** | `SANDBOX` | Client-side memory only — data stays in your browser. |
 | **Android Inset Bridge** | `OPERATIONAL` | Dynamic CSS `--safe-top` / `--safe-bottom` from native insets. |
-| **Notification Engine** | `SCHEDULED` | 5 WorkManager tasks firing daily across 15+ templates. |
+| **Notification Engine** | `SCHEDULED` | 5 WorkManager tasks + adaptive JS interval (active/idle). |
 | **Neural Uplink** | `USER-KEY` | AI features require your own API key. Offline fallback active. |
+
+---
+
+## 📋 WHAT'S NEW (v4.2.0)
+
+### Developer Page
+* **Social Links**: New Developer view with clickable Instagram (`@lenlu_arun`) and GitHub (`@lenluarun`) link cards — opens in external browser via native `Intent.ACTION_VIEW` bridge.
+* **Credits & Stack**: Build version, SDK info, and full technology stack displayed in HUD-themed cards.
+* **Navigation Access**: Developer page available from drawer nav, bottom nav, and global search.
+
+### Adaptive Notification System
+* **Active/Idle Switching**: JS-side notifications now fire every 5–10 minutes when the app is visible (foreground) and every 3.5–5 hours when idle/hidden — driven by `document.visibilitychange`.
+* **Android Bridge**: `setActiveMode(active)` JS interface method triggers WorkManager active-mode periodic worker on Android, matching the JS interval behavior.
+* **Lifecycle Hooks**: `onResume`/`onPause` in `MainActivity.kt` automatically push active mode to WebView when the app enters foreground/background.
+
+### UI/UX Improvements
+* **Safe Area Default**: `--safe-top` CSS variable default changed from hardcoded `0px` to `env(safe-area-inset-top, 0px)` for correct fallback on web.
+* **Split Button Dropdowns**: Matrix-themed split button group with dropdown toggle, click-outside-to-close, and hover highlights — ready for tools sidebar integration.
 
 ---
 
@@ -375,6 +399,6 @@ Or open the project in Android Studio → **Build → Run 'appp'**
 
 **// END OF LINE.** // Maintain precision. Assemble with control.
 
-*LENLU SC v4.0 — Built by Arunesh*
+*LENLU SC v4.2 — Built by Arunesh*
 
 </div>

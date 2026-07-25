@@ -675,6 +675,9 @@ const NOTIFICATION_POOL = [
 
 let _notifTimer = null;
 let _notifIdx = 0;
+let _isActive = true;
+let _activeInterval = 7 * 60000; // 7 minutes (5–10 range)
+let _idleInterval = (3.5 + Math.random() * 1.5) * 3600000; // 3.5–5 hours
 
 function showPeriodicNotification() {
   const notif = NOTIFICATION_POOL[_notifIdx % NOTIFICATION_POOL.length];
@@ -710,13 +713,34 @@ function showPeriodicNotification() {
   }, 12000);
 }
 
+function _scheduleNextNotif() {
+  if (_notifTimer) clearTimeout(_notifTimer);
+  const interval = _isActive ? (5 + Math.random() * 5) * 60000 : (3.5 + Math.random() * 1.5) * 3600000;
+  _notifTimer = setTimeout(() => {
+    showPeriodicNotification();
+    _scheduleNextNotif();
+  }, interval);
+}
+
 function startPeriodicNotifications() {
-  if (_notifTimer) clearInterval(_notifTimer);
-  const interval = (3.5 + Math.random() * 1.5) * 3600000; // 3.5–5 hours
-  _notifTimer = setInterval(showPeriodicNotification, interval);
+  _isActive = true;
+  _scheduleNextNotif();
   // First notification after 30 seconds for demo
   setTimeout(showPeriodicNotification, 30000);
 }
+
+function setActiveMode(active) {
+  _isActive = active;
+  try { if (typeof Android !== 'undefined' && Android.setActiveMode) Android.setActiveMode(active); } catch {}
+}
+
+// Visibility change detection — active when tab visible, idle when hidden
+document.addEventListener('visibilitychange', () => {
+  const visible = document.visibilityState === 'visible';
+  setActiveMode(visible);
+  // Restart with correct interval immediately on switch
+  _scheduleNextNotif();
+});
 
 // Initialize context menu block and notifications on load
 document.addEventListener('DOMContentLoaded', () => {

@@ -1347,6 +1347,7 @@ select.inp option {
   flex-direction: column !important;
   padding: clamp(.5rem, 1.5vw, 1.2rem) !important;
   box-sizing: border-box !important;
+  min-height: 0 !important;
 }
 
 #view-tools .tools-layout {
@@ -1356,6 +1357,12 @@ select.inp option {
   width: 100% !important;
   gap: 1.2rem !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.tools-sidebar {
+  flex-shrink: 0 !important;
+  overflow-y: auto !important;
 }
 
 #tools-viewport {
@@ -1366,6 +1373,7 @@ select.inp option {
   flex-direction: column !important;
   box-sizing: border-box !important;
   overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 #tools-viewport > .view,
@@ -1374,6 +1382,49 @@ select.inp option {
   width: 100% !important;
   box-sizing: border-box !important;
   min-width: 0 !important;
+}
+
+/* Extended Suites inside tools - full height */
+#view-dev-suite, #view-sec-suite, #view-sys-suite {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Suite tab bars - matrix theme */
+#view-dev-suite .tab-bar,
+#view-sec-suite .tab-bar,
+#view-sys-suite .tab-bar {
+  display: flex !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  background: rgba(0,0,0,.3) !important;
+  border: 1px solid var(--gbord) !important;
+  border-radius: var(--radius) !important;
+  overflow-x: auto !important;
+  flex-shrink: 0 !important;
+  margin-bottom: .8rem !important;
+}
+
+#view-dev-suite .tab-btn,
+#view-sec-suite .tab-btn,
+#view-sys-suite .tab-btn {
+  font-family: var(--font-hud) !important;
+  font-size: .65rem !important;
+  padding: .4rem .65rem !important;
+  border-radius: var(--radius) !important;
+  white-space: nowrap !important;
+}
+
+/* Suite content area - scrollable */
+#view-dev-suite .tab-panel,
+#view-sec-suite .tab-panel,
+#view-sys-suite .tab-panel {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
 }
 
 /* Payload Builder Responsive Layout Fit */

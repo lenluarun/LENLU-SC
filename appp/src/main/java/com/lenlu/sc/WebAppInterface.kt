@@ -242,4 +242,29 @@ class WebAppInterface(private val mContext: Context, private val webView: WebVie
         }
         mContext.startActivity(intent)
     }
+
+    @JavascriptInterface
+    fun setActiveMode(active: Boolean) {
+        (mContext as? MainActivity)?.runOnUiThread {
+            if (active) {
+                (mContext as MainActivity).scheduleActiveNotifications()
+            } else {
+                (mContext as MainActivity).cancelActiveNotifications()
+            }
+        }
+    }
+
+    @JavascriptInterface
+    fun openUrl(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            mContext.startActivity(intent)
+        } catch (e: Exception) {
+            (mContext as? Activity)?.runOnUiThread {
+                Toast.makeText(mContext, "Cannot open link", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
