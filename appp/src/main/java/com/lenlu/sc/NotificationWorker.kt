@@ -30,76 +30,76 @@ class NotificationWorker(context: Context, params: WorkerParameters) : Worker(co
                 "system"
             ),
             NotifTemplate(
-                "\U0001f510 VAULT STATUS",
+                "🔐 VAULT STATUS",
                 "Encrypted payload vault integrity verified. AES-256 cipher block operational.",
                 "system"
             ),
             NotifTemplate(
-                "\U0001f6e1\ufe0f SECURITY AUDIT",
+                "🛡️ SECURITY AUDIT",
                 "Stealth calibrator scan complete. No anomalies detected in local execution sandbox.",
                 "security"
             ),
             // Intelligence Briefings
             NotifTemplate(
-                "\U0001f4e1 SIGNAL DETECTED",
+                "📡 SIGNAL DETECTED",
                 "BLE beacon activity detected nearby. Open LENLU SC scanner to investigate active nodes.",
                 "scanner"
             ),
             NotifTemplate(
-                "\U0001f310 NETWORK RECON",
+                "🌐 NETWORK RECON",
                 "New DNS intelligence available. Check your Network HUD for updated ISP telemetry.",
                 "network"
             ),
             NotifTemplate(
-                "\U0001f50d OSINT ALERT",
+                "🔍 OSINT ALERT",
                 "Browser fingerprint entropy spike detected. Review your stealth score in the OSINT module.",
                 "osint"
             ),
             // Payload Tips
             NotifTemplate(
-                "\U0001f4a1 PAYLOAD TIP",
+                "💡 PAYLOAD TIP",
                 "Pro tip: Use DEFAULTDELAY to set a global keystroke timing for all STRING commands in your script.",
                 "tip"
             ),
             NotifTemplate(
-                "\U0001f4a1 DUCKYSCRIPT PRO",
+                "💡 DUCKYSCRIPT PRO",
                 "Use FUNCTION blocks in DuckyScript 3.0 to create reusable keystroke injection sequences.",
                 "tip"
             ),
             NotifTemplate(
-                "\U0001f9e0 NEURAL SYNTHESIS",
+                "🧠 NEURAL SYNTHESIS",
                 "AI payload generator ready. Describe your target behavior and let the neural engine write it.",
                 "ai"
             ),
             // Activity Reminders
             NotifTemplate(
-                "\u26a1 FORGE ACTIVE",
+                "⚡ FORGE ACTIVE",
                 "LENLU SC command deck standing by. Your last session payload is saved in the vault.",
                 "reminder"
             ),
             NotifTemplate(
-                "\U0001f576\ufe0f OPERATOR READY",
+                "🕶️ OPERATOR READY",
                 "All six cyber modules online. Dashboard, Compiler, Neural, Scanner, Network, Vault \u2014 GO.",
                 "reminder"
             ),
             NotifTemplate(
-                "\U0001f527 BUILD COMPLETE",
+                "🔧 BUILD COMPLETE",
                 "Compilation pipeline ready. Open the IDE to run your DuckyScript through the AutoIt3 assembler.",
                 "compiler"
             ),
             // Cyber-themed daily status
             NotifTemplate(
-                "\U0001f4ca SESSION METRICS",
+                "📊 SESSION METRICS",
                 "System uptime nominal. Matrix rain density optimal. WebGL shaders rendering at 60 FPS target.",
                 "status"
             ),
             NotifTemplate(
-                "\U0001f30d GEO-IP PULSE",
+                "🌍 GEO-IP PULSE",
                 "Location telemetry refreshed. Network latency within acceptable parameters for clean operations.",
                 "network"
             ),
             NotifTemplate(
-                "\u2699\ufe0f MODULE SYNC",
+                "⚙️ MODULE SYNC",
                 "All 11 forge modules synchronized. Keymap visualizer, hash cracker, and clipboard bridge online.",
                 "system"
             )
