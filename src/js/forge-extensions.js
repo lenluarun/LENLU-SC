@@ -787,26 +787,32 @@ window.trackFeatureUsage = function (feature) {
 // SUB-TAB & VIEW-SUITE MANAGEMENT
 // ================================================================
 window.switchSubTab = function(suiteId, tabId, btn) {
+  const viewport = document.getElementById('tools-viewport');
   const suiteEl = document.getElementById('view-' + suiteId);
-  if (!suiteEl) return;
-  suiteEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  suiteEl.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  const targetPanel = suiteEl.querySelector('#subtab-' + suiteId + '-' + tabId);
-  if (targetPanel) targetPanel.classList.add('active');
+  const context = viewport || suiteEl;
+  if (!context) return;
+  context.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  context.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  const targetPanel = document.getElementById('subtab-' + suiteId + '-' + tabId);
+  if (targetPanel) {
+    if (targetPanel.parentNode !== context) {
+      context.appendChild(targetPanel);
+    }
+    targetPanel.classList.add('active');
+    targetPanel.style.display = 'flex';
+  }
   if (typeof playTone === 'function') {
     playTone(660, 'sine', .05, .03);
   }
 };
 
 window.switchViewSuite = function(suiteId, tabId) {
-  const btn = document.querySelector(`[data-view="${suiteId}"]`);
-  if (typeof window.switchView === 'function') {
-    window.switchView(suiteId, btn);
-  }
-  const tabBtn = document.querySelector(`#view-${suiteId} .tab-btn[onclick*="${tabId}"]`);
-  if (tabBtn) {
-    tabBtn.click();
+  if (typeof window.switchTool === 'function') {
+    window.switchTool(tabId);
   }
 };
 
@@ -878,12 +884,21 @@ const CONSOLIDATED_TOOLS = [
   'scanner', 'network', 'encoder', 'keymap', 'osint',
   'speedtest', 'clipboard', 'whois', 'diff', 'macro',
   'architect', 'subnets', 'mitre', 'crypto', 'audit',
-  'c2_hive', 'dev-suite', 'sec-suite', 'sys-suite', 'terminal', 'templates'
+  'c2_hive', 'terminal', 'templates',
+  'jsonfmt', 'yamljson', 'regex', 'markdown', 'colorpicker',
+  'pwdgen', 'imgb64', 'geoip', 'headers',
+  'baseconv', 'timestamp', 'cron'
 ];
+
+const SUITE_TOOL_MAP = {
+  jsonfmt: 'dev-suite', yamljson: 'dev-suite', regex: 'dev-suite',
+  markdown: 'dev-suite', colorpicker: 'dev-suite',
+  pwdgen: 'sec-suite', imgb64: 'sec-suite', geoip: 'sec-suite', headers: 'sec-suite',
+  baseconv: 'sys-suite', timestamp: 'sys-suite', cron: 'sys-suite'
+};
 window.CONSOLIDATED_TOOLS = CONSOLIDATED_TOOLS;
 
 window.switchTool = function(toolId, btn) {
-  // Switch view to 'tools' first
   const toolsBtn = document.querySelector('[data-view="tools"]');
   if (window.switchViewDirect) {
     window.switchViewDirect('tools', toolsBtn);
@@ -897,28 +912,58 @@ window.switchTool = function(toolId, btn) {
     }
   }
 
-  // Set active sidebar tab
   const sidebar = document.querySelector('.tools-sidebar');
   if (sidebar) {
-    sidebar.querySelectorAll('.tool-tab-btn').forEach(b => b.classList.remove('active'));
+    sidebar.querySelectorAll('.tool-tab-btn, .split-btn-main, .split-opt').forEach(b => {
+      b.classList.remove('active');
+    });
     if (btn) {
       btn.classList.add('active');
+      const activeGroup = btn.closest('.split-btn-group');
+      const mainBtn = activeGroup ? activeGroup.querySelector('.split-btn-main') : null;
+      if (mainBtn) mainBtn.classList.add('active');
     } else {
-      const targetBtn = sidebar.querySelector(`.tool-tab-btn[onclick*="'${toolId}'"]`);
-      if (targetBtn) targetBtn.classList.add('active');
+      const targetBtn = sidebar.querySelector(`.split-btn-main[data-tool-id="${toolId}"], .split-opt[data-tool-id="${toolId}"], .tool-tab-btn[onclick*="'${toolId}'"]`);
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+        const targetGroup = targetBtn.closest('.split-btn-group');
+        const mainBtn = targetGroup ? targetGroup.querySelector('.split-btn-main') : null;
+        if (mainBtn) mainBtn.classList.add('active');
+      }
     }
   }
 
-  // Toggle viewport element
   const viewport = document.getElementById('tools-viewport');
   if (viewport) {
-    // Hide current active panels in viewport
-    viewport.querySelectorAll('#tools-viewport > .view, #tools-viewport > .tab-panel').forEach(p => {
+    viewport.querySelectorAll('#tools-viewport > .view, #tools-viewport > .tab-panel, #tools-viewport > .hero-banner, #tools-viewport > .tab-bar').forEach(p => {
       p.classList.remove('active');
       p.style.display = 'none';
     });
 
-    let targetPanel = document.getElementById('subtab-tools-' + toolId);
+    const suiteId = SUITE_TOOL_MAP[toolId];
+    let targetPanel = null;
+
+    if (suiteId) {
+      targetPanel = document.getElementById('subtab-' + suiteId + '-' + toolId);
+      if (targetPanel) {
+        const suiteView = document.getElementById('view-' + suiteId);
+        if (suiteView) {
+          const hero = suiteView.querySelector('.hero-banner');
+          const tabBar = suiteView.querySelector('.tab-bar');
+          if (hero && hero.parentNode !== viewport) viewport.appendChild(hero);
+          if (tabBar && tabBar.parentNode !== viewport) viewport.appendChild(tabBar);
+          if (hero) { hero.style.display = 'flex'; hero.classList.add('active'); }
+          if (tabBar) { tabBar.style.display = 'flex'; tabBar.classList.add('active'); }
+          tabBar.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+          const activeTabBtn = tabBar.querySelector(`[onclick*="${toolId}"]`);
+          if (activeTabBtn) activeTabBtn.classList.add('active');
+        }
+      }
+    }
+
+    if (!targetPanel) {
+      targetPanel = document.getElementById('subtab-tools-' + toolId);
+    }
     if (!targetPanel) {
       targetPanel = document.getElementById('view-' + toolId);
     }
@@ -928,8 +973,7 @@ window.switchTool = function(toolId, btn) {
       }
       targetPanel.classList.add('active');
       targetPanel.style.display = 'flex';
-      
-      // Trigger UI updates
+
       if (toolId === 'scanner') {
         if (typeof window.checkBLE === 'function') window.checkBLE();
         if (typeof window.checkWebGL === 'function') window.checkWebGL();
@@ -951,13 +995,13 @@ if (typeof window.switchView === 'function') {
     if (typeof window.trackFeatureUsage === 'function') {
       window.trackFeatureUsage('view_' + view);
     }
-    if (CONSOLIDATED_TOOLS.includes(view)) {
-      window.switchTool(view);
-    } else if (view === 'tools') {
+    if (view === 'tools') {
       window.switchViewDirect('tools', btn);
-      const activeBtn = document.querySelector('.tools-sidebar .tool-tab-btn.active') || document.querySelector('.tools-sidebar .tool-tab-btn');
-      const toolId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'templates';
+      const activeBtn = document.querySelector('.tools-sidebar .split-opt.active, .tools-sidebar .split-btn-main.active, .tools-sidebar .tool-tab-btn.active') || document.querySelector('.tools-sidebar .split-btn-main, .tools-sidebar .split-opt, .tools-sidebar .tool-tab-btn');
+      const toolId = activeBtn?.dataset?.toolId || (activeBtn ? (activeBtn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1] || 'templates') : 'templates');
       window.switchTool(toolId, activeBtn);
+    } else if (SUITE_TOOL_MAP[view]) {
+      window.switchTool(view);
     } else {
       window.switchViewDirect(view, btn);
     }
@@ -1565,7 +1609,26 @@ window.closeDrawer = function() {
   const panel = document.getElementById('drawerPanel');
   if (overlay) overlay.classList.remove('open');
   if (panel) panel.classList.remove('open');
+  if (typeof window.closeSplitMenus === 'function') window.closeSplitMenus();
   document.body.style.overflow = '';
+};
+
+window.closeSplitMenus = function() {
+  document.querySelectorAll('.split-btn-dropdown.open').forEach(menu => menu.classList.remove('open'));
+  document.querySelectorAll('.split-btn-toggle.open').forEach(toggle => toggle.classList.remove('open'));
+};
+
+window.toggleSplitMenu = function(e, menuId) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById(menuId);
+  if (!menu) return;
+  const isOpen = menu.classList.contains('open');
+  window.closeSplitMenus();
+  if (!isOpen) {
+    menu.classList.add('open');
+    const toggle = menu.parentElement?.querySelector('.split-btn-toggle');
+    if (toggle) toggle.classList.add('open');
+  }
 };
 
 window.toggleDrawerTools = function(e) {
@@ -1760,4 +1823,4 @@ if (document.readyState === 'loading') {
 } else {
   // DOM already loaded
   setTimeout(window.initNewFeatures, 500);
-}
+}

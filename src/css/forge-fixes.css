@@ -1384,19 +1384,13 @@ select.inp option {
   min-width: 0 !important;
 }
 
-/* Extended Suites inside tools - full height */
-#view-dev-suite, #view-sec-suite, #view-sys-suite {
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
+/* Extended Suites - hidden containers, content loaded into tools viewport */
+.suite-container {
+  display: none !important;
 }
 
-/* Suite tab bars - matrix theme */
-#view-dev-suite .tab-bar,
-#view-sec-suite .tab-bar,
-#view-sys-suite .tab-bar {
+/* Suite tab bars - matrix theme (when inside tools viewport) */
+#tools-viewport .tab-bar {
   display: flex !important;
   gap: 4px !important;
   padding: 4px !important;
@@ -1408,9 +1402,7 @@ select.inp option {
   margin-bottom: .8rem !important;
 }
 
-#view-dev-suite .tab-btn,
-#view-sec-suite .tab-btn,
-#view-sys-suite .tab-btn {
+#tools-viewport .tab-btn {
   font-family: var(--font-hud) !important;
   font-size: .65rem !important;
   padding: .4rem .65rem !important;
@@ -1418,10 +1410,8 @@ select.inp option {
   white-space: nowrap !important;
 }
 
-/* Suite content area - scrollable */
-#view-dev-suite .tab-panel,
-#view-sec-suite .tab-panel,
-#view-sys-suite .tab-panel {
+/* Suite content area - scrollable (when inside tools viewport) */
+#tools-viewport .tab-panel {
   flex: 1 !important;
   overflow-y: auto !important;
   min-height: 0 !important;

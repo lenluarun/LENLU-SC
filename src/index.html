@@ -5998,13 +5998,15 @@ ${r}`, "ai"); return
     @media (max-width: 860px) {
       #view-tools .tools-layout {
         flex-direction: column !important;
+        align-items: stretch !important;
+        overflow: visible !important;
       }
 
       .tools-sidebar,
       #tools-sidebar {
         width: 100% !important;
-        max-height: 200px !important;
-        overflow-y: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
       }
     }
 
@@ -6507,12 +6509,39 @@ ${r}`, "ai"); return
       }
       #view-tools .tools-layout {
         flex-direction: column !important;
+        align-items: stretch !important;
       }
       .tools-sidebar {
         width: 100% !important;
-        max-height: 180px !important;
-        overflow-y: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
       }
+    }
+
+    .tools-sidebar {
+      overflow: visible !important;
+    }
+
+    .tools-sidebar .split-btn-group {
+      margin-bottom: .45rem !important;
+    }
+
+    .tools-sidebar .split-btn-main {
+      min-height: 2.35rem;
+      padding: .6rem .75rem;
+      font-size: .7rem;
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    .tools-sidebar .split-btn-dropdown {
+      max-height: min(56vh, 26rem);
+      overflow-y: auto;
+    }
+
+    .tools-sidebar .split-opt {
+      white-space: normal;
+      line-height: 1.25;
     }
 
     /* ─────────────────────────────────────────────────────────
@@ -6666,18 +6695,66 @@ ${r}`, "ai"); return
           </button>
         </div>
         <div class="drawer-tools-sub" id="drawerToolsSub">
-          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+          <button class="drawer-nav-item" onclick="switchTool('templates');closeDrawer()">
             <i class="fas fa-magic"></i>Payload Builder</button>
-          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+          <button class="drawer-nav-item" onclick="switchTool('keymap');closeDrawer()">
             <i class="fas fa-keyboard"></i>Keymap Replayer</button>
-          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
-            <i class="fas fa-broadcast-tower"></i>Wireless & Audio</button>
-          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
-            <i class="fas fa-fingerprint"></i>OSINT Canvas</button>
-          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
+          <button class="drawer-nav-item" onclick="switchTool('macro');closeDrawer()">
+            <i class="fas fa-circle"></i>Macro Recorder</button>
+          <button class="drawer-nav-item" onclick="switchTool('c2_hive');closeDrawer()">
+            <i class="fas fa-network-wired"></i>C2 Hive Console</button>
+          <button class="drawer-nav-item" onclick="switchTool('encoder');closeDrawer()">
+            <i class="fas fa-lock"></i>Obfuscator &amp; Encoder</button>
+          <button class="drawer-nav-item" onclick="switchTool('crypto');closeDrawer()">
+            <i class="fas fa-key"></i>Crypto Toolkit</button>
+          <button class="drawer-nav-item" onclick="switchTool('terminal');closeDrawer()">
             <i class="fas fa-terminal"></i>Interactive Shell</button>
-          <button class="drawer-nav-item" onclick="switchView('tools');closeDrawer()">
-            <i class="fas fa-lock"></i>Encoder & Crypto</button>
+          <button class="drawer-nav-item" onclick="switchTool('scanner');closeDrawer()">
+            <i class="fas fa-broadcast-tower"></i>Wireless &amp; Audio</button>
+          <button class="drawer-nav-item" onclick="switchTool('osint');closeDrawer()">
+            <i class="fas fa-fingerprint"></i>OSINT Canvas</button>
+          <button class="drawer-nav-item" onclick="switchTool('whois');closeDrawer()">
+            <i class="fas fa-globe"></i>WHOIS Lookup</button>
+          <button class="drawer-nav-item" onclick="switchTool('network');closeDrawer()">
+            <i class="fas fa-network-wired"></i>GeoIP &amp; Sweep</button>
+          <button class="drawer-nav-item" onclick="switchTool('subnets');closeDrawer()">
+            <i class="fas fa-calculator"></i>Subnet CIDR</button>
+          <button class="drawer-nav-item" onclick="switchTool('architect');closeDrawer()">
+            <i class="fas fa-project-diagram"></i>Topology Builder</button>
+          <button class="drawer-nav-item" onclick="switchTool('speedtest');closeDrawer()">
+            <i class="fas fa-tachometer-alt"></i>Speed &amp; Latency</button>
+          <button class="drawer-nav-item" onclick="switchTool('diff');closeDrawer()">
+            <i class="fas fa-code-branch"></i>Diff Compare</button>
+          <button class="drawer-nav-item" onclick="switchTool('clipboard');closeDrawer()">
+            <i class="fas fa-clipboard"></i>Clipboard Dropper</button>
+          <button class="drawer-nav-item" onclick="switchTool('mitre');closeDrawer()">
+            <i class="fas fa-shield-alt"></i>MITRE ATT&amp;CK</button>
+          <button class="drawer-nav-item" onclick="switchTool('audit');closeDrawer()">
+            <i class="fas fa-clipboard-check"></i>Privacy Audit</button>
+          <button class="drawer-nav-item" onclick="switchTool('jsonfmt');closeDrawer()">
+            <i class="fas fa-indent"></i>JSON Formatter</button>
+          <button class="drawer-nav-item" onclick="switchTool('yamljson');closeDrawer()">
+            <i class="fas fa-exchange-alt"></i>YAML&#8596;JSON</button>
+          <button class="drawer-nav-item" onclick="switchTool('regex');closeDrawer()">
+            <i class="fas fa-asterisk"></i>Regex Tester</button>
+          <button class="drawer-nav-item" onclick="switchTool('markdown');closeDrawer()">
+            <i class="fab fa-markdown"></i>MD Preview</button>
+          <button class="drawer-nav-item" onclick="switchTool('colorpicker');closeDrawer()">
+            <i class="fas fa-palette"></i>Color Picker</button>
+          <button class="drawer-nav-item" onclick="switchTool('pwdgen');closeDrawer()">
+            <i class="fas fa-key"></i>Password Generator</button>
+          <button class="drawer-nav-item" onclick="switchTool('imgb64');closeDrawer()">
+            <i class="fas fa-image"></i>Image &#8596; Base64</button>
+          <button class="drawer-nav-item" onclick="switchTool('geoip');closeDrawer()">
+            <i class="fas fa-map-marker-alt"></i>IP Geolocation</button>
+          <button class="drawer-nav-item" onclick="switchTool('headers');closeDrawer()">
+            <i class="fas fa-heading"></i>Headers Inspector</button>
+          <button class="drawer-nav-item" onclick="switchTool('baseconv');closeDrawer()">
+            <i class="fas fa-calculator"></i>Base Converter</button>
+          <button class="drawer-nav-item" onclick="switchTool('timestamp');closeDrawer()">
+            <i class="fas fa-clock"></i>Time Converter</button>
+          <button class="drawer-nav-item" onclick="switchTool('cron');closeDrawer()">
+            <i class="fas fa-hourglass-start"></i>Cron Parser</button>
         </div>
         <div class="drawer-sep"></div>
         <button class="drawer-nav-item" data-view="vault" onclick="switchView('vault');closeDrawer()">
@@ -8094,77 +8171,51 @@ ${r}`, "ai"); return
       </div>
       <!-- HACKING TOOLS CONSOLE -->
       <div class="view" id="view-tools">
-        <div class="tools-layout" style="display: flex; gap: 1.2rem; flex: 1; min-height: 0; height: 100%;">
+        <div class="tools-layout" style="display: flex; gap: 1.2rem; flex: 1; min-height: 0; height: 100%; align-items: flex-start; overflow: visible;">
           <!-- Tools Sidebar -->
           <div class="tools-sidebar card"
-            style="width: 240px; flex-shrink: 0; display: flex; flex-direction: column; overflow-y: auto; padding: 0.8rem 0.5rem; gap: 0.2rem;">
+            style="width: 280px; flex-shrink: 0; display: flex; flex-direction: column; overflow: visible; padding: 0.8rem 0.55rem; gap: 0.35rem;">
             <div
-              style="font-family: var(--font-display); font-size: 0.72rem; color: var(--g-dim); padding: 0.5rem; letter-spacing: 0.1em; border-bottom: 1px solid var(--gbord); margin-bottom: 0.5rem; text-transform: uppercase;">
+              style="font-family: var(--font-display); font-size: 0.72rem; color: var(--g-dim); padding: 0.35rem 0.5rem 0.6rem; letter-spacing: 0.1em; border-bottom: 1px solid var(--gbord); margin-bottom: 0.15rem; text-transform: uppercase;">
               Category / Modules</div>
-
-            <!-- Category 1: Intrusion & Payloads -->
-            <div class="tools-category-header">Intrusion & Payloads</div>
-            <button class="tool-tab-btn active" onclick="switchTool('templates', this)"><i class="fas fa-magic"></i>
-              Payload
-              Builder</button>
-            <button class="tool-tab-btn" onclick="switchTool('keymap', this)"><i class="fas fa-keyboard"></i> Keymap
-              Replayer</button>
-            <button class="tool-tab-btn" onclick="switchTool('macro', this)"><i class="fas fa-circle"></i> Macro
-              Recorder</button>
-            <button class="tool-tab-btn" onclick="switchTool('c2_hive', this)"><i class="fas fa-network-wired"></i> C2
-              Hive
-              Console</button>
-            <button class="tool-tab-btn" onclick="switchTool('encoder', this)"><i class="fas fa-lock"></i> Obfuscator &
-              Encoder</button>
-            <button class="tool-tab-btn" onclick="switchTool('crypto', this)"><i class="fas fa-key"></i> Crypto
-              Toolkit</button>
-            <button class="tool-tab-btn" onclick="switchTool('terminal', this)"><i class="fas fa-terminal"></i>
-              Interactive
-              Shell</button>
-
-            <!-- Category 2: Reconnaissance & OSINT -->
-            <div class="tools-category-header">Recon & OSINT</div>
-            <button class="tool-tab-btn" onclick="switchTool('scanner', this)"><i class="fas fa-broadcast-tower"></i>
-              Wireless & Audio</button>
-            <button class="tool-tab-btn" onclick="switchTool('osint', this)"><i class="fas fa-fingerprint"></i> OSINT
-              Canvas</button>
-            <button class="tool-tab-btn" onclick="switchTool('whois', this)"><i class="fas fa-globe"></i> WHOIS
-              Lookup</button>
-            <button class="tool-tab-btn" onclick="switchTool('network', this)"><i class="fas fa-network-wired"></i>
-              GeoIP &
-              Sweep</button>
-
-            <!-- Category 3: Network Architecture -->
-            <div class="tools-category-header">Network Architecture</div>
-            <button class="tool-tab-btn" onclick="switchTool('subnets', this)"><i class="fas fa-calculator"></i> Subnet
-              CIDR</button>
-            <button class="tool-tab-btn" onclick="switchTool('architect', this)"><i class="fas fa-project-diagram"></i>
-              Topology Builder</button>
-            <button class="tool-tab-btn" onclick="switchTool('speedtest', this)"><i class="fas fa-tachometer-alt"></i>
-              Speed
-              & Latency</button>
-
-            <!-- Category 4: Analysis & Utility -->
-            <div class="tools-category-header">Analysis & Utility</div>
-            <button class="tool-tab-btn" onclick="switchTool('diff', this)"><i class="fas fa-code-branch"></i> Diff
-              Compare</button>
-            <button class="tool-tab-btn" onclick="switchTool('clipboard', this)"><i class="fas fa-clipboard"></i>
-              Clipboard
-              Dropper</button>
-            <button class="tool-tab-btn" onclick="switchTool('mitre', this)"><i class="fas fa-shield-alt"></i> MITRE
-              ATT&CK</button>
-            <button class="tool-tab-btn" onclick="switchTool('audit', this)"><i class="fas fa-clipboard-check"></i>
-              Privacy
-              Audit</button>
-
-            <!-- Category 5: Extended Suites -->
-            <div class="tools-category-header">Extended Suites</div>
-            <button class="tool-tab-btn" onclick="switchTool('dev-suite', this)"><i class="fas fa-tools"></i> Dev
-              Suite</button>
-            <button class="tool-tab-btn" onclick="switchTool('sec-suite', this)"><i class="fas fa-user-shield"></i> Sec
-              Suite</button>
-            <button class="tool-tab-btn" onclick="switchTool('sys-suite', this)"><i class="fas fa-sliders-h"></i> Sys
-              Suite</button>
+            <div class="split-btn-group tools-split-group" data-tool-group="all-tools">
+              <button class="split-btn-main active" data-tool-id="templates" onclick="switchTool('templates', this)" title="Open tools and modules"><i class="fas fa-layer-group"></i> Tools / Modules</button>
+              <button class="split-btn-toggle" onclick="toggleSplitMenu(event,'tools-all-menu')" title="Open all tools and modules">
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="split-btn-dropdown" id="tools-all-menu">
+                <button class="split-opt active-opt" data-tool-id="templates" onclick="switchTool('templates', this)"><i class="fas fa-magic"></i> Payload Builder</button>
+                <button class="split-opt" data-tool-id="keymap" onclick="switchTool('keymap', this)"><i class="fas fa-keyboard"></i> Keymap Replayer</button>
+                <button class="split-opt" data-tool-id="macro" onclick="switchTool('macro', this)"><i class="fas fa-circle"></i> Macro Recorder</button>
+                <button class="split-opt" data-tool-id="c2_hive" onclick="switchTool('c2_hive', this)"><i class="fas fa-network-wired"></i> C2 Hive Console</button>
+                <button class="split-opt" data-tool-id="encoder" onclick="switchTool('encoder', this)"><i class="fas fa-lock"></i> Obfuscator &amp; Encoder</button>
+                <button class="split-opt" data-tool-id="crypto" onclick="switchTool('crypto', this)"><i class="fas fa-key"></i> Crypto Toolkit</button>
+                <button class="split-opt" data-tool-id="terminal" onclick="switchTool('terminal', this)"><i class="fas fa-terminal"></i> Interactive Shell</button>
+                <button class="split-opt" data-tool-id="scanner" onclick="switchTool('scanner', this)"><i class="fas fa-broadcast-tower"></i> Wireless &amp; Audio</button>
+                <button class="split-opt" data-tool-id="osint" onclick="switchTool('osint', this)"><i class="fas fa-fingerprint"></i> OSINT Canvas</button>
+                <button class="split-opt" data-tool-id="whois" onclick="switchTool('whois', this)"><i class="fas fa-globe"></i> WHOIS Lookup</button>
+                <button class="split-opt" data-tool-id="network" onclick="switchTool('network', this)"><i class="fas fa-network-wired"></i> GeoIP &amp; Sweep</button>
+                <button class="split-opt" data-tool-id="subnets" onclick="switchTool('subnets', this)"><i class="fas fa-calculator"></i> Subnet CIDR</button>
+                <button class="split-opt" data-tool-id="architect" onclick="switchTool('architect', this)"><i class="fas fa-project-diagram"></i> Topology Builder</button>
+                <button class="split-opt" data-tool-id="speedtest" onclick="switchTool('speedtest', this)"><i class="fas fa-tachometer-alt"></i> Speed &amp; Latency</button>
+                <button class="split-opt" data-tool-id="diff" onclick="switchTool('diff', this)"><i class="fas fa-code-branch"></i> Diff Compare</button>
+                <button class="split-opt" data-tool-id="clipboard" onclick="switchTool('clipboard', this)"><i class="fas fa-clipboard"></i> Clipboard Dropper</button>
+                <button class="split-opt" data-tool-id="mitre" onclick="switchTool('mitre', this)"><i class="fas fa-shield-alt"></i> MITRE ATT&amp;CK</button>
+                <button class="split-opt" data-tool-id="audit" onclick="switchTool('audit', this)"><i class="fas fa-clipboard-check"></i> Privacy Audit</button>
+                <button class="split-opt" data-tool-id="jsonfmt" onclick="switchTool('jsonfmt', this)"><i class="fas fa-indent"></i> JSON Formatter</button>
+                <button class="split-opt" data-tool-id="yamljson" onclick="switchTool('yamljson', this)"><i class="fas fa-exchange-alt"></i> YAML&#8596;JSON</button>
+                <button class="split-opt" data-tool-id="regex" onclick="switchTool('regex', this)"><i class="fas fa-asterisk"></i> Regex Tester</button>
+                <button class="split-opt" data-tool-id="markdown" onclick="switchTool('markdown', this)"><i class="fab fa-markdown"></i> MD Preview</button>
+                <button class="split-opt" data-tool-id="colorpicker" onclick="switchTool('colorpicker', this)"><i class="fas fa-palette"></i> Color Picker</button>
+                <button class="split-opt" data-tool-id="pwdgen" onclick="switchTool('pwdgen', this)"><i class="fas fa-key"></i> Password Generator</button>
+                <button class="split-opt" data-tool-id="imgb64" onclick="switchTool('imgb64', this)"><i class="fas fa-image"></i> Image &#8596; Base64</button>
+                <button class="split-opt" data-tool-id="geoip" onclick="switchTool('geoip', this)"><i class="fas fa-map-marker-alt"></i> IP Geolocation</button>
+                <button class="split-opt" data-tool-id="headers" onclick="switchTool('headers', this)"><i class="fas fa-heading"></i> Headers Inspector</button>
+                <button class="split-opt" data-tool-id="baseconv" onclick="switchTool('baseconv', this)"><i class="fas fa-calculator"></i> Base Converter</button>
+                <button class="split-opt" data-tool-id="timestamp" onclick="switchTool('timestamp', this)"><i class="fas fa-clock"></i> Time Converter</button>
+                <button class="split-opt" data-tool-id="cron" onclick="switchTool('cron', this)"><i class="fas fa-hourglass-start"></i> Cron Parser</button>
+              </div>
+            </div>
           </div>
 
           <!-- Tools Viewport -->
@@ -8819,6 +8870,18 @@ ${r}`, "ai"); return
                 <div class="key" id="key-DOWN">↓</div>
                 <div class="key" id="key-LEFT">←</div>
                 <div class="key" id="key-RIGHT">→</div>
+              </div>
+              <div class="kbd-row" style="margin-top:2px">
+                <div class="key" id="key-INSERT" title="Insert">INS</div>
+                <div class="key" id="key-HOME" title="Home">HOME</div>
+                <div class="key" id="key-PAGEUP" title="Page Up">PGUP</div>
+                <div class="key" id="key-END" title="End">END</div>
+                <div class="key" id="key-PAGEDOWN" title="Page Down">PGDN</div>
+                <div class="key" id="key-PRINTSCREEN" title="Print Screen">PRTSC</div>
+                <div class="key" id="key-SCROLLLOCK" title="Scroll Lock">SCRLK</div>
+                <div class="key" id="key-NUMLOCK" title="Num Lock">NUMLK</div>
+                <div class="key" id="key-MENU" title="Menu">MENU</div>
+                <div class="key" id="key-BREAK" title="Pause/Break">BRK</div>
               </div>
             </div>
           </div>
@@ -10091,8 +10154,8 @@ ${r}`, "ai"); return
       </div>
 
 
-      <!-- DEV SUITE -->
-      <div class="view" id="view-dev-suite">
+      <!-- DEV SUITE (content loaded into tools viewport) -->
+      <div class="suite-container" id="view-dev-suite" style="display:none">
         <div class="hero-banner">
           <div class="hb-title">DEVELOPER <em>SUITE</em></div>
           <div class="hb-sub">Visual Formatting, Data Translation, Regular Expression Testing & Design Deck</div>
@@ -10296,8 +10359,8 @@ ${r}`, "ai"); return
         </div>
       </div>
 
-      <!-- SEC SUITE -->
-      <div class="view" id="view-sec-suite">
+      <!-- SEC SUITE (content loaded into tools viewport) -->
+      <div class="suite-container" id="view-sec-suite" style="display:none">
         <div class="hero-banner">
           <div class="hb-title">SECURITY <em>SUITE</em></div>
           <div class="hb-sub">Cryptographic Key Generator, Media Encoding, Geolocation Tracing & Network Headers Audit
@@ -10466,8 +10529,8 @@ ${r}`, "ai"); return
         </div>
       </div>
 
-      <!-- SYS SUITE -->
-      <div class="view" id="view-sys-suite">
+      <!-- SYS SUITE (content loaded into tools viewport) -->
+      <div class="suite-container" id="view-sys-suite" style="display:none">
         <div class="hero-banner">
           <div class="hb-title">SYSTEM <em>SUITE</em></div>
           <div class="hb-sub">Time Domain, Cron Scheduler Syntax & Numeric Base Translation Deck</div>

@@ -354,6 +354,7 @@
       position: relative; z-index: 10;
       display: flex; flex-direction: column;
       height: 100dvh; min-height: 100vh;
+      padding-top: var(--safe-top);
       opacity: 0; transition: opacity .8s ease;
     }
 
@@ -364,9 +365,7 @@
     .top-nav {
       position: sticky; top: 0; z-index: 500;
       height: var(--nav-h);
-      padding-top: var(--safe-top);
       padding: 0 clamp(.8rem, 2.5vw, 1.6rem);
-      padding-top: calc(var(--safe-top) + 0px);
       background: rgba(1, 3, 2, .97);
       backdrop-filter: blur(40px) saturate(200%);
       border-bottom: 1px solid var(--gbord);
@@ -397,14 +396,22 @@
     }
 
     .brand-logo {
-      width: 32px; height: 32px;
+      width: 42px; height: 42px;
       border: 1px solid var(--g);
       border-radius: 6px;
+      overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 0 12px rgba(0,255,65,.25), inset 0 0 8px rgba(0,255,65,.06);
       animation: borderPulse 3s ease-in-out infinite;
       background: rgba(0,255,65,.04);
       transition: all .2s var(--ease);
+    }
+    .brand-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
     }
     .brand-logo:hover {
       box-shadow: 0 0 20px rgba(0,255,65,.45), inset 0 0 12px rgba(0,255,65,.1);
@@ -470,7 +477,7 @@
       min-height: 0;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
-      padding-top: var(--safe-top);
+      padding-top: 0;
       padding-bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 8px);
     }
 
@@ -488,11 +495,10 @@
       animation: viewIn .3s var(--ease);
     }
 
-    #view-tools, #view-compiler, #view-terminal, #view-keymap, #view-network, #view-scanner, #view-encoder,
-    #view-dev-suite, #view-sec-suite, #view-sys-suite {
-      height: 100%;
+    #view-tools, #view-compiler, #view-terminal, #view-keymap, #view-network, #view-scanner, #view-encoder {
+      height: auto;
       min-height: 0;
-      overflow: hidden;
+      overflow: visible;
       padding-bottom: 0;
     }
 
@@ -801,7 +807,7 @@
       }
 
       .brand { font-size: .84rem; letter-spacing: .1em; gap: .3rem; }
-      .brand-logo { width: 22px; height: 22px; }
+      .brand-logo { width: 32px; height: 32px; }
       .header-clock { flex-shrink: 0; font-size: .5rem; }
       .header-online { flex-shrink: 0; font-size: .48rem; }
       .view { padding: .7rem .65rem; }
@@ -2179,7 +2185,7 @@
       background: rgba(0,255,65,.02);
     }
     .drawer-header .brand-logo {
-      width: 40px; height: 40px;
+      width: 50px; height: 50px;
       border-radius: 8px;
     }
     .drawer-header-info {
@@ -2532,4 +2538,4 @@
         max-width: none !important;
       }
     }
-    
+    

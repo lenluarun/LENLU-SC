@@ -14,13 +14,120 @@ let lastEndpoint = 'groq';
     function exportMultilang() {
       const src = document.getElementById('srcEditor')?.value?.trim();
       if (!src) { toast('No source to export', 'warn'); return; }
-      const lines = src.split('\n').filter(l => l.trim() && !l.trim().startsWith('REM'));
-      let ps = '# PowerShell — LENLU SC Forge v4.0\n', ba = '#!/bin/bash\n# Bash — LENLU SC Forge v4.0\n', py = '# Python — LENLU SC Forge v4.0\nimport subprocess,time\n\n';
+      const lines = src.split('\n');
+      let ps = '# PowerShell — LENLU SC Forge v4.0\n\n$wshell = New-Object -ComObject Wscript.Shell\nStart-Sleep -Milliseconds 500\n\n';
+      let ba = '#!/bin/bash\n# Bash — LENLU SC Forge v4.0\n\nsleep 0.5\n\n';
+      let py = '# Python — LENLU SC Forge v4.0\n# Requirements: pip install pyautogui\n\nimport pyautogui, time\npyautogui.PAUSE = 0.05\ntime.sleep(0.5)\n\n';
+      const keyMapPs = { ENTER: '{ENTER}', TAB: '{TAB}', SPACE: ' ', BACKSPACE: '{BACKSPACE}', DELETE: '{DELETE}', ESC: '{ESC}', ESCAPE: '{ESC}', UP: '{UP}', DOWN: '{DOWN}', LEFT: '{LEFT}', RIGHT: '{RIGHT}', INSERT: '{INSERT}', HOME: '{HOME}', END: '{END}', PAGEUP: '{PGUP}', PAGEDOWN: '{PGDN}', PRINTSCREEN: '{PRINTSCREEN}', CAPSLOCK: '{CAPSLOCK}', CAPS: '{CAPSLOCK}', SCROLLLOCK: '{SCROLLLOCK}', NUMLOCK: '{NUMLOCK}', MENU: '{APPSKEY}', BREAK: '{BREAK}' };
+      const keyMapPy = { ENTER: 'enter', TAB: 'tab', SPACE: 'space', BACKSPACE: 'backspace', DELETE: 'delete', ESC: 'esc', ESCAPE: 'esc', UP: 'up', DOWN: 'down', LEFT: 'left', RIGHT: 'right', INSERT: 'insert', HOME: 'home', END: 'end', PAGEUP: 'pageup', PAGEDOWN: 'pagedown', PRINTSCREEN: 'printscreen', CAPSLOCK: 'capslock', CAPS: 'capslock', SCROLLLOCK: 'scrolllock', NUMLOCK: 'numlock', MENU: 'apps', BREAK: 'pause' };
+      const keyMapSh = { ENTER: 'Return', TAB: 'Tab', SPACE: 'space', BACKSPACE: 'BackSpace', DELETE: 'Delete', ESC: 'Escape', ESCAPE: 'Escape', UP: 'Up', DOWN: 'Down', LEFT: 'Left', RIGHT: 'Right', INSERT: 'Insert', HOME: 'Home', END: 'End', PAGEUP: 'Prior', PAGEDOWN: 'Next', PRINTSCREEN: 'Print', CAPSLOCK: 'Caps_Lock', CAPS: 'Caps_Lock', SCROLLLOCK: 'Scroll_Lock', NUMLOCK: 'Num_Lock', MENU: 'Menu', BREAK: 'Break' };
+      let lastPs = '', lastBa = '', lastPy = '';
       lines.forEach(raw => {
-        const p = raw.trim().split(/\s+/); const c = p[0].toUpperCase(); const a = p.slice(1).join(' ');
-        if (c === 'DELAY') { const ms = (parseInt(a) || 0); ps += `Start-Sleep -Milliseconds ${ms}\n`; ba += `sleep ${ms / 1000}\n`; py += `time.sleep(${ms / 1000})\n`; }
-        else if (c === 'STRING') { ps += `# Type: ${a}\n`; ba += `# Type: ${a}\n`; py += `# Type: ${a}\n`; }
-        else if (c === 'ENTER') { ps += `# [ENTER]\n`; ba += `# [ENTER]\n`; py += `# [ENTER]\n`; }
+        const line = raw.trim();
+        if (!line || line.startsWith('REM') || line.startsWith(';') || line.startsWith('//')) return;
+        const p = line.split(/\s+/);
+        const c = p[0].toUpperCase();
+        const a = p.slice(1).join(' ');
+        if (c === 'DEFAULT_DELAY' || c === 'DEFAULTDELAY') {
+          const ms = parseInt(a, 10) || 0;
+          ps += `# Default delay: ${ms}ms\n`;
+          ba += `# Default delay: ${ms}ms\n`;
+          py += `# Default delay: ${ms}ms\n`;
+        } else if (c === 'DELAY') {
+          const ms = parseInt(a, 10) || 0;
+          lastPs = `Start-Sleep -Milliseconds ${ms}`;
+          lastBa = `sleep ${ms / 1000}`;
+          lastPy = `time.sleep(${ms / 1000})`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'STRING') {
+          const escaped = a.replace(/'/g, "''");
+          lastPs = `$wshell.SendKeys("${escaped.replace(/"/g, '`"')}")`;
+          lastBa = `xdotool type -- '${a.replace(/'/g, "'\\''")}'`;
+          lastPy = `pyautogui.write("${a.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'STRINGLN') {
+          const escaped = a.replace(/'/g, "''");
+          lastPs = `$wshell.SendKeys("${escaped.replace(/"/g, '`"')} + "{ENTER}")`;
+          lastBa = `xdotool type -- '${a.replace(/'/g, "'\\''")}' && xdotool key Return`;
+          lastPy = `pyautogui.write("${a.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}\\n")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'GUI' || c === 'WINDOWS') {
+          if (!a) {
+            lastPs = '$wshell.SendKeys("^{ESC}")';
+            lastBa = 'xdotool key Super';
+            lastPy = 'pyautogui.press("win")';
+          } else {
+            if (a.trim().toLowerCase() === 'r') {
+              lastPs = '(New-Object -ComObject Shell.Application).FileRun()';
+            } else {
+              lastPs = `$wshell.SendKeys("^{ESC}"); Start-Sleep -Milliseconds 180; $wshell.SendKeys("${a}")`;
+            }
+            lastBa = `xdotool key Super+${a}`;
+            lastPy = `pyautogui.hotkey("win", "${a.toLowerCase()}")`;
+          }
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'CTRL' || c === 'ALT' || c === 'SHIFT') {
+          const key = a.toUpperCase();
+          const psMod = { CTRL: '^', ALT: '%', SHIFT: '+' }[c];
+          const pyMod = c.toLowerCase();
+          const shMod = c.toLowerCase();
+          const psKey = key.length === 1 ? key : `{${key}}`;
+          lastPs = `$wshell.SendKeys("${psMod}${psKey}")`;
+          lastBa = `xdotool key ${shMod}+${key}`;
+          lastPy = `pyautogui.hotkey("${pyMod}", "${key.toLowerCase()}")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'REPEAT') {
+          const n = Math.max(1, parseInt(a, 10) || 1);
+          for (let r = 0; r < n; r++) {
+            if (lastPs) ps += lastPs + '\n';
+            if (lastBa) ba += lastBa + '\n';
+            if (lastPy) py += lastPy + '\n';
+          }
+        } else if (c === 'HOLD') {
+          const k = a.toUpperCase();
+          lastPs = `$wshell.SendKeys("{${k}}")`;
+          lastBa = `xdotool keydown ${k}`;
+          lastPy = `pyautogui.keyDown("${k.toLowerCase()}")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'RELEASE') {
+          const k = a.toUpperCase();
+          lastPs = `$wshell.SendKeys("{${k}}")`;
+          lastBa = `xdotool keyup ${k}`;
+          lastPy = `pyautogui.keyUp("${k.toLowerCase()}")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (keyMapPs[c]) {
+          lastPs = `$wshell.SendKeys("${keyMapPs[c]}")`;
+          lastBa = `xdotool key ${keyMapSh[c] || c}`;
+          lastPy = `pyautogui.press("${keyMapPy[c] || c.toLowerCase()}")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (/^F([1-9]|1[0-2])$/.test(c)) {
+          lastPs = `$wshell.SendKeys("{${c}}")`;
+          lastBa = `xdotool key ${c}`;
+          lastPy = `pyautogui.press("${c.toLowerCase()}")`;
+          ps += lastPs + '\n';
+          ba += lastBa + '\n';
+          py += lastPy + '\n';
+        } else if (c === 'IF' || c === 'ELSE' || c === 'ELSE IF' || c === 'END_IF' || c === 'WHILE' || c === 'END_WHILE' || c === 'FUNCTION' || c === 'END_FUNCTION' || c === 'VAR') {
+          ps += `# ${line}\n`;
+          ba += `# ${line}\n`;
+          py += `# ${line}\n`;
+        }
       });
       const content = `=== POWERSHELL ===\n${ps}\n\n=== BASH ===\n${ba}\n\n=== PYTHON ===\n${py}`;
       const blob = new Blob([content], { type: 'text/plain' });
@@ -103,7 +210,17 @@ ENTER`;
     function copySource() { const v = document.getElementById('srcEditor')?.value; if (v) copyText(v, 'Source copied'); }
     function copyOutput() { const v = document.getElementById('outViewer')?.textContent; if (v) copyText(v, 'Assembly copied'); }
     async function pasteSource() { try { let t = ''; if (typeof Android !== 'undefined') { t = Android.readFromClipboard(); } else { t = await navigator.clipboard.readText(); } document.getElementById('srcEditor').value += t; lintSource(document.getElementById('srcEditor').value); updateEditorCounts(); toast('Pasted', 'ok'); } catch { toast('Clipboard access denied', 'err'); } }
-    function exportAu3() { const v = document.getElementById('outViewer')?.textContent; if (!v || v.startsWith('; Compiled assembly will appear here')) return toast('No assembly to export', 'warn'); downloadTxt(v, 'payload.au3'); }
+    function exportAu3() {
+      const lang = S.compilerLang || 'au3';
+      const v = document.getElementById('outViewer')?.textContent;
+      if (!v || v.startsWith('; Compiled assembly will appear here')) return toast('No assembly to export', 'warn');
+      const extMap = { au3: 'au3', ps1: 'ps1', py: 'py', sh: 'sh', hex: 'txt' };
+      const nameMap = { au3: 'AutoIt3', ps1: 'PowerShell', py: 'Python', sh: 'Bash', hex: 'HexDump' };
+      const ext = extMap[lang] || 'au3';
+      const name = nameMap[lang] || 'AutoIt3';
+      downloadTxt(v, `payload.${ext}`);
+      toast(`${name} code downloaded as payload.${ext}`, 'ok');
+    }
     function exportIDELog() { const l = document.getElementById('ideLog'); if (l) downloadTxt(l.innerText, 'ide_log.txt'); }
     function exportShellLog() { const l = document.getElementById('shellOutput'); if (l) downloadTxt(l.innerText, 'shell_log.txt'); }
     function downloadTxt(content, fn) { if (!content) return; if (typeof Android !== 'undefined') { try { Android.saveFile(fn, content); toast('Exporting ' + fn, 'ok'); return; } catch (e) { } } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type: 'text/plain' })); a.download = fn; a.click(); toast('Downloaded ' + fn, 'ok'); }
@@ -117,8 +234,8 @@ ENTER`;
 
     async function buildEXEPackage(arch) {
       if (typeof JSZip === 'undefined') { toast('JSZip not loaded', 'err'); return; }
-      const au3 = document.getElementById('outViewer')?.textContent;
-      if (!au3 || au3.startsWith('; Compiled')) { toast('Compile first to build EXE package', 'warn'); return; }
+      const au3 = S.compilerOutputs?.au3 || document.getElementById('outViewer')?.textContent;
+      if (!au3 || au3.startsWith('; Compiled') || au3.startsWith('; No code')) { toast('Compile first to build EXE package', 'warn'); return; }
       const name = document.getElementById('exeOutName')?.value || 'payload';
       const bat = `@echo off\ntitle Aut2Exe Compiler\necho Building ${name} (${arch})...\nAut2Exe.exe /in payload.au3 /out ${name}_${arch}.exe${arch === 'x64' ? ' /x64' : ''}\necho Done. Check for ${name}_${arch}.exe\npause`;
       const readme = `LENLU SC Forge v4.0 — Build Package (${arch.toUpperCase()})\n\n1. Run compile_${arch}.bat\n2. Requires AutoIt3/Aut2Exe installed\n3. Generated: ${new Date().toLocaleString()}\n4. Session: ${S.sessionId}`;
@@ -651,15 +768,24 @@ ENTER`;
         SPACE: { au3: 'Send("{SPACE}")', ps1: '$wshell.SendKeys(" ")', py: 'pyautogui.press("space")', sh: 'xdotool key space' },
         BACKSPACE: { au3: 'Send("{BACKSPACE}")', ps1: '$wshell.SendKeys("{BACKSPACE}")', py: 'pyautogui.press("backspace")', sh: 'xdotool key BackSpace' },
         DELETE: { au3: 'Send("{DELETE}")', ps1: '$wshell.SendKeys("{DELETE}")', py: 'pyautogui.press("delete")', sh: 'xdotool key Delete' },
+        INSERT: { au3: 'Send("{INSERT}")', ps1: '$wshell.SendKeys("{INSERT}")', py: 'pyautogui.press("insert")', sh: 'xdotool key Insert' },
         ESCAPE: { au3: 'Send("{ESC}")', ps1: '$wshell.SendKeys("{ESC}")', py: 'pyautogui.press("esc")', sh: 'xdotool key Escape' },
         ESC: { au3: 'Send("{ESC}")', ps1: '$wshell.SendKeys("{ESC}")', py: 'pyautogui.press("esc")', sh: 'xdotool key Escape' },
+        HOME: { au3: 'Send("{HOME}")', ps1: '$wshell.SendKeys("{HOME}")', py: 'pyautogui.press("home")', sh: 'xdotool key Home' },
+        END: { au3: 'Send("{END}")', ps1: '$wshell.SendKeys("{END}")', py: 'pyautogui.press("end")', sh: 'xdotool key End' },
+        PAGEUP: { au3: 'Send("{PGUP}")', ps1: '$wshell.SendKeys("{PGUP}")', py: 'pyautogui.press("pageup")', sh: 'xdotool key Prior' },
+        PAGEDOWN: { au3: 'Send("{PGDN}")', ps1: '$wshell.SendKeys("{PGDN}")', py: 'pyautogui.press("pagedown")', sh: 'xdotool key Next' },
         UP: { au3: 'Send("{UP}")', ps1: '$wshell.SendKeys("{UP}")', py: 'pyautogui.press("up")', sh: 'xdotool key Up' },
         DOWN: { au3: 'Send("{DOWN}")', ps1: '$wshell.SendKeys("{DOWN}")', py: 'pyautogui.press("down")', sh: 'xdotool key Down' },
         LEFT: { au3: 'Send("{LEFT}")', ps1: '$wshell.SendKeys("{LEFT}")', py: 'pyautogui.press("left")', sh: 'xdotool key Left' },
         RIGHT: { au3: 'Send("{RIGHT}")', ps1: '$wshell.SendKeys("{RIGHT}")', py: 'pyautogui.press("right")', sh: 'xdotool key Right' },
         PRINTSCREEN: { au3: 'Send("{PRINTSCREEN}")', ps1: '$wshell.SendKeys("{PRINTSCREEN}")', py: 'pyautogui.press("printscreen")', sh: 'xdotool key Print' },
         CAPSLOCK: { au3: 'Send("{CAPSLOCK}")', ps1: '$wshell.SendKeys("{CAPSLOCK}")', py: 'pyautogui.press("capslock")', sh: 'xdotool key Caps_Lock' },
-        CAPS: { au3: 'Send("{CAPSLOCK}")', ps1: '$wshell.SendKeys("{CAPSLOCK}")', py: 'pyautogui.press("capslock")', sh: 'xdotool key Caps_Lock' }
+        CAPS: { au3: 'Send("{CAPSLOCK}")', ps1: '$wshell.SendKeys("{CAPSLOCK}")', py: 'pyautogui.press("capslock")', sh: 'xdotool key Caps_Lock' },
+        SCROLLLOCK: { au3: 'Send("{SCROLLLOCK}")', ps1: '$wshell.SendKeys("{SCROLLLOCK}")', py: 'pyautogui.press("scrolllock")', sh: 'xdotool key Scroll_Lock' },
+        NUMLOCK: { au3: 'Send("{NUMLOCK}")', ps1: '$wshell.SendKeys("{NUMLOCK}")', py: 'pyautogui.press("numlock")', sh: 'xdotool key Num_Lock' },
+        MENU: { au3: 'Send("{APPSKEY}")', ps1: '$wshell.SendKeys("{APPSKEY}")', py: 'pyautogui.press("apps")', sh: 'xdotool key Menu' },
+        BREAK: { au3: 'Send("{BREAK}")', ps1: '$wshell.SendKeys("{BREAK}")', py: 'pyautogui.press("pause")', sh: 'xdotool key Break' }
       };
 
       const translateOp = (op, lang) => {
@@ -670,7 +796,7 @@ ENTER`;
         return lang === 'ps1' ? (psOps[op] || op) : (shOps[op] || op);
       };
 
-      const known = Object.keys(DUCK_MAP).concat(['REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'STRINGLN', 'STRING', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'VAR', 'IF', 'ELSE', 'END_IF', 'WHILE', 'END_WHILE']);
+      const known = Object.keys(DUCK_MAP).concat(['REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'STRINGLN', 'STRING', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'VAR', 'IF', 'ELSE', 'ELSE IF', 'END_IF', 'WHILE', 'END_WHILE']);
 
       lines.forEach((raw, i) => {
         const line = raw.trim();
@@ -704,6 +830,18 @@ ENTER`;
             `if ($${name} ${translateOp(op, 'ps1')} ${val}) {`,
             `if ${name} ${translateOp(op, 'py')} ${val}:`,
             `if [ "$${name}" ${translateOp(op, 'sh')} "${val}" ]; then`
+          );
+          return;
+        }
+
+        const elseIfMatch = line.match(/^ELSE\s+IF\s*\(\s*\$([A-Za-z0-9_]+)\s*([=!><]+)\s*(.+)\s*\)\s*THEN$/i);
+        if (elseIfMatch) {
+          const name = elseIfMatch[1], op = elseIfMatch[2], val = elseIfMatch[3];
+          emit(
+            `ElseIf $${name} ${translateOp(op, 'au3')} ${val} Then`,
+            `} elseif ($${name} ${translateOp(op, 'ps1')} ${val}) {`,
+            `elif ${name} ${translateOp(op, 'py')} ${val}:`,
+            `elif [ "$${name}" ${translateOp(op, 'sh')} "${val}" ]; then`
           );
           return;
         }
@@ -772,20 +910,20 @@ ENTER`;
 
         if (cmd === 'STRING') {
           emit(
-            'Send(' + interpolate(arg, 'au3') + ',0)',
+            'Send(' + interpolate(arg, 'au3') + ',1)',
             '$wshell.SendKeys(' + interpolate(arg, 'ps1') + ')',
             'pyautogui.write(' + interpolate(arg, 'py') + ')',
-            'xdotool type ' + interpolate(arg, 'sh')
+            'xdotool type -- ' + interpolate(arg, 'sh')
           );
           return;
         }
 
         if (cmd === 'STRINGLN') {
           emit(
-            'Send(' + interpolate(arg, 'au3') + ' & "{ENTER}",0)',
+            'Send(' + interpolate(arg, 'au3') + ' & "{ENTER}",1)',
             '$wshell.SendKeys(' + interpolate(arg, 'ps1') + ' + "{ENTER}")',
             'pyautogui.write(' + interpolate(arg, 'py') + ' + "\\n")',
-            'xdotool type ' + interpolate(arg, 'sh') + '; xdotool key Return'
+            'xdotool type -- ' + interpolate(arg, 'sh') + '; xdotool key Return'
           );
           return;
         }
@@ -828,13 +966,39 @@ ENTER`;
 
         if (cmd === 'REPEAT') {
           const n = Math.max(1, parseInt(arg, 10) || 1);
-          for (let r = 1; r < n; r++) {
+          for (let r = 0; r < n; r++) {
             if (lastInstruction.au3) {
               au3.push(lastInstruction.au3);
               ps1.push(lastInstruction.ps1);
               py.push(lastInstruction.py);
               sh.push(lastInstruction.sh);
             }
+          }
+          return;
+        }
+
+        if (cmd === 'HOLD') {
+          const holdKey = normalizeDuckKey(arg);
+          if (holdKey) {
+            emit(
+              'Send("{' + holdKey + ' down}")',
+              `$wshell.SendKeys("{${holdKey}}")`,
+              `pyautogui.keyDown("${holdKey.toLowerCase()}")`,
+              `xdotool keydown ${holdKey}`
+            );
+          }
+          return;
+        }
+
+        if (cmd === 'RELEASE') {
+          const relKey = normalizeDuckKey(arg);
+          if (relKey) {
+            emit(
+              'Send("{' + relKey + ' up}")',
+              `$wshell.SendKeys("{${relKey}}")`,
+              `pyautogui.keyUp("${relKey.toLowerCase()}")`,
+              `xdotool keyup ${relKey}`
+            );
           }
           return;
         }
@@ -905,7 +1069,7 @@ ENTER`;
       toast('Compilation successful', 'ok');
       logFeed('Compiled: ' + lines.length + ' expanded lines', 'tl-ok');
     };
-    const lintSource = function (val) { updateEditorCounts(); if (!getSetting('lint')) return; const expanded = expandDuckySource(val || ''); const defs = new Set([...String(val || '').matchAll(/^FUNCTION\s+([A-Za-z_$][\w$]*)\s*\(\s*\)$/gim)].map(m => m[1].toUpperCase())); const known = Object.keys(DUCK_MAP).concat(['STRING', 'STRINGLN', 'DELAY', 'REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'FUNCTION', 'END_FUNCTION']); let errs = expanded.diag.length; String(val || '').split(/\r?\n/).forEach(l => { const t = l.trim(); if (!t || t.startsWith('REM') || t.startsWith(';') || t.startsWith('//')) return; if (/^FUNCTION\s+[A-Za-z_$][\w$]*\s*\(\s*\)$/i.test(t) || /^END_FUNCTION$/i.test(t)) return; const call = t.match(/^([A-Za-z_$][\w$]*)\s*\(\s*\)$/); if (call && defs.has(call[1].toUpperCase())) return; const cmd = normalizeDuckKey(t.split(/\s+/)[0]); if (!known.includes(cmd) && !/^F([1-9]|1[0-2])$/.test(cmd)) errs++; }); const b = document.getElementById('lintStatus'); if (b) { if (errs > 0) { b.className = 'badge lint-' + (errs < 3 ? 'warn' : 'err'); b.textContent = errs + ' err'; } else { b.className = 'badge lint-ok'; b.textContent = 'OK'; } } if (getSetting('persist')) localStorage.setItem('lenlu_src4', val || ''); };
+    const lintSource = function (val) { updateEditorCounts(); if (!getSetting('lint')) return; const expanded = expandDuckySource(val || ''); const defs = new Set([...String(val || '').matchAll(/^FUNCTION\s+([A-Za-z_$][\w$]*)\s*\(\s*\)$/gim)].map(m => m[1].toUpperCase()));       const known = Object.keys(DUCK_MAP).concat(['STRING', 'STRINGLN', 'DELAY', 'REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'FUNCTION', 'END_FUNCTION', 'VAR', 'IF', 'ELSE', 'ELSE IF', 'END_IF', 'WHILE', 'END_WHILE']); let errs = expanded.diag.length; String(val || '').split(/\r?\n/).forEach(l => { const t = l.trim(); if (!t || t.startsWith('REM') || t.startsWith(';') || t.startsWith('//')) return; if (/^FUNCTION\s+[A-Za-z_$][\w$]*\s*\(\s*\)$/i.test(t) || /^END_FUNCTION$/i.test(t)) return; const call = t.match(/^([A-Za-z_$][\w$]*)\s*\(\s*\)$/); if (call && defs.has(call[1].toUpperCase())) return; const cmd = normalizeDuckKey(t.split(/\s+/)[0]); if (!known.includes(cmd) && !/^F([1-9]|1[0-2])$/.test(cmd)) errs++; }); const b = document.getElementById('lintStatus'); if (b) { if (errs > 0) { b.className = 'badge lint-' + (errs < 3 ? 'warn' : 'err'); b.textContent = errs + ' err'; } else { b.className = 'badge lint-ok'; b.textContent = 'OK'; } } if (getSetting('persist')) localStorage.setItem('lenlu_src4', val || ''); };
 
     function generateHexDump(text) {
       const bytes = new TextEncoder().encode(text);

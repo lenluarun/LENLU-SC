@@ -389,8 +389,8 @@ function resetSettingsToDefault() {
             inp.value += ' ';
           } else if (keyId === 'TAB') {
             inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + 'TAB\n';
-          } else if (['GUI', 'CTRL', 'ALT', 'ESC', 'CAPS', 'LSHIFT', 'RSHIFT', 'RALT'].includes(keyId)) {
-            inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + keyId + ' ';
+          } else if (['GUI', 'CTRL', 'ALT', 'ESC', 'CAPS', 'LSHIFT', 'RSHIFT', 'RALT', 'INSERT', 'HOME', 'END', 'PAGEUP', 'PAGEDOWN', 'PRINTSCREEN', 'SCROLLLOCK', 'NUMLOCK', 'MENU', 'BREAK'].includes(keyId)) {
+            inp.value += (inp.value && !inp.value.endsWith('\n') ? '\n' : '') + keyId + '\n';
           } else {
             const lines = inp.value.split('\n');
             const lastLine = lines[lines.length - 1] || '';
