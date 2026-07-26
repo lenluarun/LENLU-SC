@@ -151,6 +151,12 @@ let lastEndpoint = 'groq';
         S.stats.compiled++; document.getElementById('stat-compiled').textContent = S.stats.compiled;
       }, 250);
     }
+    function qkAsk() {
+      const src = document.getElementById('qkInput')?.value?.trim();
+      if (!src) { toast('No input to ask about', 'warn'); return; }
+      document.getElementById('chatInput').value = 'Review and optimize this DuckyScript:\n' + src;
+      switchView('chat', document.querySelector('[data-view=chat]'));
+    }
 
     function insertTemplateWiFiDump() {
       const script = `REM --- LENLU SC: Saved Wi-Fi Passwords Dump ---
@@ -904,7 +910,7 @@ ENTER`;
         if (cmd === 'DEFAULT_BROWSER') {
           const url = arg.replace(/^["']|["']$/g, '');
           emit(
-            'ShellExecute("explorer.exe", "' + url.replace(/"/g, '""') + '")',
+            'ShellExecute("' + url.replace(/"/g, '""') + '")',
             'Start-Process "' + url.replace(/"/g, '`"') + '"',
             'import webbrowser; webbrowser.open("' + url.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")',
             'xdg-open "' + url.replace(/"/g, '\\"') + '"'
