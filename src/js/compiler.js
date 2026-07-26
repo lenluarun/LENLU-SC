@@ -33,6 +33,11 @@ let lastEndpoint = 'groq';
           ps += `# Default delay: ${ms}ms\n`;
           ba += `# Default delay: ${ms}ms\n`;
           py += `# Default delay: ${ms}ms\n`;
+        } else if (c === 'DEFAULT_BROWSER') {
+          const url = a.replace(/^["']|["']$/g, '');
+          ps += `Start-Process "${url}"\n`;
+          ba += `xdg-open "${url}"\n`;
+          py += `import webbrowser; webbrowser.open("${url}")\n`;
         } else if (c === 'DELAY') {
           const ms = parseInt(a, 10) || 0;
           lastPs = `Start-Sleep -Milliseconds ${ms}`;
@@ -796,7 +801,7 @@ ENTER`;
         return lang === 'ps1' ? (psOps[op] || op) : (shOps[op] || op);
       };
 
-      const known = Object.keys(DUCK_MAP).concat(['REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'STRINGLN', 'STRING', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'VAR', 'IF', 'ELSE', 'ELSE IF', 'END_IF', 'WHILE', 'END_WHILE']);
+      const known = Object.keys(DUCK_MAP).concat(['REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'STRINGLN', 'STRING', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'DEFAULT_BROWSER', 'VAR', 'IF', 'ELSE', 'ELSE IF', 'END_IF', 'WHILE', 'END_WHILE']);
 
       lines.forEach((raw, i) => {
         const line = raw.trim();
@@ -892,6 +897,17 @@ ENTER`;
             '# Default delay set to ' + defaultDelay + 'ms',
             '# Default delay set to ' + defaultDelay + 'ms',
             '# Default delay set to ' + defaultDelay + 'ms'
+          );
+          return;
+        }
+
+        if (cmd === 'DEFAULT_BROWSER') {
+          const url = arg.replace(/^["']|["']$/g, '');
+          emit(
+            'ShellExecute("explorer.exe", "' + url.replace(/"/g, '""') + '")',
+            'Start-Process "' + url.replace(/"/g, '`"') + '"',
+            'import webbrowser; webbrowser.open("' + url.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")',
+            'xdg-open "' + url.replace(/"/g, '\\"') + '"'
           );
           return;
         }
@@ -1069,7 +1085,7 @@ ENTER`;
       toast('Compilation successful', 'ok');
       logFeed('Compiled: ' + lines.length + ' expanded lines', 'tl-ok');
     };
-    const lintSource = function (val) { updateEditorCounts(); if (!getSetting('lint')) return; const expanded = expandDuckySource(val || ''); const defs = new Set([...String(val || '').matchAll(/^FUNCTION\s+([A-Za-z_$][\w$]*)\s*\(\s*\)$/gim)].map(m => m[1].toUpperCase()));       const known = Object.keys(DUCK_MAP).concat(['STRING', 'STRINGLN', 'DELAY', 'REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'FUNCTION', 'END_FUNCTION', 'VAR', 'IF', 'ELSE', 'ELSE IF', 'END_IF', 'WHILE', 'END_WHILE']); let errs = expanded.diag.length; String(val || '').split(/\r?\n/).forEach(l => { const t = l.trim(); if (!t || t.startsWith('REM') || t.startsWith(';') || t.startsWith('//')) return; if (/^FUNCTION\s+[A-Za-z_$][\w$]*\s*\(\s*\)$/i.test(t) || /^END_FUNCTION$/i.test(t)) return; const call = t.match(/^([A-Za-z_$][\w$]*)\s*\(\s*\)$/); if (call && defs.has(call[1].toUpperCase())) return; const cmd = normalizeDuckKey(t.split(/\s+/)[0]); if (!known.includes(cmd) && !/^F([1-9]|1[0-2])$/.test(cmd)) errs++; }); const b = document.getElementById('lintStatus'); if (b) { if (errs > 0) { b.className = 'badge lint-' + (errs < 3 ? 'warn' : 'err'); b.textContent = errs + ' err'; } else { b.className = 'badge lint-ok'; b.textContent = 'OK'; } } if (getSetting('persist')) localStorage.setItem('lenlu_src4', val || ''); };
+    const lintSource = function (val) { updateEditorCounts(); if (!getSetting('lint')) return; const expanded = expandDuckySource(val || ''); const defs = new Set([...String(val || '').matchAll(/^FUNCTION\s+([A-Za-z_$][\w$]*)\s*\(\s*\)$/gim)].map(m => m[1].toUpperCase()));       const known = Object.keys(DUCK_MAP).concat(['STRING', 'STRINGLN', 'DELAY', 'REM', 'REPEAT', 'HOLD', 'RELEASE', 'GUI', 'CTRL', 'ALT', 'SHIFT', 'WINDOWS', 'DEFAULT_DELAY', 'DEFAULTDELAY', 'DEFAULT_BROWSER', 'FUNCTION', 'END_FUNCTION', 'VAR', 'IF', 'ELSE', 'ELSE IF', 'END_IF', 'WHILE', 'END_WHILE']); let errs = expanded.diag.length; String(val || '').split(/\r?\n/).forEach(l => { const t = l.trim(); if (!t || t.startsWith('REM') || t.startsWith(';') || t.startsWith('//')) return; if (/^FUNCTION\s+[A-Za-z_$][\w$]*\s*\(\s*\)$/i.test(t) || /^END_FUNCTION$/i.test(t)) return; const call = t.match(/^([A-Za-z_$][\w$]*)\s*\(\s*\)$/); if (call && defs.has(call[1].toUpperCase())) return; const cmd = normalizeDuckKey(t.split(/\s+/)[0]); if (!known.includes(cmd) && !/^F([1-9]|1[0-2])$/.test(cmd)) errs++; }); const b = document.getElementById('lintStatus'); if (b) { if (errs > 0) { b.className = 'badge lint-' + (errs < 3 ? 'warn' : 'err'); b.textContent = errs + ' err'; } else { b.className = 'badge lint-ok'; b.textContent = 'OK'; } } if (getSetting('persist')) localStorage.setItem('lenlu_src4', val || ''); };
 
     function generateHexDump(text) {
       const bytes = new TextEncoder().encode(text);

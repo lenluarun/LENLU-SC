@@ -61,6 +61,7 @@
       SCROLLLOCK: 'Send("{SCROLLLOCK}")', NUMLOCK: 'Send("{NUMLOCK}")', MENU: 'Send("{APPSKEY}")',
       F1: 'Send("{F1}")', F2: 'Send("{F2}")', F3: 'Send("{F3}")', F4: 'Send("{F4}")', F5: 'Send("{F5}")', F6: 'Send("{F6}")',
       F7: 'Send("{F7}")', F8: 'Send("{F8}")', F9: 'Send("{F9}")', F10: 'Send("{F10}")', F11: 'Send("{F11}")', F12: 'Send("{F12}")',
+      DEFAULT_BROWSER: 'ShellExecute',
     };
     const FALLBACK_TEMPLATES = [
   {
